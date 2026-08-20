@@ -1,0 +1,66 @@
+:root[data-theme="day"] {
+	--radius-base: 6px;
+
+	--radius-xs: calc(var(--radius-base) * 0.25);
+	--radius-sm: calc(var(--radius-base) * 0.5);
+	--radius-md: var(--radius-base);
+	--radius-lg: calc(var(--radius-base) * 1.5);
+	--radius-xl: calc(var(--radius-base) * 2);
+
+	--background: oklch(0.9772 0.0017 325.59);
+	--surface: oklch(0.9759 0.0029 264.54);
+	--foreground: oklch(0.311 0.05 270.71);
+	--border: oklch(0.9114 0.0042 301.42);
+
+	--tooltip: oklch(0.1985 0.0123 353.84);
+	--tooltip-foreground: oklch(0.6956 0 353.84);
+
+	--input: oklch(0.9731 0 0);
+	--input-foreground: oklch(0.2341 0.0186 107.75);
+	--input-placeholder: oklch(0.311 0.05 270.71);
+	--input-border: oklch(0.9114 0.0042 301.42);
+
+	--modal: oklch(0.9759 0.0029 264.54);
+	--modal-foreground: oklch(0.311 0.05 270.71);
+
+	--muted: oklch(0.6677 0.0323 262.48);
+	--muted-foreground: oklch(0.6677 0.0323 262.48);
+
+	--accent: oklch(0.9235 0.0341 257.85);
+	--accent-foreground: oklch(0.562 0.2362 261.21);
+
+	--primary: oklch(0.8208 0.1293 131.99);
+	--primary-foreground: oklch(100% 0 0);
+
+	--secondary: oklch(0.7224 0.0864 261.29);
+	--secondary-foreground: oklch(100% 0 0);
+
+	--neutral: oklch(0.6956 0 353.84);
+	--neutral-foreground: oklch(0.1985 0.0123 353.84);
+
+	--success: oklch(0.7312 0.1094 152.19);
+	--success-foreground: oklch(0.1985 0.0123 353.84);
+
+	--info: oklch(0.7332 0.126 271.95);
+	--info-foreground: oklch(0.1985 0.0123 353.84);
+
+	--warning: oklch(0.8391 0.1507 94.38);
+	--warning-foreground: oklch(1 0 0);
+
+	--destructive: oklch(0.6459 0.2128 30.72);
+	--destructive-foreground: oklch(100% 0 0);
+
+	--energy: oklch(92.04% 0.17561 122.599);
+	--lighting: oklch(84.782% 0.11542 90.278);
+	--comfort: oklch(73.205% 0.09059 158.433);
+	--temperature: oklch(70% 0.15 35);
+	--humidity: oklch(68% 0.14 240);
+	--pressure: oklch(72% 0.12 170);
+	--network: oklch(72% 0.12 170);
+	--security: oklch(60% 0.22 28);
+	--automation: oklch(66% 0.18 290);
+	--car: oklch(88.449% 0.08587 182.932);
+
+	--temperature-excessive: oklch(59.029% 0.23425 29.159);
+	--temperature-low: oklch(77.127% 0.12352 236.719);
+}

@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@import "shanty-ui/css/shanty-ui.css";
+
+/* @import "shanty-ui/css/themes/default.css"; */
+@import "./themes/morning.css";
+@import "./themes/day.css";
+@import "./themes/evening.css";
+@import "./themes/night.css";
+
+@source "../views";
+@source "../js/**/*.tsx";
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+
+/** TAILWINDCSS */
+@theme inline {
+	--font-sans: "Inter", sans-serif;
+	--font-heading: "Manrope", sans-serif;
+	--font-mono: "JetBrains Mono", monospace;
+
+	--color-energy: var(--energy);
+	--color-lighting: var(--lighting);
+	--color-comfort: var(--comfort);
+	--color-temperature: var(--temperature);
+	--color-temperature-excessive: var(--temperature-excessive);
+	--color-temperature-low: var(--temperature-low);
+	--color-humidity: var(--humidity);
+	--color-pressure: var(--pressure);
+	--color-network: var(--network);
+	--color-security: var(--security);
+	--color-automation: var(--automation);
+	--color-car: var(--car);
+}
+
+@utility text-heading {
+	font-family: var(--font-heading);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+@utility text-metric {
+	font-family: var(--font-mono);
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.03em;
+}
+
+body {
+	@apply font-sans text-base text-foreground;
+}
+
+[data-slot="sidebar-item-button"] {
+	@apply bg-surface! hover:bg-background!;
+}
+
+[data-slot="card-title"] {
+	@apply text-heading;
+}
+
+[data-slot="data-list-value"] {
+	@apply text-metric;
+}
+
+[data-slot="sidebar-item"] {
+	@apply border-r-4 border-transparent;
+}
+
+[data-slot="sidebar-item"]:has([data-active="true"]) {
+	@apply border-primary;
+}

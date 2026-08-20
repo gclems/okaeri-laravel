@@ -1,0 +1,7 @@
+{
+    "diagnostics": {
+        "argumentCount": "declared",
+        "undefinedMethods": false,
+        "undefinedProperties": false
+    }
+}

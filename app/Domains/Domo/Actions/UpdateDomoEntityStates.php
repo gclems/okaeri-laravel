@@ -2,7 +2,6 @@
 
 namespace App\Domains\Domo\Actions;
 
-use App\Domains\Domo\DomoEventMode;
 use App\Domains\Domo\Events\DomoEntityStatesUpdated;
 use App\Models\DomoEntityState;
 use Carbon\Carbon;
@@ -18,18 +17,14 @@ final class UpdateDomoEntityStates
                 'ha_entity_id' => $item['entity_id'],
                 'value' => $item['state'],
                 'attributes' => json_encode($item['attributes']),
+                'raw' => json_encode($item),
                 'created_at' => now(),
                 'updated_at' => Carbon::parse($item['last_updated']),
             ])->toArray(),
             ['ha_entity_id'],
-            ['value', 'attributes', 'updated_at']
+            ['value', 'attributes', 'raw', 'updated_at']
         );
 
-        DomoEntityStatesUpdated::dispatch(
-            DomoEntityState::query()
-                ->whereIn('ha_entity_id', $collection->pluck('entity_id'))
-                ->get()->toArray(),
-            DomoEventMode::MERGE
-        );
+        DomoEntityStatesUpdated::dispatch();
     }
 }

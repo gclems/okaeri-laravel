@@ -8,6 +8,7 @@ export interface DomoDevice {
   is_virtual: boolean
   created_at: string | null
   updated_at: string | null
+  raw?: Array<unknown> | null
   // relations
   entities?: DomoEntity[]
   room?: DomoRoom
@@ -26,6 +27,7 @@ export interface DomoEntity {
   name: string
   created_at: string | null
   updated_at: string | null
+  raw?: Array<unknown> | null
   // relations
   device?: DomoDevice
   assignments?: DomoEntityAssignment[]
@@ -60,6 +62,7 @@ export interface DomoEntityState {
   value: string
   created_at: string | null
   updated_at: string | null
+  raw?: Array<unknown> | null
   // overrides
   attributes: Record<string, unknown>
   // relations
@@ -77,6 +80,7 @@ export interface DomoRoom {
   name: string
   created_at: string | null
   updated_at: string | null
+  raw?: Array<unknown> | null
   // relations
   devices?: DomoDevice[]
   assignments?: DomoEntityAssignment[]

@@ -26,6 +26,8 @@
 	--color-humidity: var(--humidity);
 	--color-pressure: var(--pressure);
 	--color-network: var(--network);
+	--color-download: var(--download);
+	--color-upload: var(--upload);
 	--color-security: var(--security);
 	--color-automation: var(--automation);
 	--color-car: var(--car);
@@ -64,5 +66,9 @@ body {
 }
 
 [data-slot="sidebar-item"]:has([data-active="true"]) {
-	@apply border-primary;
+	@apply border-primary text-foreground!;
+}
+
+[data-slot="sidebar-item-button"][data-active="true"] {
+	@apply text-foreground!;
 }

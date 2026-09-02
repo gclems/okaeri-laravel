@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.3",
         "amphp/websocket-client": "^2.0",
+        "chillerlan/php-qrcode": "^6.0",
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/framework": "^13.17",
         "laravel/reverb": "^1.0",

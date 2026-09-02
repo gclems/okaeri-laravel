@@ -56,7 +56,11 @@
 	--temperature: oklch(70% 0.15 35);
 	--humidity: oklch(68% 0.14 240);
 	--pressure: oklch(72% 0.12 170);
+
 	--network: oklch(72% 0.12 170);
+	--download: oklch(0.6522 0.1235 284.59);
+	--upload: oklch(0.7791 0.0972 155.93);
+
 	--security: oklch(60% 0.22 28);
 	--automation: oklch(66% 0.18 290);
 	--car: oklch(88.449% 0.08587 182.932);

@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
-import { Lightbulb } from "@hugeicons/core-free-icons";
+import { Lightbulb, PowerOffIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useHttp } from "@inertiajs/react";
-import { Card, Switch } from "shanty-ui";
+import { Button, Card, Switch } from "shanty-ui";
 
 import LightingController from "@/actions/App/Http/Controllers/LightingController";
 import { useDomoStore } from "@/features/domo/domo-store";
@@ -37,8 +37,6 @@ function LightingCard() {
 	const optimisticallyUpdateState = useDomoStore(
 		(state) => state.optimisticallyUpdateState,
 	);
-
-	console.log({ state: statesMap.get(47)?.value });
 
 	const viewModels: RoomViewModel[] = useMemo(() => {
 		const vms = [] as RoomViewModel[];
@@ -114,6 +112,8 @@ function LightingCard() {
 		return vms;
 	}, [assignmentsMap, roomsMap, entitiesMap, statesMap]);
 
+	console.log({ viewModels });
+
 	const handleGroupToggle = async (
 		entity: DomoEntity,
 		currentState: DomoEntityState,
@@ -124,6 +124,20 @@ function LightingCard() {
 		);
 
 		post(LightingController.toggleLight.url({ entity: entity.id }));
+	};
+
+	const handleTurnOffAll = () => {
+		const ids: number[] = [];
+		viewModels.forEach((vm) => {
+			if (vm.state.value === "off") return;
+
+			ids.push(vm.entity.id);
+			optimisticallyUpdateState(vm.state.id, "off");
+		});
+
+		post(
+			LightingController.turnOffMultiple.url({ query: { entities_ids: ids } }),
+		);
 	};
 
 	return (
@@ -138,37 +152,44 @@ function LightingCard() {
 			/>
 			<Card.Body>
 				<ul>
-					{viewModels.map((vm) => {
-						const isOn = vm.state.value === "on";
-
-						return (
-							<li key={vm.assignment.id}>
-								<div className="flex items-center">
-									<div className="flex-1 truncate">{vm.room.name}</div>
-									<div className="flex gap-x-0.5">
-										{vm.bulbs.map((bulb) => (
-											<div
-												key={bulb.entity.id}
-												className="size-3 border border-border"
-												style={{
-													backgroundColor: getLightColorCode(bulb.state),
-												}}
-											/>
-										))}
-									</div>
-									<Switch
-										checked={isOn}
-										onCheckedChange={() => {
-											handleGroupToggle(vm.entity, vm.state);
-										}}
-									/>
+					{viewModels.map((vm) => (
+						<li key={vm.assignment.id}>
+							<div className="flex items-center gap-x-1.5">
+								<div className="flex-1 truncate">{vm.room.name}</div>
+								<div className="flex gap-x-0.5">
+									{vm.bulbs.map((bulb) => (
+										<div
+											key={bulb.entity.id}
+											className="size-3 border border-border"
+											style={{
+												backgroundColor: getLightColorCode(bulb.state),
+											}}
+										/>
+									))}
 								</div>
-							</li>
-						);
-					})}
+								<Switch
+									checked={vm.state.value === "on"}
+									onCheckedChange={() => {
+										handleGroupToggle(vm.entity, vm.state);
+									}}
+								/>
+							</div>
+						</li>
+					))}
 				</ul>
 			</Card.Body>
-			<Card.Footer></Card.Footer>
+			<Card.Footer>
+				<Button
+					variant="light"
+					color="destructive"
+					className="w-full"
+					size="sm"
+					onClick={handleTurnOffAll}
+				>
+					<HugeiconsIcon icon={PowerOffIcon} />
+					Tout éteindre
+				</Button>
+			</Card.Footer>
 		</Card>
 	);
 }

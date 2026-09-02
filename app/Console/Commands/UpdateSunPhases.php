@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Domains\Domo\DomoEventMode;
 use App\Domains\Domo\Events\SunPhaseUpdated;
 use App\Domains\MetNo\MetNoClient;
 use App\Models\SunPhase;
@@ -22,45 +23,63 @@ class UpdateSunPhases extends Command
         logger()->info('update sun phases started...');
 
         $today = now()->startOfDay();
-        $tomorrow = now()->addDay()->startOfDay();
 
-        $todaySun = $metNoClient->getSunPhases(
-            date: $today,
-            latitude: config('metno.latitude'),
-            longitude: config('metno.longitude'),
-        );
+        /* Determine the range of dates with missing data */
+        $dates = [];
+        for ($i = 0; $i < config('domo.sun-phase.keep_before'); $i++) {
+            $dates[] = now()->subDays($i + 1)->startOfDay();
+        }
+        $dates[] = $today;
+        for ($i = 0; $i < config('domo.sun-phase.keep_after'); $i++) {
+            $dates[] = now()->addDays($i + 1)->startOfDay();
+        }
 
-        $tomorrowSun = $metNoClient->getSunPhases(
-            date: $tomorrow,
-            latitude: config('metno.latitude'),
-            longitude: config('metno.longitude'),
-        );
+        $existingPhaseDates = SunPhase::whereIn('date', $dates)->pluck('date')->toArray();
 
-        SunPhase::upsert([
-            [
-                'date' => $today,
-                'sunrise_starts_at' => $todaySun->sunriseTime,
-                'sunrise_azimuth' => $todaySun->sunriseAzimuth,
-                'sunset_starts_at' => $todaySun->sunsetTime,
-                'sunset_azimuth' => $todaySun->sunsetAzimuth,
-                'solar_noon_at' => $todaySun->solarNoonTime,
-                'solar_noon_disc_centre_elevation' => $todaySun->noonDiscCentreElevation,
-                'solar_midnight_at' => $todaySun->solarMidnightTime,
-                'solar_midnight_disc_centre_elevation' => $todaySun->midnightDiscCentreElevation,
-            ],
-            [
-                'date' => $tomorrow,
-                'sunrise_starts_at' => $tomorrowSun->sunriseTime,
-                'sunrise_azimuth' => $tomorrowSun->sunriseAzimuth,
-                'sunset_starts_at' => $tomorrowSun->sunsetTime,
-                'sunset_azimuth' => $tomorrowSun->sunsetAzimuth,
-                'solar_noon_at' => $tomorrowSun->solarNoonTime,
-                'solar_noon_disc_centre_elevation' => $tomorrowSun->noonDiscCentreElevation,
-                'solar_midnight_at' => $tomorrowSun->solarMidnightTime,
-                'solar_midnight_disc_centre_elevation' => $tomorrowSun->midnightDiscCentreElevation,
-            ],
-        ], ['date']);
+        $datesToFetch = array_filter($dates, fn ($date) => ! in_array($date, $existingPhaseDates));
+        $count = count($datesToFetch);
+        $this->info("Missing {$count} sun phase(s).");
 
-        SunPhaseUpdated::dispatch();
+        if ($count > 0) {
+            $progress = $this->output->createProgressBar($count);
+            $progress->start();
+
+            /* Fetch and insert missing data from MetNo to db */
+            $toCreate = [];
+            foreach ($datesToFetch as $date) {
+                $sun = $metNoClient->getSunPhases(
+                    date: $date,
+                    latitude: config('metno.latitude'),
+                    longitude: config('metno.longitude'),
+                );
+
+                $toCreate[] = [
+                    'date' => $date,
+                    'sunrise_starts_at' => $sun->sunriseTime,
+                    'sunrise_azimuth' => $sun->sunriseAzimuth,
+                    'sunset_starts_at' => $sun->sunsetTime,
+                    'sunset_azimuth' => $sun->sunsetAzimuth,
+                    'solar_noon_at' => $sun->solarNoonTime,
+                    'solar_noon_disc_centre_elevation' => $sun->noonDiscCentreElevation,
+                    'solar_midnight_at' => $sun->solarMidnightTime,
+                    'solar_midnight_disc_centre_elevation' => $sun->midnightDiscCentreElevation,
+                ];
+
+                $progress->advance();
+            }
+
+            $progress->finish();
+
+            if (count($toCreate) > 0) {
+                SunPhase::insert($toCreate);
+            }
+
+            /* Delete data outside of keeping range, ie the $dates array */
+            SunPhase::whereNotIn('date', $dates)->delete();
+
+            SunPhaseUpdated::dispatch(SunPhase::all()->toArray(), DomoEventMode::REPLACE);
+        } else {
+            $this->info('No missing sun phase data.');
+        }
     }
 }

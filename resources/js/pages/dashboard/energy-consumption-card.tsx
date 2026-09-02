@@ -4,7 +4,7 @@ import { Card } from "shanty-ui";
 
 function EnergyConsumptionCard() {
 	return (
-		<Card className="bg-linear-to-b from-energy/20 to-transparent">
+		<Card className="bg-linear-to-t from-energy/20 to-transparent">
 			<Card.Header
 				title={
 					<div className="flex items-center gap-x-2">

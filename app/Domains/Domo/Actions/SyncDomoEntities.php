@@ -2,7 +2,6 @@
 
 namespace App\Domains\Domo\Actions;
 
-use App\Domains\Domo\DomoEventMode;
 use App\Domains\Domo\Events\DomoEntitiesUpdated;
 use App\Domains\HomeAssistant\DTO\HomeAssistantEntity;
 use App\Models\DomoEntity;
@@ -15,6 +14,7 @@ final class SyncDomoEntities
             ->where(fn (HomeAssistantEntity $entity) => $entity->deviceId !== null
                 && $entity->name !== null
                 && trim($entity->name) !== ''
+                && $entity->disabledBy === null
             );
 
         DomoEntity::upsert(
@@ -23,17 +23,16 @@ final class SyncDomoEntities
                     'ha_id' => $entity->id,
                     'name' => $entity->name ?? null,
                     'ha_device_id' => $entity->deviceId ?? null,
+                    'platform' => $entity->platform,
+                    'raw' => json_encode($entity),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ])->toArray(),
             ['ha_id'],
-            ['name']);
+            ['name', 'raw', 'ha_device_id', 'platform', 'ha_id']);
 
         DomoEntity::whereNotIn('ha_id', $kept->pluck('id'))->delete();
 
-        DomoEntitiesUpdated::dispatch(
-            DomoEntity::all()->toArray(),
-            DomoEventMode::REPLACE
-        );
+        DomoEntitiesUpdated::dispatch();
     }
 }

@@ -13,10 +13,15 @@ class DomoEntityState extends Model
         ],
     ];
 
+    protected $hidden = [
+        'raw',
+    ];
+
     public function casts(): array
     {
         return [
             'attributes' => 'array',
+            'raw' => 'array',
         ];
     }
 

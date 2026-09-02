@@ -100,7 +100,7 @@ function ComfortCard() {
 							if (!room) return null;
 
 							return (
-								<HorizontalRoomCard
+								<RoomItem
 									key={roomId}
 									room={room}
 									thermometerState={roomAssignments.thermometer}
@@ -114,7 +114,7 @@ function ComfortCard() {
 	);
 }
 
-function HorizontalRoomCard({
+function RoomItem({
 	room,
 	thermometerState,
 	hygrometerState,
@@ -128,9 +128,9 @@ function HorizontalRoomCard({
 			<div className="flex items-center gap-x-4">
 				<div className="flex-1 truncate">{room.name}</div>
 				{thermometerState && (
-					<div className="flex items-center gap-x-1">
+					<div className="flex items-baseline gap-x-1">
 						<span
-							className={cn("text-metric", {
+							className={cn("text-metric text-lg", {
 								"text-temperature-excessive": +(thermometerState.value ?? 0) >= 26,
 								"text-temperature-low": +(thermometerState.value ?? 0) <= 17,
 							})}

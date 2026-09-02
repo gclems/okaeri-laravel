@@ -2,7 +2,6 @@
 
 namespace App\Domains\Domo\Actions;
 
-use App\Domains\Domo\DomoEventMode;
 use App\Domains\Domo\Events\DomoRoomsUpdated;
 use App\Domains\HomeAssistant\DTO\HomeAssistantArea as DTOHomeAssistantArea;
 use App\Models\DomoRoom;
@@ -16,18 +15,16 @@ final class SyncDomoRooms
             $collection->map(fn (DTOHomeAssistantArea $area) => [
                 'ha_id' => $area->id,
                 'name' => $area->name,
+                'raw' => json_encode($area),
                 'created_at' => now(),
                 'updated_at' => now(),
             ])->toArray(),
             ['ha_id'],
-            ['name']
+            ['name', 'raw', 'ha_id']
         );
 
         DomoRoom::whereNotIn('ha_id', $collection->pluck('id'))->delete();
 
-        DomoRoomsUpdated::dispatch(
-            DomoRoom::all()->toArray(),
-            DomoEventMode::REPLACE
-        );
+        DomoRoomsUpdated::dispatch();
     }
 }

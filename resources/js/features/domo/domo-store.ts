@@ -9,13 +9,19 @@ import type {
 	SunPhase,
 } from "@/types/models";
 
+type Network = {
+	txRateBps: number;
+	rxRateBps: number;
+};
+
 type DomoStore = {
 	roomsMap: Map<number, DomoRoom>;
 	devicesMap: Map<number, DomoDevice>;
 	entitiesMap: Map<number, DomoEntity>;
 	statesMap: Map<number, DomoEntityState>;
 	assignmentsMap: Map<number, DomoEntityAssignment>;
-	sunPhase: SunPhase | null;
+	sunPhasesMap: Map<string, SunPhase>;
+	network: Network | null;
 
 	updateRooms: (rooms: DomoRoom[], mode: UpdateMode) => void;
 	updateDevices: (devices: DomoDevice[], mode: UpdateMode) => void;
@@ -25,7 +31,8 @@ type DomoStore = {
 		assignments: DomoEntityAssignment[],
 		mode: UpdateMode,
 	) => void;
-	updateSunPhase: (sunPhase: SunPhase | null) => void;
+	updateSunPhases: (sunPhases: SunPhase[], mode: UpdateMode) => void;
+	updateNetwork: (uplink: Network) => void;
 
 	optimisticallyUpdateState: (stateId: number, value: string) => void;
 };
@@ -38,9 +45,6 @@ enum UpdateMode {
 type PendingOptimisticStateUpdate = {
 	timeoutId: ReturnType<typeof setTimeout>;
 	expectedValue: string;
-	// Most recent value actually received from HA, tracked even when it's
-	// ignored for display (transitional value that doesn't match expectedValue).
-	// This is what we roll back to if the expected value never shows up.
 	latestKnown: DomoEntityState;
 };
 
@@ -57,19 +61,35 @@ const useDomoStore = create<DomoStore>((set) => ({
 	entitiesMap: new Map<number, DomoEntity>(),
 	statesMap: new Map<number, DomoEntityState>(),
 	assignmentsMap: new Map<number, DomoEntityAssignment>(),
-	sunPhase: null,
+	sunPhasesMap: new Map<string, SunPhase>(),
+	network: null,
 
 	updateRooms: (rooms: DomoRoom[], mode: UpdateMode) =>
 		set(() => ({
-			roomsMap: updateMap(useDomoStore.getState().roomsMap, rooms, mode),
+			roomsMap: updateMapFromArray(
+				useDomoStore.getState().roomsMap,
+				rooms,
+				mode,
+				(room) => room.id,
+			),
 		})),
 	updateDevices: (devices: DomoDevice[], mode: UpdateMode) =>
 		set(() => ({
-			devicesMap: updateMap(useDomoStore.getState().devicesMap, devices, mode),
+			devicesMap: updateMapFromArray(
+				useDomoStore.getState().devicesMap,
+				devices,
+				mode,
+				(device) => device.id,
+			),
 		})),
 	updateEntities: (entities: DomoEntity[], mode: UpdateMode) =>
 		set(() => ({
-			entitiesMap: updateMap(useDomoStore.getState().entitiesMap, entities, mode),
+			entitiesMap: updateMapFromArray(
+				useDomoStore.getState().entitiesMap,
+				entities,
+				mode,
+				(entity) => entity.id,
+			),
 		})),
 	updateStates: (states: DomoEntityState[], mode: UpdateMode) => {
 		const statesToApply = states.filter((state) => {
@@ -89,20 +109,36 @@ const useDomoStore = create<DomoStore>((set) => ({
 		});
 
 		set(() => ({
-			statesMap: updateMap(useDomoStore.getState().statesMap, statesToApply, mode),
+			statesMap: updateMapFromArray(
+				useDomoStore.getState().statesMap,
+				statesToApply,
+				mode,
+				(state) => state.id,
+			),
 		}));
 	},
 	updateAssignments: (assignments: DomoEntityAssignment[], mode: UpdateMode) =>
 		set(() => ({
-			assignmentsMap: updateMap(
+			assignmentsMap: updateMapFromArray(
 				useDomoStore.getState().assignmentsMap,
 				assignments,
 				mode,
+				(assignment) => assignment.id,
 			),
 		})),
-	updateSunPhase: (sunPhase: SunPhase | null) =>
+	updateSunPhases: (sunPhases: SunPhase[], mode: UpdateMode) =>
 		set(() => ({
-			sunPhase: sunPhase,
+			sunPhasesMap: updateMapFromArray(
+				useDomoStore.getState().sunPhasesMap,
+				sunPhases,
+				mode,
+				(sunPhase) => new Date(sunPhase.date).toISOString(),
+			),
+		})),
+
+	updateNetwork: (network: Network) =>
+		set(() => ({
+			network: network,
 		})),
 
 	optimisticallyUpdateState: (stateId: number, value: string) => {
@@ -123,10 +159,11 @@ const useDomoStore = create<DomoStore>((set) => ({
 			if (!pending) return;
 
 			set(() => ({
-				statesMap: updateMap(
+				statesMap: updateMapFromArray<number, DomoEntityState>(
 					useDomoStore.getState().statesMap,
 					[pending.latestKnown],
 					UpdateMode.Merge,
+					(state) => state.id,
 				),
 			}));
 		}, OPTIMISTIC_STATE_TIMEOUT_MS);
@@ -138,23 +175,30 @@ const useDomoStore = create<DomoStore>((set) => ({
 		});
 
 		set(() => ({
-			statesMap: updateMap(statesMap, [{ ...current, value }], UpdateMode.Merge),
+			statesMap: updateMapFromArray(
+				statesMap,
+				[{ ...current, value }],
+				UpdateMode.Merge,
+				(state) => state.id,
+			),
 		}));
 	},
 }));
 
-const updateMap = <T extends { id: number }>(
-	map: Map<number, T>,
-	items: T[],
+const updateMapFromArray = <T, Y>(
+	map: Map<T, Y>,
+	items: Y[],
 	mode: UpdateMode,
+	getId: (item: Y) => T,
 ) => {
 	const newMap = new Map(mode === UpdateMode.Merge ? map : undefined);
 
 	items.forEach((item) => {
-		newMap.set(item.id, item);
+		newMap.set(getId(item), item);
 	});
 
 	return newMap;
 };
 
 export { UpdateMode, useDomoStore };
+export type { Network };

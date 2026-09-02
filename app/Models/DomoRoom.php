@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DomoRoom extends Model
 {
+    public function casts(): array
+    {
+        return [
+            'raw' => 'array',
+        ];
+    }
+
+    protected $hidden = [
+        'raw',
+    ];
+
     public function devices(): HasMany
     {
         return $this->hasMany(DomoDevice::class);

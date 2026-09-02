@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { useHttp } from "@inertiajs/react";
 import { useEchoPublic } from "@laravel/echo-react";
@@ -11,19 +11,19 @@ function DomoDevicesUpdater() {
 	const updateDevices = useDomoStore((state) => state.updateDevices);
 	const { get } = useHttp<Record<string, never>, DomoDevice[]>();
 
-	useEchoPublic(
-		"domo",
-		".DomoDevicesUpdated",
-		({ devices, mode }: { devices: DomoDevice[]; mode: UpdateMode }) => {
-			updateDevices(devices, mode);
-		},
-	);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: We want this to run only once on mount
-	useEffect(() => {
+	const update = useCallback(() => {
 		get(DomoDevicesController.list.url(), {
 			onSuccess: (devices) => updateDevices(devices, UpdateMode.Replace),
 		});
+	}, [get, updateDevices]);
+
+	useEchoPublic("domo", ".DomoDevicesUpdated", () => {
+		update();
+	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: We want this to run only once on mount
+	useEffect(() => {
+		update();
 	}, []);
 
 	return null;

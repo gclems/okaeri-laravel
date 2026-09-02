@@ -4,7 +4,7 @@ import { Card } from "shanty-ui";
 
 function AirConditioningCard() {
 	return (
-		<Card className="bg-linear-to-bl to-temperature-low/20 from-transparent">
+		<Card className="bg-linear-to-br from-transparent to-temperature-low/20">
 			<Card.Header
 				title={
 					<div className="flex items-center gap-x-2">

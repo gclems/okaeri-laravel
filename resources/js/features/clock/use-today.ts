@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 
+const getToday = () => {
+	const today = new Date();
+	today.setUTCHours(0, 0, 0, 0);
+	return today;
+};
+
 export function useToday(): Date {
-	const [today, setToday] = useState<Date>(() => new Date());
+	const [today, setToday] = useState<Date>(() => getToday());
 
 	useEffect(() => {
 		const tomorrow = new Date();
@@ -11,7 +17,7 @@ export function useToday(): Date {
 		const timeUntilMidnight = tomorrow.getTime() - Date.now();
 
 		const interval = window.setInterval(
-			() => setToday(new Date()),
+			() => setToday(getToday()),
 			timeUntilMidnight,
 		);
 

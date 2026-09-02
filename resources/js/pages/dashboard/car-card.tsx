@@ -90,7 +90,7 @@ function CarCard() {
 	const plugState = carAssignments[EntityAssignmentRoles.RenaultPlugState];
 
 	return (
-		<Card className="bg-linear-to-br from-car/15 to-transparent">
+		<Card className="@container bg-linear-to-br from-car/15 to-transparent">
 			<Card.Header
 				title={
 					<div className="flex justify-between items-center gap-4">
@@ -99,7 +99,7 @@ function CarCard() {
 							Renault 4
 						</div>
 						{distance && (
-							<span className="text-metric">
+							<span className="text-metric font-thin text-base">
 								<RollingNumber number={+(distance.state.value ?? 0)} />
 								{autonomy.state.attributes.unit_of_measurement as string}
 							</span>
@@ -108,95 +108,96 @@ function CarCard() {
 				}
 			></Card.Header>
 
-			<Card.Body className="grid grid-cols-2 gap-1">
-				{(battery || autonomy) && (
-					<div className="flex items-center gap-x-2">
-						<HugeiconsIcon icon={AutomotiveBattery02Icon} />
-						<div className="flex items-center gap-1">
-							{battery && (
-								<span
-									className={cn(
-										"font-semibold text-lg",
-										getBatteryLevelColor(+(battery.state.value ?? 0)),
-									)}
-								>
-									<RollingNumber number={+(battery.state.value ?? 0)} />
-									<span>
-										{(battery.state.attributes.unit_of_measurement as string) ?? ""}
+			<Card.Body className=" space-y-2">
+				<div className="grid @xs:grid-cols-2 gap-1">
+					{(battery || autonomy) && (
+						<div className="flex items-center gap-x-2">
+							<HugeiconsIcon icon={AutomotiveBattery02Icon} />
+							<div className="flex items-center gap-1">
+								{battery && (
+									<span
+										className={cn(
+											"font-semibold text-lg",
+											getBatteryLevelColor(+(battery.state.value ?? 0)),
+										)}
+									>
+										<RollingNumber number={+(battery.state.value ?? 0)} />
+										<span>
+											{(battery.state.attributes.unit_of_measurement as string) ?? ""}
+										</span>
 									</span>
-								</span>
-							)}
-							{battery && autonomy && (
-								<HugeiconsIcon icon={ArrowRight04Icon} size="1.25rem" />
-							)}
-							{autonomy && (
-								<span className="text-sm">
-									<RollingNumber number={+(autonomy.state.value ?? 0)} />
-									<span>
-										{(autonomy.state.attributes.unit_of_measurement as string) ?? ""}
-									</span>
-								</span>
-							)}
-						</div>
-					</div>
-				)}
-				{(plugState || chargingState) && (
-					<div className="flex items-center gap-x-2">
-						{(() => {
-							switch (plugState?.state.value) {
-								case "plugged":
-									return <HugeiconsIcon icon={ElectricPlugsIcon} />;
-								case "unplugged":
-									return <HugeiconsIcon icon={PlugSocketIcon} />;
-								default:
-									return <HugeiconsIcon icon={CableIcon} />;
-							}
-						})()}
-						<div>
-							<div className="flex flex-col">
-								{plugState && (
-									<div className="text-xs">
-										{getPlugStateLabel(plugState?.state.value ?? "")}
-									</div>
 								)}
-								{chargingState && (
-									<>
-										{chargingState.state.value !== "charge_in_progress" && (
-											<div className="text-xs">
-												<span>
-													{getChargingStateLabel(chargingState.state.value ?? "")}
-												</span>
-											</div>
-										)}
-										{chargingState.state.value === "charge_in_progress" && (
-											<div className="text-xs flex gap-x-1 items-center">
-												<span>{`${chargeLevelTarget?.state.value ?? "?"}%`}</span>
-												<HugeiconsIcon icon={ArrowRight04Icon} size="1.25rem" />
-												<span>
-													{(() => {
-														if (!remainingChargingTime) return "???";
-
-														const chargingTime = getChargingTime(
-															+(remainingChargingTime.state.value ?? 0),
-														);
-
-														return (
-															<span className="font-semibold">
-																<RollingNumber number={chargingTime.hours} />h
-																<RollingNumber number={chargingTime.minutes} />m
-															</span>
-														);
-													})()}
-												</span>
-											</div>
-										)}
-									</>
+								{battery && autonomy && (
+									<HugeiconsIcon icon={ArrowRight04Icon} size="1.25rem" />
+								)}
+								{autonomy && (
+									<span className="text-sm">
+										<RollingNumber number={+(autonomy.state.value ?? 0)} />
+										<span>
+											{(autonomy.state.attributes.unit_of_measurement as string) ?? ""}
+										</span>
+									</span>
 								)}
 							</div>
 						</div>
-					</div>
-				)}
+					)}
+					{(plugState || chargingState) && (
+						<div className="flex items-center gap-x-2">
+							{(() => {
+								switch (plugState?.state.value) {
+									case "plugged":
+										return <HugeiconsIcon icon={ElectricPlugsIcon} />;
+									case "unplugged":
+										return <HugeiconsIcon icon={PlugSocketIcon} />;
+									default:
+										return <HugeiconsIcon icon={CableIcon} />;
+								}
+							})()}
+							<div>
+								<div className="flex flex-col">
+									{plugState && (
+										<div className="text-xs">
+											{getPlugStateLabel(plugState?.state.value ?? "")}
+										</div>
+									)}
+									{chargingState && (
+										<>
+											{chargingState.state.value !== "charge_in_progress" && (
+												<div className="text-xs">
+													<span>
+														{getChargingStateLabel(chargingState.state.value ?? "")}
+													</span>
+												</div>
+											)}
+											{chargingState.state.value === "charge_in_progress" && (
+												<div className="text-xs flex gap-x-1 items-center">
+													<span>{`${chargeLevelTarget?.state.value ?? "?"}%`}</span>
+													<HugeiconsIcon icon={ArrowRight04Icon} size="1.25rem" />
+													<span>
+														{(() => {
+															if (!remainingChargingTime) return "???";
 
+															const chargingTime = getChargingTime(
+																+(remainingChargingTime.state.value ?? 0),
+															);
+
+															return (
+																<span className="font-semibold">
+																	<RollingNumber number={chargingTime.hours} />h
+																	<RollingNumber number={chargingTime.minutes} />m
+																</span>
+															);
+														})()}
+													</span>
+												</div>
+											)}
+										</>
+									)}
+								</div>
+							</div>
+						</div>
+					)}
+				</div>
 				{gpsTracker && (
 					<div className="col-span-2 aspect-video">
 						<MapContainer

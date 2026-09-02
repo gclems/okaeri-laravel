@@ -11,6 +11,8 @@ import { DomoEntitiesUpdater } from "@/components/domo-store/domo-entities-updat
 import { DomoEntityAssignmentsUpdater } from "@/components/domo-store/domo-entity-assignments-updater";
 import { DomoEntityStatesUpdater } from "@/components/domo-store/domo-entity-states-updater";
 import { DomoRoomsUpdater } from "@/components/domo-store/domo-rooms-updater";
+import { NetworkUpdater } from "@/components/domo-store/network-updater";
+import { ProjectionsUpdater } from "@/components/domo-store/projections-updater";
 import { SunPhaseUpdater } from "@/components/domo-store/sun-phase-updater";
 import { useTheme } from "@/features/use-theme";
 
@@ -41,6 +43,8 @@ function Layout({ children }: { children: ReactNode }) {
 			<DomoEntityAssignmentsUpdater />
 			<DomoEntityStatesUpdater />
 			<SunPhaseUpdater />
+			<ProjectionsUpdater />
+			<NetworkUpdater />
 		</>
 	);
 }

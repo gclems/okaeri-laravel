@@ -13,8 +13,13 @@ class DomoDevice extends Model
         return [
             'is_active' => 'boolean',
             'is_virtual' => 'boolean',
+            'raw' => 'array',
         ];
     }
+
+    protected $hidden = [
+        'raw',
+    ];
 
     public function entities(): HasMany
     {

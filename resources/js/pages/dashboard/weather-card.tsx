@@ -14,8 +14,9 @@ import { useToday } from "@/features/clock/use-today";
 import { useDomoStore } from "@/features/domo/domo-store";
 
 function WeatherCard() {
-	const sunPhase = useDomoStore((state) => state.sunPhase);
 	const today = useToday();
+	const sunPhasesMap = useDomoStore((state) => state.sunPhasesMap);
+	const sunPhase = sunPhasesMap.get(today.toISOString());
 
 	return (
 		<Card>

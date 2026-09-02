@@ -13,7 +13,7 @@ return new class() extends Migration
     {
         Schema::create('domo_devices', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ha_id')->unique();
+            $table->string('ha_id')->unique();
             $table->foreignId('ha_area_id')->nullable(true);
             $table->string('name');
             $table->boolean('is_active');

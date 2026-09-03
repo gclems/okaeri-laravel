@@ -3,6 +3,7 @@
 namespace App\Domains\Domo\Actions;
 
 use App\Domains\Domo\Events\DomoEntityStatesUpdated;
+use App\Domains\Domo\Events\DomoEntityStateUpdated;
 use App\Models\DomoEntityState;
 use Carbon\Carbon;
 
@@ -25,6 +26,13 @@ final class UpdateDomoEntityStates
             ['value', 'attributes', 'raw', 'updated_at']
         );
 
-        DomoEntityStatesUpdated::dispatch();
+        if ($collection->count() > 1) {
+            DomoEntityStatesUpdated::dispatch();
+        } else {
+            $state = DomoEntityState::where('ha_entity_id', $haEntityStates[0]['entity_id'])->first();
+            if ($state) {
+                DomoEntityStateUpdated::dispatch($state);
+            }
+        }
     }
 }

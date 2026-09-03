@@ -20,8 +20,6 @@ function ProjectionsUpdater() {
 				const { lights } = projections as ProjectionsApiResponse;
 
 				updateLights(lights, UpdateMode.Replace);
-
-				console.log({ projections });
 			},
 		});
 	}, [get, updateLights]);

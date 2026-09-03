@@ -11,19 +11,34 @@ function DomoEntityStatesUpdater() {
 	const updateStates = useDomoStore((state) => state.updateDomoStates);
 	const { get } = useHttp<Record<string, never>, DomoEntityState[]>();
 
-	const update = useCallback(() => {
+	const updateAll = useCallback(() => {
 		get(DomoEntityStatesController.list.url(), {
 			onSuccess: (states) => updateStates(states, UpdateMode.Replace),
 		});
 	}, [get, updateStates]);
 
+	const updateOne = useCallback(
+		(state: DomoEntityState) => {
+			updateStates([state], UpdateMode.Merge);
+		},
+		[updateStates],
+	);
+
 	useEchoPublic("domo", ".DomoEntityStatesUpdated", () => {
-		update();
+		updateAll();
 	});
+
+	useEchoPublic(
+		"domo",
+		".DomoEntityStateUpdated",
+		(event: { state: DomoEntityState }) => {
+			updateOne(event.state);
+		},
+	);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: We want this to run only once on mount
 	useEffect(() => {
-		update();
+		updateAll();
 	}, []);
 
 	return null;

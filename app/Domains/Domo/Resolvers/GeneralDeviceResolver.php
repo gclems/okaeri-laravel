@@ -3,7 +3,11 @@
 namespace App\Domains\Domo\Resolvers;
 
 use App\Domains\Domo\Models\Device;
+use App\Domains\Domo\Models\EntityWithState;
 use App\Models\DomoDevice;
+use App\Models\DomoEntity;
+use App\Models\DomoEntityState;
+use App\Models\DomoRoom;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
@@ -38,6 +42,18 @@ final class GeneralDeviceResolver implements DeviceResolver
         }
 
         return $resolver->resolve($device, $entitiesWithStates, $rooms);
+    }
+
+    public function resolveSingle(DomoDevice $device, DomoEntity $entity, DomoEntityState $state, ?DomoRoom $room = null): Device
+    {
+        $entityWithState = EntityWithState::pair(
+            EloquentCollection::make([$entity]),
+            EloquentCollection::make([$state])
+        );
+
+        $rooms = EloquentCollection::make(is_null($room) ? [] : [$room]);
+
+        return $this->resolve($device, $entityWithState, $rooms);
     }
 
     private function findResolver(DomoDevice $device, Collection $entitiesWithStates): ?DeviceResolver

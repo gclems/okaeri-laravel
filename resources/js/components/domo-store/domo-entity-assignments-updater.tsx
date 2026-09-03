@@ -8,7 +8,7 @@ import { UpdateMode, useDomoStore } from "@/features/domo/domo-store";
 import type { DomoEntityAssignment } from "@/types/models";
 
 function DomoEntityAssignmentsUpdater() {
-	const updateAssignments = useDomoStore((state) => state.updateAssignments);
+	const updateAssignments = useDomoStore((state) => state.updateDomoAssignments);
 	const { get } = useHttp<Record<string, never>, DomoEntityAssignment[]>();
 
 	const update = useCallback(() => {

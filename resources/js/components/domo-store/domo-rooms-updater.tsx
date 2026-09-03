@@ -8,7 +8,7 @@ import { UpdateMode, useDomoStore } from "@/features/domo/domo-store";
 import type { DomoRoom } from "@/types/models";
 
 function DomoRoomsUpdater() {
-	const updateRooms = useDomoStore((state) => state.updateRooms);
+	const updateRooms = useDomoStore((state) => state.updateDomoRooms);
 	const { get } = useHttp<Record<string, never>, DomoRoom[]>();
 
 	const update = useCallback(() => {

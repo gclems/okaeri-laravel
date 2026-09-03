@@ -4,6 +4,7 @@ namespace App\Domains\Domo\Resolvers;
 
 use App\Domains\Domo\Models\ClimateSensor;
 use App\Models\DomoDevice;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 final class AquaraClimateSensorResolver implements DeviceResolver
@@ -21,7 +22,7 @@ final class AquaraClimateSensorResolver implements DeviceResolver
         return $device->model === 'lumi.sensor_ht.agl02';
     }
 
-    public function resolve(DomoDevice $device, Collection $entitiesWithStates): ClimateSensor
+    public function resolve(DomoDevice $device, Collection $entitiesWithStates, EloquentCollection $rooms): ClimateSensor
     {
         throw new \LogicException('Not implemented yet');
     }

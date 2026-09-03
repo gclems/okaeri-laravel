@@ -20,16 +20,25 @@ final class HueLightStateResolver implements EntityResolver
         $entity = $entityAndState->entity;
         $state = $entityAndState->state;
 
+        $brightness = 0;
+        if (isset($state->attributes['brightness'])) {
+            $brightness = max(0, min(1, $state->attributes['brightness'] / 255));
+        }
+
         $color = null;
         if (! empty($state->attributes['rgb_color'])) {
             $color = sprintf('rgb(%d, %d, %d)', ...$state->attributes['rgb_color']);
+        } elseif (isset($state->attributes['brightness'])) {
+            $from = [254, 206, 66];
+            $brightnessApplied = array_map(fn ($value) => max(0, min(255, $value * $state->attributes['brightness'] / 255)), $from);
+            $color = sprintf('rgb(%d, %d, %d)', ...$brightnessApplied);
         }
 
         return new LightState(
             id: $entity->id,
-            isOn: $state->state === 'on',
+            isOn: $state->value === 'on',
             supportsColor: $this->supportsColor($entityAndState),
-            brightness: $state->attributes['brightness'] ?? null,
+            brightness: $brightness,
             rgb: $color,
         );
     }

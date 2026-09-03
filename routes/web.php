@@ -25,7 +25,7 @@ Route::get('wifi-qr-code', [WifiQrCodeController::class, 'show'])->name('wifi-qr
 Route::get('domo-projections', [DomoController::class, 'getProjections'])->name('domo-projections.get');
 
 Route::post('lighting/{entity}/toggle', [LightingController::class, 'toggleLight'])->name('lighting.toggleLight');
-Route::post('lighting/turn-off-multiple', [LightingController::class, 'turnOffMultiple'])->name('lighting.turnOffMultiple');
+Route::post('lighting/toggle', [LightingController::class, 'toggle'])->name('lighting.toggle');
 
 // Inertia routes
 Route::get('/', [DashboardController::class, 'index'])->name('home');

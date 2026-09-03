@@ -5,6 +5,7 @@ namespace App\Domains\Domo\Resolvers;
 use App\Domains\Domo\Models\EntityWithState;
 use App\Domains\Domo\Models\LightBulb;
 use App\Models\DomoDevice;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 final class HueLightBulbResolver implements DeviceResolver
@@ -25,7 +26,7 @@ final class HueLightBulbResolver implements DeviceResolver
         );
     }
 
-    public function resolve(DomoDevice $device, Collection $entitiesWithStates): LightBulb
+    public function resolve(DomoDevice $device, Collection $entitiesWithStates, EloquentCollection $rooms): LightBulb
     {
         if (! $this->supports($device, $entitiesWithStates)) {
             throw new \InvalidArgumentException('Device is not a Hue light');
@@ -40,11 +41,17 @@ final class HueLightBulbResolver implements DeviceResolver
             throw new \RuntimeException("No light entity found for Hue light bulb device [{$device->id}]");
         }
 
+        $roomId = null;
+        if (isset($device->ha_area_id)) {
+            $roomId = $rooms->firstWhere('ha_id', $device->ha_area_id)?->id;
+        }
+
         return new LightBulb(
             $device->id,
             $device->name,
             $device->is_active,
             $this->lightStateResolver->resolve($pair, $device),
+            $roomId,
         );
     }
 

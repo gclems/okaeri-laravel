@@ -1,31 +1,14 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
+
+import { useMap } from "react-leaflet";
+import { Card } from "shanty-ui";
 
 import {
-	ArrowRight04Icon,
-	AutomotiveBattery02Icon,
-	CableIcon,
-	ElectricPlugsIcon,
-	PlugSocketIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
-import { Card, cn } from "shanty-ui";
-
-import { RollingNumber } from "@/components/rolling-number";
-import { getBatteryLevelColor } from "@/features/renault/battery";
-import { getChargingStateLabel } from "@/features/renault/charging-state";
-import { getChargingTime } from "@/features/renault/charing-time";
-import { getPlugStateLabel } from "@/features/renault/plug-state";
-import {
-	type DomoEntityAssignment,
-	type DomoEntityState,
 	EntityAssignmentRoles,
 	type EntityAssignmentRolesEnum,
 } from "@/types/models";
 
 import "leaflet/dist/leaflet.css";
-
-import { useDomoStore } from "@/features/domo/domo-store";
 
 const carRoles: EntityAssignmentRolesEnum[] = [
 	EntityAssignmentRoles.RenaultAutonomy,
@@ -39,55 +22,55 @@ const carRoles: EntityAssignmentRolesEnum[] = [
 ];
 
 function CarCard() {
-	const assignments = Array.from(
-		useDomoStore((state) => state.assignmentsMap).values(),
-	);
-	const entities = Array.from(
-		useDomoStore((state) => state.entitiesMap).values(),
-	);
-	const states = Array.from(useDomoStore((state) => state.statesMap).values());
+	// const assignments = Array.from(
+	// 	useDomoStore((state) => state.assignmentsMap).values(),
+	// );
+	// const entities = Array.from(
+	// 	useDomoStore((state) => state.entitiesMap).values(),
+	// );
+	// const states = Array.from(useDomoStore((state) => state.statesMap).values());
 
-	const carAssignments = useMemo(() => {
-		const ass = {} as Record<
-			EntityAssignmentRoles,
-			{
-				assignment: DomoEntityAssignment;
-				state: DomoEntityState;
-			}
-		>;
+	// const carAssignments = useMemo(() => {
+	// 	const ass = {} as Record<
+	// 		EntityAssignmentRoles,
+	// 		{
+	// 			assignment: DomoEntityAssignment;
+	// 			state: DomoEntityState;
+	// 		}
+	// 	>;
 
-		assignments.forEach((assignment) => {
-			if (!carRoles.includes(assignment.role)) return;
+	// 	assignments.forEach((assignment) => {
+	// 		if (!carRoles.includes(assignment.role)) return;
 
-			const entity = entities.find((e) => e.id === assignment.domo_entity_id);
-			if (!entity) return;
+	// 		const entity = entities.find((e) => e.id === assignment.domo_entity_id);
+	// 		if (!entity) return;
 
-			const state = states.find((s) => s.ha_entity_id === entity.ha_id);
-			if (!state) return;
+	// 		const state = states.find((s) => s.ha_entity_id === entity.ha_id);
+	// 		if (!state) return;
 
-			ass[assignment.role as EntityAssignmentRoles] = {
-				assignment,
-				state,
-			};
-		});
-		return ass;
-	}, [assignments, entities, states]);
+	// 		ass[assignment.role as EntityAssignmentRoles] = {
+	// 			assignment,
+	// 			state,
+	// 		};
+	// 	});
+	// 	return ass;
+	// }, [assignments, entities, states]);
 
-	if (Object.keys(carAssignments).length === 0) {
-		return null;
-	}
+	// if (Object.keys(carAssignments).length === 0) {
+	// 	return null;
+	// }
 
-	const battery = carAssignments[EntityAssignmentRoles.RenaultBattery];
-	const autonomy = carAssignments[EntityAssignmentRoles.RenaultAutonomy];
-	const distance = carAssignments[EntityAssignmentRoles.RenaultTotalDistance];
-	const chargeLevelTarget =
-		carAssignments[EntityAssignmentRoles.RenaultChargeLevelTarget];
-	const chargingState =
-		carAssignments[EntityAssignmentRoles.RenaultChargingState];
-	const remainingChargingTime =
-		carAssignments[EntityAssignmentRoles.RenaultRemainingChargingTime];
-	const gpsTracker = carAssignments[EntityAssignmentRoles.RenaultGpsTracker];
-	const plugState = carAssignments[EntityAssignmentRoles.RenaultPlugState];
+	// const battery = carAssignments[EntityAssignmentRoles.RenaultBattery];
+	// const autonomy = carAssignments[EntityAssignmentRoles.RenaultAutonomy];
+	// const distance = carAssignments[EntityAssignmentRoles.RenaultTotalDistance];
+	// const chargeLevelTarget =
+	// 	carAssignments[EntityAssignmentRoles.RenaultChargeLevelTarget];
+	// const chargingState =
+	// 	carAssignments[EntityAssignmentRoles.RenaultChargingState];
+	// const remainingChargingTime =
+	// 	carAssignments[EntityAssignmentRoles.RenaultRemainingChargingTime];
+	// const gpsTracker = carAssignments[EntityAssignmentRoles.RenaultGpsTracker];
+	// const plugState = carAssignments[EntityAssignmentRoles.RenaultPlugState];
 
 	return (
 		<Card className="@container bg-linear-to-br from-car/15 to-transparent">
@@ -98,18 +81,18 @@ function CarCard() {
 							<img src="/renault_4_small.png" alt="Renault 4" className="w-10" />{" "}
 							Renault 4
 						</div>
-						{distance && (
+						{/* {distance && (
 							<span className="text-metric font-thin text-base">
 								<RollingNumber number={+(distance.state.value ?? 0)} />
 								{autonomy.state.attributes.unit_of_measurement as string}
 							</span>
-						)}
+						)} */}
 					</div>
 				}
 			></Card.Header>
 
 			<Card.Body className=" space-y-2">
-				<div className="grid @xs:grid-cols-2 gap-1">
+				{/* <div className="grid @xs:grid-cols-2 gap-1">
 					{(battery || autonomy) && (
 						<div className="flex items-center gap-x-2">
 							<HugeiconsIcon icon={AutomotiveBattery02Icon} />
@@ -228,7 +211,7 @@ function CarCard() {
 							/>
 						</MapContainer>
 					</div>
-				)}
+				)} */}
 			</Card.Body>
 		</Card>
 	);

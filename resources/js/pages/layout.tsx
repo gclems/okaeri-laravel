@@ -37,11 +37,13 @@ function Layout({ children }: { children: ReactNode }) {
 				</motion.div>
 			</ShantyRoot>
 			<AppScreensaver />
+
 			<DomoRoomsUpdater />
 			<DomoDevicesUpdater />
 			<DomoEntitiesUpdater />
 			<DomoEntityAssignmentsUpdater />
 			<DomoEntityStatesUpdater />
+
 			<SunPhaseUpdater />
 			<ProjectionsUpdater />
 			<NetworkUpdater />

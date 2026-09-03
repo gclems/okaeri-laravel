@@ -8,6 +8,7 @@ use App\Domains\Domo\Resolvers\GeneralDeviceResolver;
 use App\Models\DomoDevice;
 use App\Models\DomoEntity;
 use App\Models\DomoEntityState;
+use App\Models\DomoRoom;
 use Illuminate\Support\Collection;
 
 final class GenerateDomoModelsAction
@@ -21,6 +22,7 @@ final class GenerateDomoModelsAction
      */
     public function execute(): Collection
     {
+        $rooms = DomoRoom::all();
         $devices = DomoDevice::all();
         $entities = DomoEntity::all();
         $states = DomoEntityState::all();
@@ -30,7 +32,7 @@ final class GenerateDomoModelsAction
         $results = collect();
         foreach ($devices as $device) {
             if ($this->generalDeviceResolver->supports($device, $entitiesWithStates)) {
-                $results->push($this->generalDeviceResolver->resolve($device, $entitiesWithStates));
+                $results->push($this->generalDeviceResolver->resolve($device, $entitiesWithStates, $rooms));
             }
         }
 

@@ -1,8 +1,6 @@
 import { Card, cn } from "shanty-ui";
 
-import { getDomoEntityAssignmentRoleLabel } from "@/features/domo-entity-assignment-role";
-import { useDomoStore } from "@/features/domo/domo-store";
-import type { DomoDevice, DomoRoom } from "@/types/models";
+import type { DomoRoom } from "@/types/models";
 
 import { AddAssignmentButton } from "./add-assignment-button";
 import { RenameRoomButton } from "./rename-room-button";
@@ -14,22 +12,22 @@ function AssignmentsGroupCard({
 	title?: React.ReactNode;
 	room?: DomoRoom | null;
 }) {
-	const assignments = Array.from(
-		useDomoStore((state) => state.assignmentsMap).values(),
-	);
-	const roomsAssignments = assignments.filter(
-		(a) => a.domo_room_id === (room?.id ?? null),
-	);
-	const entitiesMap = useDomoStore((state) => state.entitiesMap);
+	// const assignments = Array.from(
+	// 	useDomoStore((state) => state.assignmentsMap).values(),
+	// );
+	// const roomsAssignments = assignments.filter(
+	// 	(a) => a.domo_room_id === (room?.id ?? null),
+	// );
+	// const entitiesMap = useDomoStore((state) => state.entitiesMap);
 
-	const devices = Array.from(useDomoStore((state) => state.devicesMap).values());
-	const devicesByHaId = devices.reduce(
-		(acc, device) => {
-			acc[device.ha_id] = device;
-			return acc;
-		},
-		{} as Record<string, DomoDevice>,
-	);
+	// const devices = Array.from(useDomoStore((state) => state.devicesMap).values());
+	// const devicesByHaId = devices.reduce(
+	// 	(acc, device) => {
+	// 		acc[device.ha_id] = device;
+	// 		return acc;
+	// 	},
+	// 	{} as Record<string, DomoDevice>,
+	// );
 
 	return (
 		<Card
@@ -48,7 +46,7 @@ function AssignmentsGroupCard({
 
 			<Card.Body>
 				<ul className="space-y-1">
-					{roomsAssignments.map((assignment) => {
+					{/* {roomsAssignments.map((assignment) => {
 						const entity = entitiesMap.get(assignment.domo_entity_id);
 						return (
 							<li key={assignment.id}>
@@ -66,7 +64,7 @@ function AssignmentsGroupCard({
 								</div>
 							</li>
 						);
-					})}
+					})} */}
 				</ul>
 
 				<div className="mt-4">

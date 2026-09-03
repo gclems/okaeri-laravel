@@ -4,6 +4,7 @@ namespace App\Domains\Domo\Resolvers;
 
 use App\Domains\Domo\Models\Device;
 use App\Models\DomoDevice;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 final class GeneralDeviceResolver implements DeviceResolver
@@ -28,7 +29,7 @@ final class GeneralDeviceResolver implements DeviceResolver
         return $this->findResolver($device, $entitiesWithStates) !== null;
     }
 
-    public function resolve(DomoDevice $device, Collection $entitiesWithStates): Device
+    public function resolve(DomoDevice $device, Collection $entitiesWithStates, EloquentCollection $rooms): Device
     {
         $resolver = $this->findResolver($device, $entitiesWithStates);
 
@@ -36,7 +37,7 @@ final class GeneralDeviceResolver implements DeviceResolver
             throw new \RuntimeException("No resolver found for device [{$device->id}]");
         }
 
-        return $resolver->resolve($device, $entitiesWithStates);
+        return $resolver->resolve($device, $entitiesWithStates, $rooms);
     }
 
     private function findResolver(DomoDevice $device, Collection $entitiesWithStates): ?DeviceResolver

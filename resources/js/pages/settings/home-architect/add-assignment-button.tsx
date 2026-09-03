@@ -8,31 +8,26 @@ import { Button, Label, Popover, Select } from "shanty-ui";
 
 import DomoEntityAssignmentsController from "@/actions/App/Http/Controllers/DomoEntityAssignmentsController";
 import { getDomoEntityAssignmentRoleLabel } from "@/features/domo-entity-assignment-role";
-import { useDomoStore } from "@/features/domo/domo-store";
-import {
-	type DomoDevice,
-	type DomoRoom,
-	EntityAssignmentRoles,
-} from "@/types/models";
+import { type DomoRoom, EntityAssignmentRoles } from "@/types/models";
 
 function AddAssignmentButton({ room }: { room?: DomoRoom | null }) {
 	const [hovered, setHovered] = useState(false);
 
-	const entities = useDomoStore((state) => state.entitiesMap).values();
+	// const entities = useDomoStore((state) => state.entitiesMap).values();
 
-	const devices = useDomoStore((state) => state.devicesMap).values();
+	// const devices = useDomoStore((state) => state.devicesMap).values();
 
-	const devicesByHaId = devices?.reduce(
-		(acc, device) => {
-			acc[device.ha_id] = device;
-			return acc;
-		},
-		{} as Record<string, DomoDevice>,
-	);
+	// const devicesByHaId = devices?.reduce(
+	// 	(acc, device) => {
+	// 		acc[device.ha_id] = device;
+	// 		return acc;
+	// 	},
+	// 	{} as Record<string, DomoDevice>,
+	// );
 
-	const sortedEntities = Array.from(entities).sort((a, b) =>
-		a.name.localeCompare(b.name),
-	);
+	// const sortedEntities = Array.from(entities).sort((a, b) =>
+	// 	a.name.localeCompare(b.name),
+	// );
 
 	return (
 		<Popover>
@@ -86,7 +81,7 @@ function AddAssignmentButton({ room }: { room?: DomoRoom | null }) {
 					</div>
 					<div className="space-y-0.5">
 						<Label htmlFor="name">Entité</Label>
-						<Select
+						{/* <Select
 							items={sortedEntities.map((entity) => {
 								const device = devicesByHaId[String(entity.ha_device_id)];
 
@@ -98,7 +93,7 @@ function AddAssignmentButton({ room }: { room?: DomoRoom | null }) {
 							name="entity_id"
 							placeholder="Entité"
 							className="flex-1"
-						/>
+						/> */}
 					</div>
 					<div className="flex justify-end">
 						<Button type="submit" color="primary">

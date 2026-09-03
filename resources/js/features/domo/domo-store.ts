@@ -8,33 +8,39 @@ import type {
 	DomoRoom,
 	SunPhase,
 } from "@/types/models";
+import type { LightBulb } from "@/types/projections";
 
 type Network = {
 	txRateBps: number;
 	rxRateBps: number;
+	date: Date;
 };
 
 type DomoStore = {
-	roomsMap: Map<number, DomoRoom>;
-	devicesMap: Map<number, DomoDevice>;
-	entitiesMap: Map<number, DomoEntity>;
-	statesMap: Map<number, DomoEntityState>;
-	assignmentsMap: Map<number, DomoEntityAssignment>;
-	sunPhasesMap: Map<string, SunPhase>;
-	network: Network | null;
+	domoRoomsMap: Map<number, DomoRoom>;
+	domoDevicesMap: Map<number, DomoDevice>;
+	domoEntitiesMap: Map<number, DomoEntity>;
+	domoStatesMap: Map<number, DomoEntityState>;
+	domoAssignmentsMap: Map<number, DomoEntityAssignment>;
 
-	updateRooms: (rooms: DomoRoom[], mode: UpdateMode) => void;
-	updateDevices: (devices: DomoDevice[], mode: UpdateMode) => void;
-	updateEntities: (entities: DomoEntity[], mode: UpdateMode) => void;
-	updateStates: (states: DomoEntityState[], mode: UpdateMode) => void;
-	updateAssignments: (
+	sunPhasesMap: Map<string, SunPhase>;
+	network: Network[];
+	lightsMap: Map<number, LightBulb>;
+
+	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) => void;
+	updateDomoDevices: (devices: DomoDevice[], mode: UpdateMode) => void;
+	updateDomoEntities: (entities: DomoEntity[], mode: UpdateMode) => void;
+	optimisticallyUpdateState: (stateId: number, value: string) => void;
+	updateDomoStates: (states: DomoEntityState[], mode: UpdateMode) => void;
+
+	updateDomoAssignments: (
 		assignments: DomoEntityAssignment[],
 		mode: UpdateMode,
 	) => void;
-	updateSunPhases: (sunPhases: SunPhase[], mode: UpdateMode) => void;
-	updateNetwork: (uplink: Network) => void;
 
-	optimisticallyUpdateState: (stateId: number, value: string) => void;
+	updateSunPhases: (sunPhases: SunPhase[], mode: UpdateMode) => void;
+	addNetwork: (uplink: Network) => void;
+	updateLights: (lights: LightBulb[], mode: UpdateMode) => void;
 };
 
 enum UpdateMode {
@@ -55,43 +61,47 @@ const pendingOptimisticStateUpdates = new Map<
 	PendingOptimisticStateUpdate
 >();
 
-const useDomoStore = create<DomoStore>((set) => ({
-	roomsMap: new Map<number, DomoRoom>(),
-	devicesMap: new Map<number, DomoDevice>(),
-	entitiesMap: new Map<number, DomoEntity>(),
-	statesMap: new Map<number, DomoEntityState>(),
-	assignmentsMap: new Map<number, DomoEntityAssignment>(),
-	sunPhasesMap: new Map<string, SunPhase>(),
-	network: null,
+const MAX_NETWORK_MEASUREMENTS = 100;
 
-	updateRooms: (rooms: DomoRoom[], mode: UpdateMode) =>
+const useDomoStore = create<DomoStore>((set) => ({
+	domoRoomsMap: new Map<number, DomoRoom>(),
+	domoDevicesMap: new Map<number, DomoDevice>(),
+	domoEntitiesMap: new Map<number, DomoEntity>(),
+	domoStatesMap: new Map<number, DomoEntityState>(),
+	domoAssignmentsMap: new Map<number, DomoEntityAssignment>(),
+
+	sunPhasesMap: new Map<string, SunPhase>(),
+	network: [],
+	lightsMap: new Map<number, LightBulb>(),
+
+	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) =>
 		set(() => ({
-			roomsMap: updateMapFromArray(
-				useDomoStore.getState().roomsMap,
-				rooms,
+			domoRoomsMap: updateMapFromArray(
+				useDomoStore.getState().domoRoomsMap,
+				domoRooms,
 				mode,
 				(room) => room.id,
 			),
 		})),
-	updateDevices: (devices: DomoDevice[], mode: UpdateMode) =>
+	updateDomoDevices: (devices: DomoDevice[], mode: UpdateMode) =>
 		set(() => ({
-			devicesMap: updateMapFromArray(
-				useDomoStore.getState().devicesMap,
+			domoDevicesMap: updateMapFromArray(
+				useDomoStore.getState().domoDevicesMap,
 				devices,
 				mode,
 				(device) => device.id,
 			),
 		})),
-	updateEntities: (entities: DomoEntity[], mode: UpdateMode) =>
+	updateDomoEntities: (entities: DomoEntity[], mode: UpdateMode) =>
 		set(() => ({
-			entitiesMap: updateMapFromArray(
-				useDomoStore.getState().entitiesMap,
+			domoEntitiesMap: updateMapFromArray(
+				useDomoStore.getState().domoEntitiesMap,
 				entities,
 				mode,
 				(entity) => entity.id,
 			),
 		})),
-	updateStates: (states: DomoEntityState[], mode: UpdateMode) => {
+	updateDomoStates: (states: DomoEntityState[], mode: UpdateMode) => {
 		const statesToApply = states.filter((state) => {
 			const pending = pendingOptimisticStateUpdates.get(state.id);
 			if (!pending) return true;
@@ -109,40 +119,16 @@ const useDomoStore = create<DomoStore>((set) => ({
 		});
 
 		set(() => ({
-			statesMap: updateMapFromArray(
-				useDomoStore.getState().statesMap,
+			domoStatesMap: updateMapFromArray(
+				useDomoStore.getState().domoStatesMap,
 				statesToApply,
 				mode,
 				(state) => state.id,
 			),
 		}));
 	},
-	updateAssignments: (assignments: DomoEntityAssignment[], mode: UpdateMode) =>
-		set(() => ({
-			assignmentsMap: updateMapFromArray(
-				useDomoStore.getState().assignmentsMap,
-				assignments,
-				mode,
-				(assignment) => assignment.id,
-			),
-		})),
-	updateSunPhases: (sunPhases: SunPhase[], mode: UpdateMode) =>
-		set(() => ({
-			sunPhasesMap: updateMapFromArray(
-				useDomoStore.getState().sunPhasesMap,
-				sunPhases,
-				mode,
-				(sunPhase) => new Date(sunPhase.date).toISOString(),
-			),
-		})),
-
-	updateNetwork: (network: Network) =>
-		set(() => ({
-			network: network,
-		})),
-
 	optimisticallyUpdateState: (stateId: number, value: string) => {
-		const statesMap = useDomoStore.getState().statesMap;
+		const statesMap = useDomoStore.getState().domoStatesMap;
 		const current = statesMap.get(stateId);
 		if (!current) return;
 
@@ -159,8 +145,8 @@ const useDomoStore = create<DomoStore>((set) => ({
 			if (!pending) return;
 
 			set(() => ({
-				statesMap: updateMapFromArray<number, DomoEntityState>(
-					useDomoStore.getState().statesMap,
+				domoStatesMap: updateMapFromArray<number, DomoEntityState>(
+					useDomoStore.getState().domoStatesMap,
 					[pending.latestKnown],
 					UpdateMode.Merge,
 					(state) => state.id,
@@ -173,16 +159,61 @@ const useDomoStore = create<DomoStore>((set) => ({
 			expectedValue: value,
 			latestKnown,
 		});
-
-		set(() => ({
-			statesMap: updateMapFromArray(
-				statesMap,
-				[{ ...current, value }],
-				UpdateMode.Merge,
-				(state) => state.id,
-			),
-		}));
 	},
+
+	updateDomoAssignments: (
+		assignments: DomoEntityAssignment[],
+		mode: UpdateMode,
+	) =>
+		set(() => ({
+			domoAssignmentsMap: updateMapFromArray(
+				useDomoStore.getState().domoAssignmentsMap,
+				assignments,
+				mode,
+				(assignment) => assignment.id,
+			),
+		})),
+
+	updateSunPhases: (sunPhases: SunPhase[], mode: UpdateMode) =>
+		set(() => ({
+			sunPhasesMap: updateMapFromArray(
+				useDomoStore.getState().sunPhasesMap,
+				sunPhases,
+				mode,
+				(sunPhase) => new Date(sunPhase.date).toISOString(),
+			),
+		})),
+
+	addNetwork: (network: Network) =>
+		set((state) => {
+			const lastEntry = state.network[state.network.length - 1];
+			if (
+				lastEntry &&
+				lastEntry.txRateBps === network.txRateBps &&
+				lastEntry.rxRateBps === network.rxRateBps
+			) {
+				return { network: state.network };
+			}
+
+			const newNetwork = [...state.network, network];
+			while (newNetwork.length > MAX_NETWORK_MEASUREMENTS) {
+				newNetwork.shift();
+			}
+
+			return {
+				network: newNetwork,
+			};
+		}),
+
+	updateLights: (lights: LightBulb[], mode: UpdateMode) =>
+		set(() => ({
+			lightsMap: updateMapFromArray(
+				useDomoStore.getState().lightsMap,
+				lights,
+				mode,
+				(light) => light.id,
+			),
+		})),
 }));
 
 const updateMapFromArray = <T, Y>(

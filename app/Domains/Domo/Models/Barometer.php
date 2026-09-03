@@ -2,6 +2,9 @@
 
 namespace App\Domains\Domo\Models;
 
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+
+#[TypeScript]
 final class Barometer extends Entity
 {
     public function __construct(

@@ -1,11 +1,8 @@
-import { useMemo } from "react";
-
 import { DropletIcon, HouseHeartIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Card, cn } from "shanty-ui";
 
 import { RollingNumber } from "@/components/rolling-number";
-import { useDomoStore } from "@/features/domo/domo-store";
 import type {
 	DomoEntityState,
 	DomoRoom,
@@ -19,69 +16,69 @@ const comfortRoles: EntityAssignmentRolesEnum[] = [
 ];
 
 function ComfortCard() {
-	const assignments = Array.from(
-		useDomoStore((state) => state.assignmentsMap).values(),
-	);
-	const rooms = Array.from(useDomoStore((state) => state.roomsMap).values());
-	const entities = Array.from(
-		useDomoStore((state) => state.entitiesMap).values(),
-	);
-	const states = Array.from(useDomoStore((state) => state.statesMap).values());
+	// const assignments = Array.from(
+	// 	useDomoStore((state) => state.assignmentsMap).values(),
+	// );
+	// const rooms = Array.from(useDomoStore((state) => state.roomsMap).values());
+	// const entities = Array.from(
+	// 	useDomoStore((state) => state.entitiesMap).values(),
+	// );
+	// const states = Array.from(useDomoStore((state) => state.statesMap).values());
 
-	const roomsById = useMemo(() => {
-		const map: Record<string, (typeof rooms)[0]> = {};
-		for (const room of rooms) {
-			map[room.id] = room;
-		}
-		return map;
-	}, [rooms]);
+	// const roomsById = useMemo(() => {
+	// 	const map: Record<string, (typeof rooms)[0]> = {};
+	// 	for (const room of rooms) {
+	// 		map[room.id] = room;
+	// 	}
+	// 	return map;
+	// }, [rooms]);
 
-	const statesByEntityId = useMemo(() => {
-		const map: Record<number, (typeof states)[0]> = {};
-		for (const state of states) {
-			const entity = entities.find((e) => e.ha_id === state.ha_entity_id);
-			if (entity) {
-				map[entity.id] = state;
-			}
-		}
-		return map;
-	}, [states, entities]);
+	// const statesByEntityId = useMemo(() => {
+	// 	const map: Record<number, (typeof states)[0]> = {};
+	// 	for (const state of states) {
+	// 		const entity = entities.find((e) => e.ha_id === state.ha_entity_id);
+	// 		if (entity) {
+	// 			map[entity.id] = state;
+	// 		}
+	// 	}
+	// 	return map;
+	// }, [states, entities]);
 
-	const assignmentsByRoom = useMemo(() => {
-		const assignmentsByRoom: Record<
-			number,
-			{
-				thermometer: DomoEntityState | null;
-				hygrometer: DomoEntityState | null;
-			}
-		> = {};
+	// const assignmentsByRoom = useMemo(() => {
+	// 	const assignmentsByRoom: Record<
+	// 		number,
+	// 		{
+	// 			thermometer: DomoEntityState | null;
+	// 			hygrometer: DomoEntityState | null;
+	// 		}
+	// 	> = {};
 
-		for (const assignment of assignments) {
-			if (comfortRoles.includes(assignment.role)) {
-				if (!assignment.domo_room_id) continue;
+	// 	for (const assignment of assignments) {
+	// 		if (comfortRoles.includes(assignment.role)) {
+	// 			if (!assignment.domo_room_id) continue;
 
-				if (!assignmentsByRoom[assignment.domo_room_id]) {
-					assignmentsByRoom[assignment.domo_room_id] = {
-						thermometer: null,
-						hygrometer: null,
-					};
-				}
+	// 			if (!assignmentsByRoom[assignment.domo_room_id]) {
+	// 				assignmentsByRoom[assignment.domo_room_id] = {
+	// 					thermometer: null,
+	// 					hygrometer: null,
+	// 				};
+	// 			}
 
-				switch (assignment.role) {
-					case EntityAssignmentRoles.AqaraThermometer:
-						assignmentsByRoom[assignment.domo_room_id].thermometer =
-							statesByEntityId[assignment.domo_entity_id];
-						break;
-					case EntityAssignmentRoles.AqaraHygrometer:
-						assignmentsByRoom[assignment.domo_room_id].hygrometer =
-							statesByEntityId[assignment.domo_entity_id];
-						break;
-				}
-			}
-		}
+	// 			switch (assignment.role) {
+	// 				case EntityAssignmentRoles.AqaraThermometer:
+	// 					assignmentsByRoom[assignment.domo_room_id].thermometer =
+	// 						statesByEntityId[assignment.domo_entity_id];
+	// 					break;
+	// 				case EntityAssignmentRoles.AqaraHygrometer:
+	// 					assignmentsByRoom[assignment.domo_room_id].hygrometer =
+	// 						statesByEntityId[assignment.domo_entity_id];
+	// 					break;
+	// 			}
+	// 		}
+	// 	}
 
-		return assignmentsByRoom;
-	}, [assignments, statesByEntityId]);
+	// 	return assignmentsByRoom;
+	// }, [assignments, statesByEntityId]);
 
 	return (
 		<Card className="bg-linear-to-bl to-comfort/20 from-transparent">
@@ -93,7 +90,7 @@ function ComfortCard() {
 				}
 			></Card.Header>
 			<Card.Body>
-				<ul className="space-y-1">
+				{/* <ul className="space-y-1">
 					{assignmentsByRoom &&
 						Object.entries(assignmentsByRoom).map(([roomId, roomAssignments]) => {
 							const room = roomsById[roomId];
@@ -108,7 +105,7 @@ function ComfortCard() {
 								/>
 							);
 						})}
-				</ul>
+				</ul> */}
 			</Card.Body>
 		</Card>
 	);

@@ -72,3 +72,7 @@ body {
 [data-slot="sidebar-item-button"][data-active="true"] {
 	@apply text-foreground!;
 }
+
+[data-slot="button"] {
+	@apply focus:outline-0;
+}

@@ -8,15 +8,17 @@ type UnifyUplinkUpdatedEvent = {
 };
 
 function NetworkUpdater() {
-	const updateNetwork = useDomoStore((state) => state.updateNetwork);
+	const addNetwork = useDomoStore((state) => state.addNetwork);
 
 	useEchoPublic(
 		"unify",
 		".UnifyUplinkUpdated",
 		(event: UnifyUplinkUpdatedEvent) => {
-			updateNetwork({
+			// if not, add the value
+			addNetwork({
 				txRateBps: event.txRateBps,
 				rxRateBps: event.rxRateBps,
+				date: new Date(),
 			});
 		},
 	);

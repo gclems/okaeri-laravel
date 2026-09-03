@@ -1,51 +1,43 @@
-import { useMemo } from "react";
-
 import { BatteryMedium01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Card, cn } from "shanty-ui";
-
-import { useDomoStore } from "@/features/domo/domo-store";
-import { clamp } from "@/helpers/numbers";
-import type { DomoDevice } from "@/types/models";
+import { Card } from "shanty-ui";
 
 function BatteriesCard() {
-	const statesMap = useDomoStore((state) => state.statesMap);
-	const entitiesMap = useDomoStore((state) => state.entitiesMap);
-	const devicesMap = useDomoStore((state) => state.devicesMap);
+	// const statesMap = useDomoStore((state) => state.statesMap);
+	// const entitiesMap = useDomoStore((state) => state.entitiesMap);
+	// const devicesMap = useDomoStore((state) => state.devicesMap);
 
-	const batteries = useMemo(() => {
-		const array = [];
+	// const batteries = useMemo(() => {
+	// 	const array = [];
 
-		for (const state of statesMap.values()) {
-			if (
-				state.attributes?.device_class === "battery" &&
-				!Number.isNaN(+state.value)
-			) {
-				array.push(state);
-			}
-		}
+	// 	for (const state of statesMap.values()) {
+	// 		if (
+	// 			state.attributes?.device_class === "battery" &&
+	// 			!Number.isNaN(+state.value)
+	// 		) {
+	// 			array.push(state);
+	// 		}
+	// 	}
 
-		return array.sort((a, b) => +a.value - +b.value);
-	}, [statesMap]);
+	// 	return array.sort((a, b) => +a.value - +b.value);
+	// }, [statesMap]);
 
-	const deviceByEntityHaId = useMemo(() => {
-		const devicesByHaId = new Map<number, DomoDevice>();
-		for (const device of devicesMap.values()) {
-			devicesByHaId.set(device.ha_id, device);
-		}
+	// const deviceByEntityHaId = useMemo(() => {
+	// 	const devicesByHaId = new Map<number, DomoDevice>();
+	// 	for (const device of devicesMap.values()) {
+	// 		devicesByHaId.set(device.ha_id, device);
+	// 	}
 
-		const map = new Map<string, DomoDevice>();
-		for (const entity of entitiesMap.values()) {
-			const device = devicesByHaId.get(entity.ha_device_id);
-			if (!device) continue;
+	// 	const map = new Map<string, DomoDevice>();
+	// 	for (const entity of entitiesMap.values()) {
+	// 		const device = devicesByHaId.get(entity.ha_device_id);
+	// 		if (!device) continue;
 
-			map.set(entity.ha_id, device);
-		}
+	// 		map.set(entity.ha_id, device);
+	// 	}
 
-		return map;
-	}, [devicesMap, entitiesMap]);
-
-	console.log({ batteries });
+	// 	return map;
+	// }, [devicesMap, entitiesMap]);
 
 	return (
 		<Card className="bg-linear-to-tl from-transparent to-energy/20">
@@ -57,7 +49,7 @@ function BatteriesCard() {
 				}
 			/>
 			<Card.Body>
-				<ul>
+				{/* <ul>
 					{batteries.map((battery) => {
 						const device = deviceByEntityHaId.get(battery.ha_entity_id);
 						if (!device) return null;
@@ -88,7 +80,7 @@ function BatteriesCard() {
 							</li>
 						);
 					})}
-				</ul>
+				</ul> */}
 			</Card.Body>
 		</Card>
 	);

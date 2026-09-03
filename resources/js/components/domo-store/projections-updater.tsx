@@ -3,19 +3,28 @@ import { useCallback, useEffect } from "react";
 import { useHttp } from "@inertiajs/react";
 
 import DomoController from "@/actions/App/Http/Controllers/DomoController";
-import type { DomoEntity } from "@/types/models";
+import { UpdateMode, useDomoStore } from "@/features/domo/domo-store";
+import type { LightBulb } from "@/types/projections";
+
+type ProjectionsApiResponse = {
+	lights: LightBulb[];
+};
 
 function ProjectionsUpdater() {
-	// const updateEntities = useDomoStore((state) => state.updateEntities);
-	const { get } = useHttp<Record<string, never>, DomoEntity[]>();
+	const updateLights = useDomoStore((state) => state.updateLights);
+	const { get } = useHttp<ProjectionsApiResponse>();
 
 	const update = useCallback(() => {
 		get(DomoController.getProjections.url(), {
 			onSuccess: (projections) => {
+				const { lights } = projections as ProjectionsApiResponse;
+
+				updateLights(lights, UpdateMode.Replace);
+
 				console.log({ projections });
 			},
 		});
-	}, [get]);
+	}, [get, updateLights]);
 
 	// useEchoPublic("domo", ".DomoEntitiesUpdated", () => {
 	// 	update();

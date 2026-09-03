@@ -7,136 +7,61 @@ import { Button, Card, Switch } from "shanty-ui";
 
 import LightingController from "@/actions/App/Http/Controllers/LightingController";
 import { useDomoStore } from "@/features/domo/domo-store";
-import { getLightColorCode } from "@/features/lighting/lighting";
-import {
-	type DomoEntity,
-	type DomoEntityAssignment,
-	type DomoEntityState,
-	type DomoRoom,
-	EntityAssignmentRoles,
-} from "@/types/models";
+import type { DomoRoom } from "@/types/models";
+import type { LightBulb } from "@/types/projections";
 
 type RoomViewModel = {
-	assignment: DomoEntityAssignment;
 	room: DomoRoom;
-	entity: DomoEntity;
-	state: DomoEntityState;
-	bulbs: {
-		entity: DomoEntity;
-		state: DomoEntityState;
-	}[];
+	bulbs: LightBulb[];
+	isOn: boolean;
 };
 
 function LightingCard() {
 	const { post } = useHttp();
 
-	const assignmentsMap = useDomoStore((state) => state.assignmentsMap);
-	const roomsMap = useDomoStore((state) => state.roomsMap);
-	const entitiesMap = useDomoStore((state) => state.entitiesMap);
-	const statesMap = useDomoStore((state) => state.statesMap);
-	const optimisticallyUpdateState = useDomoStore(
-		(state) => state.optimisticallyUpdateState,
-	);
+	const lightsMap = useDomoStore((state) => state.lightsMap);
+	const roomsMap = useDomoStore((state) => state.domoRoomsMap);
 
 	const viewModels: RoomViewModel[] = useMemo(() => {
-		const vms = [] as RoomViewModel[];
+		return Array.from(roomsMap.values())
+			.map((room) => {
+				const bulbs = Array.from(lightsMap.values()).filter(
+					(bulb) => bulb.roomId === room.id,
+				);
 
-		const groupAssignments = [] as DomoEntityAssignment[];
-		const bulbAssignments = [] as DomoEntityAssignment[];
+				return {
+					room,
+					bulbs: Array.from(lightsMap.values()).filter(
+						(bulb) => bulb.roomId === room.id,
+					),
+					isOn: !!bulbs.find((b) => b.light.isOn),
+				};
+			})
+			.filter((vm) => vm.bulbs.length > 0)
+			.sort((a, b) => a.room.name.localeCompare(b.room.name));
+	}, [lightsMap, roomsMap]);
 
-		const entitiesByHaId = Array.from(entitiesMap.values()).reduce(
-			(acc, entity) => {
-				acc[entity.ha_id] = entity;
-				return acc;
-			},
-			{} as Record<string, DomoEntity>,
+	const handleGroupToggle = async (vm: RoomViewModel) => {
+		post(
+			LightingController.toggle.url({
+				query: {
+					entities_ids: vm.bulbs.map((bulb) => bulb.light.id),
+					target_state: vm.isOn ? "off" : "on",
+				},
+			}),
 		);
-
-		const statesByEntityId = Array.from(statesMap.values()).reduce(
-			(acc, state) => {
-				const entity = entitiesByHaId[state.ha_entity_id];
-				if (entity) {
-					acc[entity.id] = state;
-				}
-				return acc;
-			},
-			{} as Record<number, DomoEntityState>,
-		);
-
-		// Filter assignments for HueLightGroup and HueLight roles
-		for (const assignment of assignmentsMap.values()) {
-			if (assignment.role === EntityAssignmentRoles.HueLightGroup)
-				groupAssignments.push(assignment);
-
-			if (assignment.role === EntityAssignmentRoles.HueLight)
-				bulbAssignments.push(assignment);
-		}
-
-		// Generate view models for each group assignment
-		for (const assignment of groupAssignments) {
-			// we don't keep lights that are not assigned to a room
-			if (!assignment.domo_room_id) continue;
-
-			const room = roomsMap.get(assignment.domo_room_id);
-			if (!room) continue; // it should not happen but just in case
-
-			const entity = entitiesMap.get(assignment.domo_entity_id);
-			if (!entity) continue; // it should not happen but just in case
-
-			const state = statesByEntityId[entity.id];
-			if (!state) continue; // it should not happen but just in case
-
-			const bulbs = [];
-			for (const bulbEntityId of (state.attributes.entity_id as string[]) || []) {
-				const bulbEntity = entitiesByHaId[bulbEntityId];
-				if (!bulbEntity) continue;
-
-				const bulbState = statesByEntityId[bulbEntity.id];
-				if (!bulbState) continue;
-
-				bulbs.push({
-					entity: bulbEntity,
-					state: bulbState,
-				});
-			}
-
-			vms.push({
-				assignment,
-				room,
-				entity,
-				state,
-				bulbs,
-			});
-		}
-
-		return vms;
-	}, [assignmentsMap, roomsMap, entitiesMap, statesMap]);
-
-	console.log({ viewModels });
-
-	const handleGroupToggle = async (
-		entity: DomoEntity,
-		currentState: DomoEntityState,
-	) => {
-		optimisticallyUpdateState(
-			currentState.id,
-			currentState.value === "on" ? "off" : "on",
-		);
-
-		post(LightingController.toggleLight.url({ entity: entity.id }));
 	};
 
 	const handleTurnOffAll = () => {
-		const ids: number[] = [];
-		viewModels.forEach((vm) => {
-			if (vm.state.value === "off") return;
-
-			ids.push(vm.entity.id);
-			optimisticallyUpdateState(vm.state.id, "off");
-		});
-
 		post(
-			LightingController.turnOffMultiple.url({ query: { entities_ids: ids } }),
+			LightingController.toggle.url({
+				query: {
+					entities_ids: viewModels.flatMap((vm) =>
+						vm.bulbs.map((bulb) => bulb.light.id),
+					),
+					target_state: "off",
+				},
+			}),
 		);
 	};
 
@@ -153,24 +78,30 @@ function LightingCard() {
 			<Card.Body>
 				<ul>
 					{viewModels.map((vm) => (
-						<li key={vm.assignment.id}>
+						<li key={vm.room.id}>
 							<div className="flex items-center gap-x-1.5">
 								<div className="flex-1 truncate">{vm.room.name}</div>
-								<div className="flex gap-x-0.5">
-									{vm.bulbs.map((bulb) => (
-										<div
-											key={bulb.entity.id}
-											className="size-3 border border-border"
-											style={{
-												backgroundColor: getLightColorCode(bulb.state),
-											}}
-										/>
-									))}
+								<div className="flex gap-x-2">
+									{vm.bulbs.map((bulb) => {
+										const safeRGB = bulb.light.rgb ?? "white";
+										return (
+											<div
+												key={bulb.id}
+												className={"size-3 rounded-full border"}
+												style={{
+													background: bulb.light.isOn ? safeRGB : "transparent",
+													borderColor: bulb.light.isOn
+														? "var(--foreground)"
+														: "var(--border)",
+												}}
+											/>
+										);
+									})}
 								</div>
 								<Switch
-									checked={vm.state.value === "on"}
+									checked={vm.isOn}
 									onCheckedChange={() => {
-										handleGroupToggle(vm.entity, vm.state);
+										handleGroupToggle(vm);
 									}}
 								/>
 							</div>

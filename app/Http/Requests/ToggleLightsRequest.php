@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TurnMultipleLightsOffRequest extends FormRequest
+class ToggleLightsRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -20,6 +20,9 @@ class TurnMultipleLightsOffRequest extends FormRequest
             ],
             'entities_ids.*' => [
                 'exists:domo_entities,id',
+            ],
+            'target_state' => [
+                'in:on,off',
             ],
         ];
     }

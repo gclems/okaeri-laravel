@@ -2,6 +2,9 @@
 
 namespace App\Domains\Domo\Models;
 
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+
+#[TypeScript]
 final class Renault4 extends Device
 {
     public function __construct(

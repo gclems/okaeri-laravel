@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
 	ChartAverageIcon,
@@ -6,6 +6,7 @@ import {
 	QrCodeIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { motion } from "motion/react";
 import {
 	Area,
 	AreaChart,
@@ -15,20 +16,15 @@ import {
 	YAxis,
 	createHorizontalChart,
 } from "recharts";
-import { Button, Card, cn } from "shanty-ui";
+import { Button, Card } from "shanty-ui";
 
 import WifiQrCodeController from "@/actions/App/Http/Controllers/WifiQrCodeController";
-import { useDomoStore } from "@/features/domo/domo-store";
+import { useClock } from "@/features/clock/use-clock";
+import { type Network, useDomoStore } from "@/features/domo/domo-store";
 
 import { bitsToString } from "../../helpers/network";
 
-type ChartValue = {
-	rxRateBps: number;
-	txRateBps: number;
-	date: Date;
-};
-
-const Typed = createHorizontalChart<ChartValue, Date, number>()({
+const Typed = createHorizontalChart<Network, Date, number>()({
 	Area,
 	AreaChart,
 	XAxis,
@@ -36,10 +32,12 @@ const Typed = createHorizontalChart<ChartValue, Date, number>()({
 	Tooltip,
 });
 
-const MAX_MEASUREMENTS = 100;
-
 function NetworkCard() {
 	const [mode, setMode] = useState<"monitoring" | "qrCode">("monitoring");
+
+	function toggleMode() {
+		setMode((current) => (current === "monitoring" ? "qrCode" : "monitoring"));
+	}
 
 	return (
 		<Card className="bg-linear-to-tl from-lighting/20 to-transparent">
@@ -51,14 +49,7 @@ function NetworkCard() {
 							Réseau
 						</div>
 
-						<Button
-							variant="ghost"
-							onClick={() => {
-								setMode((current) =>
-									current === "monitoring" ? "qrCode" : "monitoring",
-								);
-							}}
-						>
+						<Button variant="ghost" onClick={toggleMode}>
 							<HugeiconsIcon
 								icon={mode === "monitoring" ? QrCodeIcon : ChartAverageIcon}
 							/>
@@ -66,71 +57,68 @@ function NetworkCard() {
 					</div>
 				}
 			/>
-			<Card.Body>
-				<div
-					className={cn({
-						hidden: mode !== "monitoring",
-					})}
+			<Card.Body className="grid overflow-hidden">
+				<motion.div
+					className="col-start-1 row-start-1"
+					initial={false}
+					animate={{
+						x: mode === "monitoring" ? "0%" : "-100%",
+						opacity: mode === "monitoring" ? 1 : 0,
+					}}
+					transition={{ duration: 0.15, ease: "easeInOut" }}
 				>
 					<Monitoring />
-				</div>
-				<div
-					className={cn({
-						hidden: mode !== "qrCode",
-					})}
+				</motion.div>
+				<motion.div
+					className="col-start-1 row-start-1"
+					initial={false}
+					animate={{
+						x: mode === "qrCode" ? "0%" : "100%",
+						opacity: mode === "qrCode" ? 1 : 0,
+					}}
+					transition={{ duration: 0.15, ease: "easeInOut" }}
 				>
 					<QrCode />
-				</div>
+				</motion.div>
 			</Card.Body>
 		</Card>
 	);
 }
 
 function Monitoring() {
-	const [chartValues, setChartValues] = useState<ChartValue[]>([]);
-
 	const network = useDomoStore((state) => state.network);
+	const now = useClock();
 
-	const currentValue = useMemo(
-		() => chartValues[chartValues.length - 1],
-		[chartValues],
+	const firstValue = network[0];
+	const lastValue = network[network.length - 1];
+
+	const secondsSinceUpdate = Math.max(
+		0,
+		now.getTime() - (lastValue?.date.getTime() ?? 0),
 	);
+	const totalTime =
+		(lastValue?.date.getTime() ?? 0) - (firstValue?.date.getTime() ?? 0);
 
-	useEffect(() => {
-		if (!network) return;
-		const lastMeasurement = currentValue;
+	const dlAvg = useMemo(() => {
+		if (network.length === 0) return 0;
+		const total = network.reduce((sum, entry) => sum + (entry.rxRateBps ?? 0), 0);
+		return total / network.length;
+	}, [network]);
 
-		const networkDownload = network.rxRateBps;
-		const networkUpload = network.txRateBps;
-
-		if (
-			lastMeasurement &&
-			lastMeasurement.rxRateBps === networkDownload &&
-			lastMeasurement.txRateBps === networkUpload
-		) {
-			return;
-		}
-
-		const measurement: ChartValue[] = [
-			...chartValues,
-			{ rxRateBps: networkDownload, txRateBps: networkUpload, date: new Date() },
-		];
-
-		while (measurement.length > MAX_MEASUREMENTS) {
-			measurement.shift();
-		}
-
-		setChartValues(measurement);
-	}, [network, chartValues, currentValue]);
+	const ulAvg = useMemo(() => {
+		if (network.length === 0) return 0;
+		const total = network.reduce((sum, entry) => sum + (entry.txRateBps ?? 0), 0);
+		return total / network.length;
+	}, [network]);
 
 	return (
 		<>
-			{!network && (
+			{!network.length && (
 				<div className="w-full h-full flex items-center justify-center text-muted">
 					Pas de données
 				</div>
 			)}
-			{network && (
+			{network.length > 0 && (
 				<>
 					<Typed.AreaChart
 						style={{
@@ -140,7 +128,7 @@ function Monitoring() {
 							aspectRatio: 16 / 9,
 						}}
 						responsive
-						data={chartValues}
+						data={network}
 					>
 						<defs>
 							<linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -176,18 +164,39 @@ function Monitoring() {
 							animationDuration={1300}
 						/>
 					</Typed.AreaChart>
-					<div className="text-sm">
-						<div className="flex items-center justify-between">
+					<div className="text-xs">
+						<div className="flex items-baseline">
 							<span className="text-download">Descendant</span>
+							<div className="flex-1 border-b border-dotted border-muted" />
 							<span className="text-metric">
-								{bitsToString(currentValue?.rxRateBps ?? 0)}
+								{bitsToString(lastValue?.rxRateBps ?? 0)}
 							</span>
 						</div>
-						<div className="flex items-center justify-between">
+						<div className="text-muted text-xs text-right">
+							<span className="">moy: </span>
+							<span className="text-metric">{bitsToString(dlAvg)}</span>
+						</div>
+						<div className="flex items-baseline">
 							<span className="text-upload">Montant</span>
+							<div className="flex-1 border-b border-dotted border-muted" />
 							<span className="text-metric">
-								{bitsToString(currentValue?.txRateBps ?? 0)}
+								{bitsToString(lastValue?.txRateBps ?? 0)}
 							</span>
+						</div>
+						<div className="text-muted text-xs text-right">
+							<span className="">moy: </span>
+							<span className="text-metric">{bitsToString(ulAvg)}</span>
+						</div>
+						<div className="text-muted text-xs text-right mt-4">
+							<div>Moyennes sur environ {Math.floor(totalTime / 1000 / 60)}mins</div>
+							<div>
+								<span className="">Mis à jour il y a </span>
+								<span className="text-metric">
+									{secondsSinceUpdate != null
+										? `${Math.floor(secondsSinceUpdate / 1000)}s`
+										: "N/A"}
+								</span>
+							</div>
 						</div>
 					</div>
 				</>
@@ -215,7 +224,7 @@ function QrCode() {
 			<img
 				src={WifiQrCodeController.show.url()}
 				alt="Qr Code"
-				className={`size-48 ${qrCodeLoaded ? "opacity-100" : "opacity-0"}`}
+				className={`max-h-full max-w-full aspect-square rounded-lg ${qrCodeLoaded ? "opacity-100" : "opacity-0"}`}
 				onLoad={() => setQrCodeLoaded(true)}
 				onError={() => setQrCodeError(true)}
 			/>

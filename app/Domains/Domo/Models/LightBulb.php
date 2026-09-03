@@ -2,6 +2,9 @@
 
 namespace App\Domains\Domo\Models;
 
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+
+#[TypeScript]
 final class LightBulb extends Device
 {
     public function __construct(
@@ -9,8 +12,9 @@ final class LightBulb extends Device
         string $name,
         bool $isActive,
         public readonly LightState $light,
+        ?int $roomId = null,
         ?Battery $battery = null,
     ) {
-        parent::__construct($id, $name, $isActive, $battery);
+        parent::__construct($id, $name, $isActive, $roomId, $battery);
     }
 }

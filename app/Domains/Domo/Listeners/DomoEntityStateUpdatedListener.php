@@ -2,7 +2,7 @@
 
 namespace App\Domains\Domo\Listeners;
 
-use App\Domains\Domo\Actions\SyncDomoRooms;
+use App\Domains\Domo\Actions\GenerateDomoDeviceProjectionFromStateAction;
 use App\Domains\Domo\Events\DomoEntityStateUpdated;
 
 /**
@@ -12,7 +12,7 @@ use App\Domains\Domo\Events\DomoEntityStateUpdated;
 class DomoEntityStateUpdatedListener
 {
     public function __construct(
-        private SyncDomoRooms $action
+        private GenerateDomoDeviceProjectionFromStateAction $action
     ) {}
 
     /**
@@ -20,6 +20,6 @@ class DomoEntityStateUpdatedListener
      */
     public function handle(DomoEntityStateUpdated $event): void
     {
-        $this->action->execute($event->payload);
+        $this->action->execute($event->state);
     }
 }

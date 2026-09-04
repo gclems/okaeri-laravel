@@ -11,7 +11,7 @@ final class Renault4 extends Device
         int $id,
         string $name,
         bool $isActive,
-        public readonly ?Battery $battery,
+        ?Battery $battery,
         public readonly ?Distance $totalDistance,
         public readonly ?Distance $autonomy,
         // charging state
@@ -21,10 +21,11 @@ final class Renault4 extends Device
         // position -> gps
     ) {
         parent::__construct(
-            $id,
-            $name,
-            $isActive,
-            $battery,
+            id: $id,
+            name: $name,
+            isActive: $isActive,
+            type: DeviceType::Renault4,
+            battery: $battery,
         );
     }
 }

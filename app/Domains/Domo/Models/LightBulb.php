@@ -15,6 +15,13 @@ final class LightBulb extends Device
         ?int $roomId = null,
         ?Battery $battery = null,
     ) {
-        parent::__construct($id, $name, $isActive, $roomId, $battery);
+        parent::__construct(
+            id: $id,
+            name: $name,
+            isActive: $isActive,
+            type: DeviceType::LightBulb,
+            roomId: $roomId,
+            battery: $battery,
+        );
     }
 }

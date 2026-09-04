@@ -8,7 +8,7 @@ import type {
 	DomoRoom,
 	SunPhase,
 } from "@/types/models";
-import type { LightBulb } from "@/types/projections";
+import type { ClimateSensor, LightBulb } from "@/types/projections";
 
 type Network = {
 	txRateBps: number;
@@ -26,6 +26,7 @@ type DomoStore = {
 	sunPhasesMap: Map<string, SunPhase>;
 	network: Network[];
 	lightsMap: Map<number, LightBulb>;
+	climateSensorsMap: Map<number, ClimateSensor>;
 
 	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) => void;
 	updateDomoDevices: (devices: DomoDevice[], mode: UpdateMode) => void;
@@ -41,6 +42,10 @@ type DomoStore = {
 	updateSunPhases: (sunPhases: SunPhase[], mode: UpdateMode) => void;
 	addNetwork: (uplink: Network) => void;
 	updateLights: (lights: LightBulb[], mode: UpdateMode) => void;
+	updateClimateSensors: (
+		climateSensors: ClimateSensor[],
+		mode: UpdateMode,
+	) => void;
 };
 
 enum UpdateMode {
@@ -73,6 +78,7 @@ const useDomoStore = create<DomoStore>((set) => ({
 	sunPhasesMap: new Map<string, SunPhase>(),
 	network: [],
 	lightsMap: new Map<number, LightBulb>(),
+	climateSensorsMap: new Map<number, ClimateSensor>(),
 
 	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) =>
 		set(() => ({
@@ -212,6 +218,16 @@ const useDomoStore = create<DomoStore>((set) => ({
 				lights,
 				mode,
 				(light) => light.id,
+			),
+		})),
+
+	updateClimateSensors: (climateSensors: ClimateSensor[], mode: UpdateMode) =>
+		set(() => ({
+			climateSensorsMap: updateMapFromArray(
+				useDomoStore.getState().climateSensorsMap,
+				climateSensors,
+				mode,
+				(climateSensor) => climateSensor.id,
 			),
 		})),
 }));

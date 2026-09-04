@@ -2,11 +2,9 @@
 
 namespace App\Domains\Domo\Resolvers;
 
-use App\Domains\Domo\Models\EntityWithState;
 use App\Domains\Domo\Models\LightBulb;
 use App\Models\DomoDevice;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection;
+use App\Models\DomoEntity;
 
 final class HueLightBulbResolver implements DeviceResolver
 {
@@ -14,44 +12,33 @@ final class HueLightBulbResolver implements DeviceResolver
         private readonly HueLightStateResolver $lightStateResolver,
     ) {}
 
-    public function supports(DomoDevice $device, Collection $entitiesWithStates): bool
+    public function supports(DomoDevice $device): bool
     {
         if (! $this->isHueDevice($device)) {
             return false;
         }
 
-        return $entitiesWithStates->contains(
-            fn (EntityWithState $pair) => $pair->belongsTo($device)
-                && $this->lightStateResolver->supports($pair)
+        return $device->entities->contains(
+            fn (DomoEntity $entity) => $this->lightStateResolver->supports($entity)
         );
     }
 
-    public function resolve(DomoDevice $device, Collection $entitiesWithStates, EloquentCollection $rooms): LightBulb
+    public function resolve(DomoDevice $device): LightBulb
     {
-        if (! $this->supports($device, $entitiesWithStates)) {
-            throw new \InvalidArgumentException('Device is not a Hue light');
-        }
-
-        $pair = $entitiesWithStates->first(
-            fn (EntityWithState $pair) => $pair->entity->ha_device_id === $device->ha_id
-                && $this->lightStateResolver->supports($pair)
+        $entity = $device->entities->first(
+            fn (DomoEntity $entity) => $this->lightStateResolver->supports($entity)
         );
 
-        if ($pair === null) {
+        if ($entity === null) {
             throw new \RuntimeException("No light entity found for Hue light bulb device [{$device->id}]");
-        }
-
-        $roomId = null;
-        if (isset($device->ha_area_id)) {
-            $roomId = $rooms->firstWhere('ha_id', $device->ha_area_id)?->id;
         }
 
         return new LightBulb(
             $device->id,
             $device->name,
             $device->is_active,
-            $this->lightStateResolver->resolve($pair, $device),
-            $roomId,
+            $this->lightStateResolver->resolve($entity, $device),
+            $device->room?->id,
         );
     }
 

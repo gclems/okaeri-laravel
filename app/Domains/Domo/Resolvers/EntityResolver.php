@@ -3,12 +3,12 @@
 namespace App\Domains\Domo\Resolvers;
 
 use App\Domains\Domo\Models\Entity;
-use App\Domains\Domo\Models\EntityWithState;
 use App\Models\DomoDevice;
+use App\Models\DomoEntity;
 
 interface EntityResolver
 {
-    public function supports(EntityWithState $entityAndState): bool;
+    public function supports(DomoEntity $entity): bool;
 
-    public function resolve(EntityWithState $entityAndState, DomoDevice $device): Entity;
+    public function resolve(DomoEntity $entity, DomoDevice $device): Entity;
 }

@@ -2,23 +2,22 @@
 
 namespace App\Domains\Domo\Resolvers;
 
-use App\Domains\Domo\Models\EntityWithState;
 use App\Domains\Domo\Models\LightState;
 use App\Models\DomoDevice;
+use App\Models\DomoEntity;
 
 final class HueLightStateResolver implements EntityResolver
 {
     private const array SUPPORTED_COLOR_MODES = ['xy', 'hs', 'rgb', 'rgbw', 'rgbww'];
 
-    public function supports(EntityWithState $entityAndState): bool
+    public function supports(DomoEntity $entity): bool
     {
-        return $entityAndState->entity->domain === 'light';
+        return $entity->domain === 'light' && $entity->state !== null;
     }
 
-    public function resolve(EntityWithState $entityAndState, DomoDevice $device): LightState
+    public function resolve(DomoEntity $entity, DomoDevice $device): LightState
     {
-        $entity = $entityAndState->entity;
-        $state = $entityAndState->state;
+        $state = $entity->state;
 
         $brightness = 0;
         if (isset($state->attributes['brightness'])) {
@@ -37,15 +36,15 @@ final class HueLightStateResolver implements EntityResolver
         return new LightState(
             id: $entity->id,
             isOn: $state->value === 'on',
-            supportsColor: $this->supportsColor($entityAndState),
+            supportsColor: $this->supportsColor($entity),
             brightness: $brightness,
             rgb: $color,
         );
     }
 
-    private function supportsColor(EntityWithState $entityAndState): bool
+    private function supportsColor(DomoEntity $entity): bool
     {
-        $modes = $entityAndState->state->attributes['supported_color_modes'] ?? [];
+        $modes = $entity->state->attributes['supported_color_modes'] ?? [];
 
         return ! empty(array_intersect($modes, self::SUPPORTED_COLOR_MODES));
     }

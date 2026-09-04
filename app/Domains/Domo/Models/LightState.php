@@ -11,7 +11,7 @@ final class LightState extends Entity
         int $id,
         public readonly bool $isOn,
         public readonly bool $supportsColor,
-        public readonly ?int $brightness,
+        public readonly ?float $brightness,
         public readonly ?string $rgb,
     ) {
         parent::__construct($id);

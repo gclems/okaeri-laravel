@@ -11,6 +11,7 @@ abstract class Device
         public readonly int $id,
         public readonly string $name,
         public readonly bool $isActive,
+        public readonly DeviceType $type,
         public readonly ?int $roomId = null,
         public readonly ?Battery $battery = null,
     ) {}

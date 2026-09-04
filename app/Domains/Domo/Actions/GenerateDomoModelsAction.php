@@ -3,12 +3,8 @@
 namespace App\Domains\Domo\Actions;
 
 use App\Domains\Domo\Models\Device;
-use App\Domains\Domo\Models\EntityWithState;
 use App\Domains\Domo\Resolvers\GeneralDeviceResolver;
 use App\Models\DomoDevice;
-use App\Models\DomoEntity;
-use App\Models\DomoEntityState;
-use App\Models\DomoRoom;
 use Illuminate\Support\Collection;
 
 final class GenerateDomoModelsAction
@@ -22,17 +18,12 @@ final class GenerateDomoModelsAction
      */
     public function execute(): Collection
     {
-        $rooms = DomoRoom::all();
-        $devices = DomoDevice::all();
-        $entities = DomoEntity::all();
-        $states = DomoEntityState::all();
-
-        $entitiesWithStates = EntityWithState::pair($entities, $states);
+        $devices = DomoDevice::with(['entities.state', 'room'])->get();
 
         $results = collect();
         foreach ($devices as $device) {
-            if ($this->generalDeviceResolver->supports($device, $entitiesWithStates)) {
-                $results->push($this->generalDeviceResolver->resolve($device, $entitiesWithStates, $rooms));
+            if ($this->generalDeviceResolver->supports($device)) {
+                $results->push($this->generalDeviceResolver->resolve($device));
             }
         }
 

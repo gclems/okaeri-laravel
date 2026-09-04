@@ -11,16 +11,19 @@ final class ClimateSensor extends Device
         int $id,
         string $name,
         bool $isActive,
-        public readonly ?Battery $battery,
+        ?string $roomId,
+        ?Battery $battery,
         public readonly ?Thermometer $thermometer,
         public readonly ?Hygrometer $hygrometer,
         public readonly ?Barometer $barometer,
     ) {
         parent::__construct(
-            $id,
-            $name,
-            $isActive,
-            $battery,
+            id: $id,
+            name: $name,
+            isActive: $isActive,
+            type: DeviceType::ClimateSensor,
+            roomId: $roomId,
+            battery: $battery,
         );
     }
 }

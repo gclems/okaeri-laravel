@@ -3,13 +3,7 @@
 namespace App\Domains\Domo\Resolvers;
 
 use App\Domains\Domo\Models\Device;
-use App\Domains\Domo\Models\EntityWithState;
 use App\Models\DomoDevice;
-use App\Models\DomoEntity;
-use App\Models\DomoEntityState;
-use App\Models\DomoRoom;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection;
 
 final class GeneralDeviceResolver implements DeviceResolver
 {
@@ -17,7 +11,7 @@ final class GeneralDeviceResolver implements DeviceResolver
     private readonly array $resolvers;
 
     public function __construct(
-        AquaraClimateSensorResolver $climateSensorResolver,
+        AqaraClimateSensorResolver $climateSensorResolver,
         HueLightBulbResolver $lightBulbResolver,
         Renault4Resolver $renault4Resolver,
     ) {
@@ -28,37 +22,29 @@ final class GeneralDeviceResolver implements DeviceResolver
         ];
     }
 
-    public function supports(DomoDevice $device, Collection $entitiesWithStates): bool
+    public function supports(DomoDevice $device): bool
     {
-        return $this->findResolver($device, $entitiesWithStates) !== null;
+        $device->loadMissing(['entities.state', 'room']);
+
+        return $this->findResolver($device) !== null;
     }
 
-    public function resolve(DomoDevice $device, Collection $entitiesWithStates, EloquentCollection $rooms): Device
+    public function resolve(DomoDevice $device): Device
     {
-        $resolver = $this->findResolver($device, $entitiesWithStates);
+        $device->loadMissing(['entities.state', 'room']);
+
+        $resolver = $this->findResolver($device);
 
         if ($resolver === null) {
             throw new \RuntimeException("No resolver found for device [{$device->id}]");
         }
 
-        return $resolver->resolve($device, $entitiesWithStates, $rooms);
+        return $resolver->resolve($device);
     }
 
-    public function resolveSingle(DomoDevice $device, DomoEntity $entity, DomoEntityState $state, ?DomoRoom $room = null): Device
-    {
-        $entityWithState = EntityWithState::pair(
-            EloquentCollection::make([$entity]),
-            EloquentCollection::make([$state])
-        );
-
-        $rooms = EloquentCollection::make(is_null($room) ? [] : [$room]);
-
-        return $this->resolve($device, $entityWithState, $rooms);
-    }
-
-    private function findResolver(DomoDevice $device, Collection $entitiesWithStates): ?DeviceResolver
+    private function findResolver(DomoDevice $device): ?DeviceResolver
     {
         return collect($this->resolvers)
-            ->first(fn (DeviceResolver $resolver) => $resolver->supports($device, $entitiesWithStates));
+            ->first(fn (DeviceResolver $resolver) => $resolver->supports($device));
     }
 }

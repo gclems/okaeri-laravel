@@ -1,84 +1,38 @@
+import { useMemo } from "react";
+
 import { DropletIcon, HouseHeartIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Card, cn } from "shanty-ui";
 
 import { RollingNumber } from "@/components/rolling-number";
-import type {
-	DomoEntityState,
-	DomoRoom,
-	EntityAssignmentRolesEnum,
-} from "@/types/models";
-import { EntityAssignmentRoles } from "@/types/models";
+import { useDomoStore } from "@/features/domo/domo-store";
+import type { DomoRoom } from "@/types/models";
+import type { ClimateSensor } from "@/types/projections";
 
-const comfortRoles: EntityAssignmentRolesEnum[] = [
-	EntityAssignmentRoles.AqaraHygrometer,
-	EntityAssignmentRoles.AqaraThermometer,
-];
+type RoomViewModel = {
+	room: DomoRoom;
+	sensors: ClimateSensor[];
+};
 
 function ComfortCard() {
-	// const assignments = Array.from(
-	// 	useDomoStore((state) => state.assignmentsMap).values(),
-	// );
-	// const rooms = Array.from(useDomoStore((state) => state.roomsMap).values());
-	// const entities = Array.from(
-	// 	useDomoStore((state) => state.entitiesMap).values(),
-	// );
-	// const states = Array.from(useDomoStore((state) => state.statesMap).values());
+	const climateSensorsMap = useDomoStore((state) => state.climateSensorsMap);
+	const roomsMap = useDomoStore((state) => state.domoRoomsMap);
+	console.log(climateSensorsMap, roomsMap);
+	const viewModels: RoomViewModel[] = useMemo(() => {
+		return Array.from(roomsMap.values())
+			.map((room) => {
+				return {
+					room,
+					sensors: Array.from(climateSensorsMap.values()).filter(
+						(sensor) => sensor.roomId === room.id,
+					),
+				};
+			})
+			.filter((vm) => vm.sensors.length > 0)
+			.sort((a, b) => a.room.name.localeCompare(b.room.name));
+	}, [climateSensorsMap, roomsMap]);
 
-	// const roomsById = useMemo(() => {
-	// 	const map: Record<string, (typeof rooms)[0]> = {};
-	// 	for (const room of rooms) {
-	// 		map[room.id] = room;
-	// 	}
-	// 	return map;
-	// }, [rooms]);
-
-	// const statesByEntityId = useMemo(() => {
-	// 	const map: Record<number, (typeof states)[0]> = {};
-	// 	for (const state of states) {
-	// 		const entity = entities.find((e) => e.ha_id === state.ha_entity_id);
-	// 		if (entity) {
-	// 			map[entity.id] = state;
-	// 		}
-	// 	}
-	// 	return map;
-	// }, [states, entities]);
-
-	// const assignmentsByRoom = useMemo(() => {
-	// 	const assignmentsByRoom: Record<
-	// 		number,
-	// 		{
-	// 			thermometer: DomoEntityState | null;
-	// 			hygrometer: DomoEntityState | null;
-	// 		}
-	// 	> = {};
-
-	// 	for (const assignment of assignments) {
-	// 		if (comfortRoles.includes(assignment.role)) {
-	// 			if (!assignment.domo_room_id) continue;
-
-	// 			if (!assignmentsByRoom[assignment.domo_room_id]) {
-	// 				assignmentsByRoom[assignment.domo_room_id] = {
-	// 					thermometer: null,
-	// 					hygrometer: null,
-	// 				};
-	// 			}
-
-	// 			switch (assignment.role) {
-	// 				case EntityAssignmentRoles.AqaraThermometer:
-	// 					assignmentsByRoom[assignment.domo_room_id].thermometer =
-	// 						statesByEntityId[assignment.domo_entity_id];
-	// 					break;
-	// 				case EntityAssignmentRoles.AqaraHygrometer:
-	// 					assignmentsByRoom[assignment.domo_room_id].hygrometer =
-	// 						statesByEntityId[assignment.domo_entity_id];
-	// 					break;
-	// 			}
-	// 		}
-	// 	}
-
-	// 	return assignmentsByRoom;
-	// }, [assignments, statesByEntityId]);
+	console.log(viewModels);
 
 	return (
 		<Card className="bg-linear-to-bl to-comfort/20 from-transparent">
@@ -90,76 +44,65 @@ function ComfortCard() {
 				}
 			></Card.Header>
 			<Card.Body>
-				{/* <ul className="space-y-1">
-					{assignmentsByRoom &&
-						Object.entries(assignmentsByRoom).map(([roomId, roomAssignments]) => {
-							const room = roomsById[roomId];
-							if (!room) return null;
-
-							return (
-								<RoomItem
-									key={roomId}
-									room={room}
-									thermometerState={roomAssignments.thermometer}
-									hygrometerState={roomAssignments.hygrometer}
-								/>
-							);
-						})}
-				</ul> */}
+				<ul className="space-y-2">
+					{viewModels.map((vm) => (
+						<li key={vm.room.id}>
+							<RoomItem vm={vm} />
+						</li>
+					))}
+				</ul>
 			</Card.Body>
 		</Card>
 	);
 }
 
-function RoomItem({
-	room,
-	thermometerState,
-	hygrometerState,
-}: {
-	room: DomoRoom;
-	thermometerState: DomoEntityState | null;
-	hygrometerState: DomoEntityState | null;
-}) {
+function RoomItem({ vm }: { vm: RoomViewModel }) {
 	return (
 		<li>
 			<div className="flex items-center gap-x-4">
-				<div className="flex-1 truncate">{room.name}</div>
-				{thermometerState && (
-					<div className="flex items-baseline gap-x-1">
-						<span
-							className={cn("text-metric text-lg", {
-								"text-temperature-excessive": +(thermometerState.value ?? 0) >= 26,
-								"text-temperature-low": +(thermometerState.value ?? 0) <= 17,
-							})}
-						>
-							<RollingNumber
-								number={+(thermometerState.value ?? 0)}
-								formatter={(value) => value.toFixed(1).toString()}
-							/>
-						</span>
-						<span className="text-muted text-xs">
-							{thermometerState.attributes.unit_of_measurement as string}
-						</span>
-					</div>
-				)}
-				{hygrometerState && (
-					<div className="flex items-center gap-x-1 text-sm">
-						<HugeiconsIcon
-							icon={DropletIcon}
-							size="0.75rem"
-							className="fill-humidity text-white"
-						/>
-						<span className="text-metric">
-							<RollingNumber
-								number={+(hygrometerState.value ?? 0)}
-								formatter={(value) => value.toFixed(1).toString()}
-							/>
-						</span>
-						<span className="text-muted text-xs">
-							{hygrometerState.attributes.unit_of_measurement as string}
-						</span>
-					</div>
-				)}
+				<div className="flex-1 truncate">{vm.room.name}</div>
+				<div>
+					{vm.sensors.map((sensor) => (
+						<div key={sensor.id} className="flex gap-x-2">
+							{sensor.thermometer && (
+								<div className="flex items-baseline gap-x-1">
+									<span
+										className={cn("text-metric text-lg", {
+											"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
+											"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
+										})}
+									>
+										<RollingNumber
+											number={+(sensor.thermometer.value ?? 0)}
+											formatter={(value) => value.toFixed(1).toString()}
+										/>
+									</span>
+									<span className="text-muted text-xs">
+										{sensor.thermometer.unit as string}
+									</span>
+								</div>
+							)}
+							{sensor.hygrometer && (
+								<div className="flex items-center gap-x-1 text-sm">
+									<HugeiconsIcon
+										icon={DropletIcon}
+										size="0.75rem"
+										className="fill-humidity text-white"
+									/>
+									<span className="text-metric">
+										<RollingNumber
+											number={+(sensor.hygrometer.value ?? 0)}
+											formatter={(value) => value.toFixed(1).toString()}
+										/>
+									</span>
+									<span className="text-muted text-xs">
+										{sensor.hygrometer.unit as string}
+									</span>
+								</div>
+							)}
+						</div>
+					))}
+				</div>
 			</div>
 		</li>
 	);

@@ -36,6 +36,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntity whereRaw($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntity whereUpdatedAt($value)
  *
+ * @property-read DomoEntityState|null $state
+ *
  * @mixin \Eloquent
  */
 class DomoEntity extends Model

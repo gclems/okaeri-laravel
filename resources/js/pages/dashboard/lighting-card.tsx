@@ -3,9 +3,10 @@ import { useMemo } from "react";
 import { Lightbulb, PowerOffIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useHttp } from "@inertiajs/react";
-import { Button, Card, Switch } from "shanty-ui";
+import { Button, Card, Switch, cn } from "shanty-ui";
 
 import LightingController from "@/actions/App/Http/Controllers/LightingController";
+import { AnimatedNumber } from "@/components/animated-number";
 import { useDomoStore } from "@/features/domo/domo-store";
 import type { DomoRoom } from "@/types/models";
 import type { LightBulb } from "@/types/projections";
@@ -76,35 +77,10 @@ function LightingCard() {
 				}
 			/>
 			<Card.Body>
-				<ul>
+				<ul className="space-y-2">
 					{viewModels.map((vm) => (
 						<li key={vm.room.id}>
-							<div className="flex items-center gap-x-1.5">
-								<div className="flex-1 truncate">{vm.room.name}</div>
-								<div className="flex gap-x-2">
-									{vm.bulbs.map((bulb) => {
-										const safeRGB = bulb.light.rgb ?? "white";
-										return (
-											<div
-												key={bulb.id}
-												className={"size-3 rounded-full border"}
-												style={{
-													background: bulb.light.isOn ? safeRGB : "transparent",
-													borderColor: bulb.light.isOn
-														? "var(--foreground)"
-														: "var(--border)",
-												}}
-											/>
-										);
-									})}
-								</div>
-								<Switch
-									checked={vm.isOn}
-									onCheckedChange={() => {
-										handleGroupToggle(vm);
-									}}
-								/>
-							</div>
+							<ViewModelItem vm={vm} onToggle={handleGroupToggle} />
 						</li>
 					))}
 				</ul>
@@ -122,6 +98,53 @@ function LightingCard() {
 				</Button>
 			</Card.Footer>
 		</Card>
+	);
+}
+
+function ViewModelItem({
+	vm,
+	onToggle,
+}: {
+	vm: RoomViewModel;
+	onToggle: (vm: RoomViewModel) => void;
+}) {
+	return (
+		<div>
+			<div className="flex items-stretch gap-x-1.5">
+				<div className="flex-1 truncate">{vm.room.name}</div>
+
+				<Switch
+					checked={vm.isOn}
+					onCheckedChange={() => {
+						onToggle(vm);
+					}}
+				/>
+			</div>
+			<div className="flex gap-x-2">
+				{vm.bulbs.map((bulb) => {
+					const safeRGB = bulb.light.rgb ?? "white";
+					const percent = (bulb.light.brightness ?? 0) * 100;
+					return (
+						<div key={bulb.id} className="flex items-center gap-x-0.5">
+							<div
+								className={"size-3 rounded-full border"}
+								style={{
+									background: bulb.light.isOn ? safeRGB : "transparent",
+									borderColor: bulb.light.isOn ? "var(--foreground)" : "var(--border)",
+								}}
+							/>
+							<div
+								className={cn("text-xs", {
+									"opacity-30": !bulb.light.isOn,
+								})}
+							>
+								<AnimatedNumber number={percent} formatter={(n) => n.toFixed(0)} />%
+							</div>
+						</div>
+					);
+				})}
+			</div>
+		</div>
 	);
 }
 

@@ -1,43 +1,44 @@
-import { BatteryMedium01Icon } from "@hugeicons/core-free-icons";
+import { useMemo } from "react";
+
+import {
+	BatteryEmptyIcon,
+	BatteryFullIcon,
+	BatteryLowIcon,
+	BatteryMedium01Icon,
+	BatteryMedium02Icon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Card } from "shanty-ui";
+import { Card, cn } from "shanty-ui";
+
+import { useDomoStore } from "@/features/domo/domo-store";
+import { clamp } from "@/helpers/numbers";
+import type {
+	Car,
+	ClimateSensor,
+	LightBulb,
+	SwitchDevice,
+} from "@/types/projections";
 
 function BatteriesCard() {
-	// const statesMap = useDomoStore((state) => state.statesMap);
-	// const entitiesMap = useDomoStore((state) => state.entitiesMap);
-	// const devicesMap = useDomoStore((state) => state.devicesMap);
+	const lightsMap = useDomoStore((state) => state.lightsMap);
+	const climateSensorsMap = useDomoStore((state) => state.climateSensorsMap);
+	const carsMap = useDomoStore((state) => state.carsMap);
+	const switchesMap = useDomoStore((state) => state.switchesMap);
+	const domoRoomsMap = useDomoStore((state) => state.domoRoomsMap);
 
-	// const batteries = useMemo(() => {
-	// 	const array = [];
+	const devicesWithBattery: (LightBulb | Car | ClimateSensor | SwitchDevice)[] =
+		useMemo(() => {
+			return [
+				...Array.from(lightsMap.values()),
+				...Array.from(climateSensorsMap.values()),
+				...Array.from(carsMap.values()),
+				...Array.from(switchesMap.values()),
+			]
+				.filter((device) => !!device.battery)
+				.sort((a, b) => (a.battery?.value ?? 0) - (b.battery?.value ?? 0));
+		}, [lightsMap, climateSensorsMap, carsMap, switchesMap]);
 
-	// 	for (const state of statesMap.values()) {
-	// 		if (
-	// 			state.attributes?.device_class === "battery" &&
-	// 			!Number.isNaN(+state.value)
-	// 		) {
-	// 			array.push(state);
-	// 		}
-	// 	}
-
-	// 	return array.sort((a, b) => +a.value - +b.value);
-	// }, [statesMap]);
-
-	// const deviceByEntityHaId = useMemo(() => {
-	// 	const devicesByHaId = new Map<number, DomoDevice>();
-	// 	for (const device of devicesMap.values()) {
-	// 		devicesByHaId.set(device.ha_id, device);
-	// 	}
-
-	// 	const map = new Map<string, DomoDevice>();
-	// 	for (const entity of entitiesMap.values()) {
-	// 		const device = devicesByHaId.get(entity.ha_device_id);
-	// 		if (!device) continue;
-
-	// 		map.set(entity.ha_id, device);
-	// 	}
-
-	// 	return map;
-	// }, [devicesMap, entitiesMap]);
+	if (devicesWithBattery.length === 0) return null;
 
 	return (
 		<Card className="bg-linear-to-tl from-transparent to-energy/20">
@@ -49,38 +50,66 @@ function BatteriesCard() {
 				}
 			/>
 			<Card.Body>
-				{/* <ul>
-					{batteries.map((battery) => {
-						const device = deviceByEntityHaId.get(battery.ha_entity_id);
-						if (!device) return null;
+				<ul className="space-y-2">
+					{devicesWithBattery.map((device) => {
+						const battery = device.battery;
+						if (!battery) return null;
+						if (battery.value === undefined || battery.value === null) return null;
 
 						let textColor = "text-current";
-						if (+battery.value <= 20) {
+						if (battery.value <= 20) {
 							textColor = "text-destructive";
-						} else if (+battery.value <= 50) {
+						} else if (battery.value <= 50) {
 							textColor = "text-warning";
 						}
+
+						const roomName = device.roomId
+							? domoRoomsMap.get(device.roomId)?.name
+							: undefined;
 
 						return (
 							<li
 								key={battery.id}
-								className={cn("flex items-center justify-between gap-x-2", textColor, {
-									"font-semibold": +battery.value <= 50,
-									"font-bold": +battery.value <= 20,
+								className={cn("flex items-center justify-between gap-x-2", {
+									"font-semibold": battery.value <= 50,
+									"font-bold": battery.value <= 20,
 								})}
 								style={{
-									opacity: `${clamp(120 - +battery.value, 20, 100)}%`,
+									opacity: `${clamp(120 - battery.value, 20, 100)}%`,
 								}}
 							>
-								<span className="text-xs">{device.name}</span>
-								<span className="text-metric text-sm">
-									{(+battery.value).toFixed(0)}
+								<div className="flex flex-col">
+									<span className="text-xs">{device.name}</span>
+									{roomName && <span className="text-muted text-xs">{roomName}</span>}
+								</div>
+								<span
+									className={cn(
+										"text-metric text-sm flex items-center gap-x-1",
+										textColor,
+									)}
+								>
+									{battery.value.toFixed(0)}
 									<span className="text-xs">%</span>
+									<HugeiconsIcon
+										size={28}
+										className="-rotate-90"
+										icon={
+											battery.value > 80
+												? BatteryFullIcon
+												: battery.value > 60
+													? BatteryMedium02Icon
+													: battery.value > 30
+														? BatteryMedium01Icon
+														: battery.value > 5
+															? BatteryLowIcon
+															: BatteryEmptyIcon
+										}
+									/>
 								</span>
 							</li>
 						);
 					})}
-				</ul> */}
+				</ul>
 			</Card.Body>
 		</Card>
 	);

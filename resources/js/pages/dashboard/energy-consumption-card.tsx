@@ -8,7 +8,7 @@ function EnergyConsumptionCard() {
 			<Card.Header
 				title={
 					<div className="flex items-center gap-x-2">
-						<HugeiconsIcon icon={EnergyIcon} /> Énergie
+						<HugeiconsIcon icon={EnergyIcon} className="fill-energy" /> Énergie
 					</div>
 				}
 			/>

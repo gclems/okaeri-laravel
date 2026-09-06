@@ -2,8 +2,8 @@
 
 namespace App\Domains\Domo\Actions;
 
-use App\Domains\Domo\Models\Device;
-use App\Domains\Domo\Resolvers\GeneralDeviceResolver;
+use App\Domains\Domo\Models\Devices\Device;
+use App\Domains\Domo\Resolvers\Devices\GeneralDeviceResolver;
 use App\Models\DomoDevice;
 use Illuminate\Support\Collection;
 

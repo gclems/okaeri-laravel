@@ -1,77 +1,35 @@
 import { useEffect } from "react";
 
-import { useMap } from "react-leaflet";
-import { Card } from "shanty-ui";
-
 import {
-	EntityAssignmentRoles,
-	type EntityAssignmentRolesEnum,
-} from "@/types/models";
+	ArrowRight04Icon,
+	AutomotiveBattery02Icon,
+	ElectricPlugsIcon,
+	Login02Icon,
+	Plug01Icon,
+	RoadIcon,
+	UnplugIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { Card, cn } from "shanty-ui";
 
+import { RollingNumber } from "@/components/rolling-number";
+import { useDomoStore } from "@/features/domo/domo-store";
+import type { Car } from "@/types/projections";
 import "leaflet/dist/leaflet.css";
 
-const carRoles: EntityAssignmentRolesEnum[] = [
-	EntityAssignmentRoles.RenaultAutonomy,
-	EntityAssignmentRoles.RenaultBattery,
-	EntityAssignmentRoles.RenaultChargeLevelTarget,
-	EntityAssignmentRoles.RenaultChargingState,
-	EntityAssignmentRoles.RenaultGpsTracker,
-	EntityAssignmentRoles.RenaultPlugState,
-	EntityAssignmentRoles.RenaultTotalDistance,
-	EntityAssignmentRoles.RenaultRemainingChargingTime,
-];
+import { getBatteryLevelColor } from "@/features/renault/battery";
+import { getChargingTime } from "@/features/renault/charing-time";
 
 function CarCard() {
-	// const assignments = Array.from(
-	// 	useDomoStore((state) => state.assignmentsMap).values(),
-	// );
-	// const entities = Array.from(
-	// 	useDomoStore((state) => state.entitiesMap).values(),
-	// );
-	// const states = Array.from(useDomoStore((state) => state.statesMap).values());
+	const carsMap = useDomoStore((state) => state.carsMap);
 
-	// const carAssignments = useMemo(() => {
-	// 	const ass = {} as Record<
-	// 		EntityAssignmentRoles,
-	// 		{
-	// 			assignment: DomoEntityAssignment;
-	// 			state: DomoEntityState;
-	// 		}
-	// 	>;
+	const cars = Array.from(carsMap.values());
+	return cars.map((car) => <CarItem key={car.id} car={car} />);
+}
 
-	// 	assignments.forEach((assignment) => {
-	// 		if (!carRoles.includes(assignment.role)) return;
-
-	// 		const entity = entities.find((e) => e.id === assignment.domo_entity_id);
-	// 		if (!entity) return;
-
-	// 		const state = states.find((s) => s.ha_entity_id === entity.ha_id);
-	// 		if (!state) return;
-
-	// 		ass[assignment.role as EntityAssignmentRoles] = {
-	// 			assignment,
-	// 			state,
-	// 		};
-	// 	});
-	// 	return ass;
-	// }, [assignments, entities, states]);
-
-	// if (Object.keys(carAssignments).length === 0) {
-	// 	return null;
-	// }
-
-	// const battery = carAssignments[EntityAssignmentRoles.RenaultBattery];
-	// const autonomy = carAssignments[EntityAssignmentRoles.RenaultAutonomy];
-	// const distance = carAssignments[EntityAssignmentRoles.RenaultTotalDistance];
-	// const chargeLevelTarget =
-	// 	carAssignments[EntityAssignmentRoles.RenaultChargeLevelTarget];
-	// const chargingState =
-	// 	carAssignments[EntityAssignmentRoles.RenaultChargingState];
-	// const remainingChargingTime =
-	// 	carAssignments[EntityAssignmentRoles.RenaultRemainingChargingTime];
-	// const gpsTracker = carAssignments[EntityAssignmentRoles.RenaultGpsTracker];
-	// const plugState = carAssignments[EntityAssignmentRoles.RenaultPlugState];
-
+function CarItem({ car }: { car: Car }) {
+	console.log(car);
 	return (
 		<Card className="@container bg-linear-to-br from-car/15 to-transparent">
 			<Card.Header
@@ -81,112 +39,66 @@ function CarCard() {
 							<img src="/renault_4_small.png" alt="Renault 4" className="w-10" />{" "}
 							Renault 4
 						</div>
-						{/* {distance && (
+						{car.mileage && (
 							<span className="text-metric font-thin text-base">
-								<RollingNumber number={+(distance.state.value ?? 0)} />
-								{autonomy.state.attributes.unit_of_measurement as string}
+								<RollingNumber
+									number={+(car.mileage.value ?? 0)}
+									formatter={(n) => new Intl.NumberFormat("fr-FR").format(n)}
+								/>
+								{car.mileage.unit}
 							</span>
-						)} */}
+						)}
 					</div>
 				}
 			></Card.Header>
 
-			<Card.Body className=" space-y-2">
-				{/* <div className="grid @xs:grid-cols-2 gap-1">
-					{(battery || autonomy) && (
-						<div className="flex items-center gap-x-2">
-							<HugeiconsIcon icon={AutomotiveBattery02Icon} />
-							<div className="flex items-center gap-1">
-								{battery && (
-									<span
-										className={cn(
-											"font-semibold text-lg",
-											getBatteryLevelColor(+(battery.state.value ?? 0)),
+			<Card.Body className=" space-y-2  text-metric">
+				<div className="grid @xs:grid-cols-2 gap-1">
+					{(car.battery || car.autonomy) && (
+						<div className="flex items-center justify-between">
+							{car.battery && (
+								<div className="flex gap-x-2">
+									<HugeiconsIcon icon={AutomotiveBattery02Icon} />
+									<div className="flex items-center gap-x-2">
+										{car.battery && (
+											<span
+												className={cn(
+													"font-semibold text-lg",
+													getBatteryLevelColor(+(car.battery.value ?? 0)),
+												)}
+											>
+												<RollingNumber number={+(car.battery.value ?? 0)} />
+												<span>{car.battery.unit ?? ""}</span>
+											</span>
 										)}
-									>
-										<RollingNumber number={+(battery.state.value ?? 0)} />
-										<span>
-											{(battery.state.attributes.unit_of_measurement as string) ?? ""}
-										</span>
-									</span>
-								)}
-								{battery && autonomy && (
-									<HugeiconsIcon icon={ArrowRight04Icon} size="1.25rem" />
-								)}
-								{autonomy && (
-									<span className="text-sm">
-										<RollingNumber number={+(autonomy.state.value ?? 0)} />
-										<span>
-											{(autonomy.state.attributes.unit_of_measurement as string) ?? ""}
-										</span>
-									</span>
-								)}
-							</div>
-						</div>
-					)}
-					{(plugState || chargingState) && (
-						<div className="flex items-center gap-x-2">
-							{(() => {
-								switch (plugState?.state.value) {
-									case "plugged":
-										return <HugeiconsIcon icon={ElectricPlugsIcon} />;
-									case "unplugged":
-										return <HugeiconsIcon icon={PlugSocketIcon} />;
-									default:
-										return <HugeiconsIcon icon={CableIcon} />;
-								}
-							})()}
-							<div>
-								<div className="flex flex-col">
-									{plugState && (
-										<div className="text-xs">
-											{getPlugStateLabel(plugState?.state.value ?? "")}
-										</div>
-									)}
-									{chargingState && (
-										<>
-											{chargingState.state.value !== "charge_in_progress" && (
-												<div className="text-xs">
-													<span>
-														{getChargingStateLabel(chargingState.state.value ?? "")}
-													</span>
-												</div>
-											)}
-											{chargingState.state.value === "charge_in_progress" && (
-												<div className="text-xs flex gap-x-1 items-center">
-													<span>{`${chargeLevelTarget?.state.value ?? "?"}%`}</span>
-													<HugeiconsIcon icon={ArrowRight04Icon} size="1.25rem" />
-													<span>
-														{(() => {
-															if (!remainingChargingTime) return "???";
-
-															const chargingTime = getChargingTime(
-																+(remainingChargingTime.state.value ?? 0),
-															);
-
-															return (
-																<span className="font-semibold">
-																	<RollingNumber number={chargingTime.hours} />h
-																	<RollingNumber number={chargingTime.minutes} />m
-																</span>
-															);
-														})()}
-													</span>
-												</div>
-											)}
-										</>
-									)}
+									</div>
 								</div>
-							</div>
+							)}
+							{car.autonomy && (
+								<div className="flex gap-x-2">
+									<HugeiconsIcon icon={RoadIcon} size="1.25rem" />
+									<span className="text-sm text-metric">
+										<RollingNumber number={+(car.autonomy.value ?? 0)} />
+										<span>{car.autonomy.unit ?? ""}</span>
+									</span>
+								</div>
+							)}
 						</div>
 					)}
+
+					<PlugAndChargeStatus car={car} />
 				</div>
-				{gpsTracker && (
-					<div className="col-span-2 aspect-video">
+				{car.energyFlapOpened && !car.isPlugged && (
+					<div className="flex gap-x-2 text-destructive">
+						<HugeiconsIcon icon={Login02Icon} size="1.25rem" /> Trappe ouverte
+					</div>
+				)}
+				{car.coordinates && (
+					<div className="col-span-2 w-full aspect-video">
 						<MapContainer
 							center={[
-								+(gpsTracker.state.attributes.latitude ?? 0),
-								+(gpsTracker.state.attributes.longitude ?? 0),
+								+(car.coordinates.latitude ?? 0),
+								+(car.coordinates.longitude ?? 0),
 							]}
 							zoom={16}
 							scrollWheelZoom={false}
@@ -200,20 +112,68 @@ function CarCard() {
 								url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 							/>
 							<RecenterMap
-								latitude={+(gpsTracker.state.attributes.latitude ?? 0)}
-								longitude={+(gpsTracker.state.attributes.longitude ?? 0)}
+								latitude={+(car.coordinates.latitude ?? 0)}
+								longitude={+(car.coordinates.longitude ?? 0)}
 							/>
 							<Marker
 								position={[
-									+(gpsTracker.state.attributes.latitude ?? 0),
-									+(gpsTracker.state.attributes.longitude ?? 0),
+									+(car.coordinates.latitude ?? 0),
+									+(car.coordinates.longitude ?? 0),
 								]}
 							/>
 						</MapContainer>
 					</div>
-				)} */}
+				)}
 			</Card.Body>
 		</Card>
+	);
+}
+
+function PlugAndChargeStatus({ car }: { car: Car }) {
+	const isPlugged = car.isPlugged.value;
+	const isCharging = car.isCharging.value;
+	const chargingTime = getChargingTime(car.remainingChargingMinutes?.value ?? 0);
+
+	return (
+		<>
+			<div className="flex items-center justify-between">
+				<div className="flex items-center gap-x-1">
+					<HugeiconsIcon
+						icon={
+							isPlugged ? (isCharging ? ElectricPlugsIcon : Plug01Icon) : UnplugIcon
+						}
+					/>
+					<span className="text-sm">
+						{isCharging ? "Charge en cours" : isPlugged ? "Branchée" : "Débranchée"}
+					</span>
+				</div>
+
+				{isCharging && (
+					<div className="flex items-center gap-x-1">
+						<span>
+							{!chargingTime && "???"}
+							{!!chargingTime && (
+								<span className="font-semibold text-metric">
+									<RollingNumber number={chargingTime.hours} />h
+									<RollingNumber
+										number={chargingTime.minutes}
+										formatter={(num) => num.toString().padStart(2, "0")}
+									/>
+								</span>
+							)}
+						</span>
+					</div>
+				)}
+			</div>
+			<div className="flex items-center gap-x-1">
+				{isCharging && (
+					<>
+						<HugeiconsIcon icon={ArrowRight04Icon} size="1.25rem" />
+						<span className="text-sm text-metric">{`${car.targetChargeLevel?.value ?? "?"}%`}</span>
+					</>
+				)}
+			</div>
+		</>
 	);
 }
 

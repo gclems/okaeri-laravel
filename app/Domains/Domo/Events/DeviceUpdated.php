@@ -2,7 +2,7 @@
 
 namespace App\Domains\Domo\Events;
 
-use App\Domains\Domo\Models\Device;
+use App\Domains\Domo\Models\Devices\Device;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;

@@ -8,7 +8,8 @@ function AirConditioningCard() {
 			<Card.Header
 				title={
 					<div className="flex items-center gap-x-2">
-						<HugeiconsIcon icon={SmartAcIcon} /> Climatisation
+						<HugeiconsIcon icon={SmartAcIcon} className="text-temperature-low" />{" "}
+						Climatisation
 					</div>
 				}
 			/>

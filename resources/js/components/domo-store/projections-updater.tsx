@@ -5,11 +5,20 @@ import { useEchoPublic } from "@laravel/echo-react";
 
 import DomoController from "@/actions/App/Http/Controllers/DomoController";
 import { UpdateMode, useDomoStore } from "@/features/domo/domo-store";
-import type { ClimateSensor, LightBulb, Renault4 } from "@/types/projections";
+import type {
+	Car,
+	ClimateSensor,
+	LightBulb,
+	SwitchDevice,
+	WeatherForecast,
+} from "@/types/projections";
 
 type ProjectionsApiResponse = {
 	lights: LightBulb[];
 	climateSensors: ClimateSensor[];
+	cars: Car[];
+	switches: SwitchDevice[];
+	weatherForecasts: WeatherForecast[];
 };
 
 // spatie/typescript-transformer flattens each Device subclass independently,
@@ -18,25 +27,43 @@ type ProjectionsApiResponse = {
 type AnyDevice =
 	| (Omit<LightBulb, "type"> & { type: "light_bulb" })
 	| (Omit<ClimateSensor, "type"> & { type: "climate_sensor" })
-	| (Omit<Renault4, "type"> & { type: "renault4" });
+	| (Omit<Car, "type"> & { type: "car" })
+	| (Omit<SwitchDevice, "type"> & { type: "switch" })
+	| (Omit<WeatherForecast, "type"> & { type: "weather_forecast" });
 
 function ProjectionsUpdater() {
 	const updateLights = useDomoStore((state) => state.updateLights);
 	const updateClimateSensors = useDomoStore(
 		(state) => state.updateClimateSensors,
 	);
+	const updateCars = useDomoStore((state) => state.updateCars);
+	const updateSwitches = useDomoStore((state) => state.updateSwitches);
+	const updateWeatherForecasts = useDomoStore(
+		(state) => state.updateWeatherForecasts,
+	);
 	const { get } = useHttp<ProjectionsApiResponse>();
 
 	const update = useCallback(() => {
 		get(DomoController.getProjections.url(), {
 			onSuccess: (projections) => {
-				const { lights, climateSensors } = projections as ProjectionsApiResponse;
+				const { lights, climateSensors, cars, switches, weatherForecasts } =
+					projections as ProjectionsApiResponse;
 
 				updateLights(lights, UpdateMode.Replace);
 				updateClimateSensors(climateSensors, UpdateMode.Replace);
+				updateCars(cars, UpdateMode.Replace);
+				updateSwitches(switches, UpdateMode.Replace);
+				updateWeatherForecasts(weatherForecasts, UpdateMode.Replace);
 			},
 		});
-	}, [get, updateLights, updateClimateSensors]);
+	}, [
+		get,
+		updateLights,
+		updateClimateSensors,
+		updateCars,
+		updateSwitches,
+		updateWeatherForecasts,
+	]);
 
 	useEchoPublic(
 		"domo",
@@ -49,7 +76,14 @@ function ProjectionsUpdater() {
 				case "climate_sensor":
 					updateClimateSensors([device], UpdateMode.Merge);
 					break;
-				case "renault4":
+				case "car":
+					updateCars([device], UpdateMode.Merge);
+					break;
+				case "switch":
+					updateSwitches([device], UpdateMode.Merge);
+					break;
+				case "weather_forecast":
+					updateWeatherForecasts([device], UpdateMode.Merge);
 					break;
 			}
 		},

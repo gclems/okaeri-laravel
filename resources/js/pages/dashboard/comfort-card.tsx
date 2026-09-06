@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
-import { DropletIcon, HouseHeartIcon } from "@hugeicons/core-free-icons";
+import { HouseHeartIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@iconify/react";
 import { Card, cn } from "shanty-ui";
 
 import { RollingNumber } from "@/components/rolling-number";
@@ -17,7 +18,6 @@ type RoomViewModel = {
 function ComfortCard() {
 	const climateSensorsMap = useDomoStore((state) => state.climateSensorsMap);
 	const roomsMap = useDomoStore((state) => state.domoRoomsMap);
-	console.log(climateSensorsMap, roomsMap);
 	const viewModels: RoomViewModel[] = useMemo(() => {
 		return Array.from(roomsMap.values())
 			.map((room) => {
@@ -31,8 +31,6 @@ function ComfortCard() {
 			.filter((vm) => vm.sensors.length > 0)
 			.sort((a, b) => a.room.name.localeCompare(b.room.name));
 	}, [climateSensorsMap, roomsMap]);
-
-	console.log(viewModels);
 
 	return (
 		<Card className="bg-linear-to-bl to-comfort/20 from-transparent">
@@ -58,53 +56,51 @@ function ComfortCard() {
 
 function RoomItem({ vm }: { vm: RoomViewModel }) {
 	return (
-		<li>
-			<div className="flex items-center gap-x-4">
-				<div className="flex-1 truncate">{vm.room.name}</div>
-				<div>
-					{vm.sensors.map((sensor) => (
-						<div key={sensor.id} className="flex gap-x-2">
-							{sensor.thermometer && (
-								<div className="flex items-baseline gap-x-1">
-									<span
-										className={cn("text-metric text-lg", {
-											"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
-											"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
-										})}
-									>
-										<RollingNumber
-											number={+(sensor.thermometer.value ?? 0)}
-											formatter={(value) => value.toFixed(1).toString()}
-										/>
-									</span>
-									<span className="text-muted text-xs">
-										{sensor.thermometer.unit as string}
-									</span>
-								</div>
-							)}
-							{sensor.hygrometer && (
-								<div className="flex items-center gap-x-1 text-sm">
-									<HugeiconsIcon
-										icon={DropletIcon}
-										size="0.75rem"
-										className="fill-humidity text-white"
+		<div className="flex items-center gap-x-4">
+			<div className="flex-1 truncate">{vm.room.name}</div>
+			<div>
+				{vm.sensors.map((sensor) => (
+					<div key={sensor.id} className="flex gap-x-2">
+						{sensor.thermometer && (
+							<div className="flex items-baseline gap-x-1">
+								{+(sensor.thermometer.value ?? 0) > 25 && (
+									<Icon
+										icon="meteocons:thermometer-warmer-fill"
+										width="1rem"
+										height="1rem"
 									/>
-									<span className="text-metric">
-										<RollingNumber
-											number={+(sensor.hygrometer.value ?? 0)}
-											formatter={(value) => value.toFixed(1).toString()}
-										/>
-									</span>
-									<span className="text-muted text-xs">
-										{sensor.hygrometer.unit as string}
-									</span>
-								</div>
-							)}
-						</div>
-					))}
-				</div>
+								)}
+								<span
+									className={cn("text-metric text-lg", {
+										"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
+										"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
+									})}
+								>
+									<RollingNumber
+										number={+(sensor.thermometer.value ?? 0)}
+										formatter={(value) => value.toFixed(1).toString()}
+									/>
+								</span>
+								<span className="text-muted text-xs">
+									{sensor.thermometer.unit as string}
+								</span>
+							</div>
+						)}
+						{sensor.hygrometer && (
+							<div className="flex items-center text-sm">
+								<Icon icon="meteocons:humidity-fill" height="2rem" className="-mr-2" />
+								<span className="text-metric">
+									<RollingNumber
+										number={+(sensor.hygrometer.value ?? 0)}
+										formatter={(value) => value.toFixed(1).toString()}
+									/>
+								</span>
+							</div>
+						)}
+					</div>
+				))}
 			</div>
-		</li>
+		</div>
 	);
 }
 

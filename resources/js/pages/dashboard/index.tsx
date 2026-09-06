@@ -17,7 +17,7 @@ export default function Welcome() {
 
 			<div className="@container mt-6">
 				<div className="flex gap-4 flex-col @xl:flex-row">
-					<div className="flex-1 grid grid-cols-3 gap-4">
+					<div className="flex-1 grid grid-cols-3 gap-4 content-start">
 						<div className="col-span-3">
 							<WeatherCard />
 						</div>
@@ -30,13 +30,12 @@ export default function Welcome() {
 
 						<CarCard />
 
-						<BatteriesCard />
-
 						<NetworkCard />
 					</div>
 					<div className="@xl:w-72 space-y-4">
 						<DoorCard />
 						<ComfortCard />
+						<BatteriesCard />
 					</div>
 				</div>
 			</div>

@@ -71,7 +71,7 @@ function LightingCard() {
 			<Card.Header
 				title={
 					<div className="flex gap-x-2 items-center">
-						<HugeiconsIcon icon={Lightbulb} />
+						<HugeiconsIcon icon={Lightbulb} className="text-lighting" />
 						Éclairage
 					</div>
 				}
@@ -134,7 +134,7 @@ function ViewModelItem({
 								}}
 							/>
 							<div
-								className={cn("text-xs", {
+								className={cn("text-xs text-metric", {
 									"opacity-30": !bulb.light.isOn,
 								})}
 							>

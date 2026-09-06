@@ -8,7 +8,13 @@ import type {
 	DomoRoom,
 	SunPhase,
 } from "@/types/models";
-import type { ClimateSensor, LightBulb } from "@/types/projections";
+import type {
+	Car,
+	ClimateSensor,
+	LightBulb,
+	SwitchDevice,
+	WeatherForecast,
+} from "@/types/projections";
 
 type Network = {
 	txRateBps: number;
@@ -27,6 +33,9 @@ type DomoStore = {
 	network: Network[];
 	lightsMap: Map<number, LightBulb>;
 	climateSensorsMap: Map<number, ClimateSensor>;
+	carsMap: Map<number, Car>;
+	switchesMap: Map<number, SwitchDevice>;
+	weatherForecastsMap: Map<number, WeatherForecast>;
 
 	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) => void;
 	updateDomoDevices: (devices: DomoDevice[], mode: UpdateMode) => void;
@@ -44,6 +53,12 @@ type DomoStore = {
 	updateLights: (lights: LightBulb[], mode: UpdateMode) => void;
 	updateClimateSensors: (
 		climateSensors: ClimateSensor[],
+		mode: UpdateMode,
+	) => void;
+	updateCars: (cars: Car[], mode: UpdateMode) => void;
+	updateSwitches: (switches: SwitchDevice[], mode: UpdateMode) => void;
+	updateWeatherForecasts: (
+		weatherForecasts: WeatherForecast[],
 		mode: UpdateMode,
 	) => void;
 };
@@ -79,6 +94,9 @@ const useDomoStore = create<DomoStore>((set) => ({
 	network: [],
 	lightsMap: new Map<number, LightBulb>(),
 	climateSensorsMap: new Map<number, ClimateSensor>(),
+	carsMap: new Map<number, Car>(),
+	switchesMap: new Map<number, SwitchDevice>(),
+	weatherForecastsMap: new Map<number, WeatherForecast>(),
 
 	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) =>
 		set(() => ({
@@ -228,6 +246,39 @@ const useDomoStore = create<DomoStore>((set) => ({
 				climateSensors,
 				mode,
 				(climateSensor) => climateSensor.id,
+			),
+		})),
+
+	updateCars: (cars: Car[], mode: UpdateMode) =>
+		set(() => ({
+			carsMap: updateMapFromArray(
+				useDomoStore.getState().carsMap,
+				cars,
+				mode,
+				(car) => car.id,
+			),
+		})),
+
+	updateSwitches: (switches: SwitchDevice[], mode: UpdateMode) =>
+		set(() => ({
+			switchesMap: updateMapFromArray(
+				useDomoStore.getState().switchesMap,
+				switches,
+				mode,
+				(switchDevice) => switchDevice.id,
+			),
+		})),
+
+	updateWeatherForecasts: (
+		weatherForecasts: WeatherForecast[],
+		mode: UpdateMode,
+	) =>
+		set(() => ({
+			weatherForecastsMap: updateMapFromArray(
+				useDomoStore.getState().weatherForecastsMap,
+				weatherForecasts,
+				mode,
+				(weatherForecast) => weatherForecast.id,
 			),
 		})),
 }));

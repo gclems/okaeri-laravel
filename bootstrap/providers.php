@@ -2,8 +2,11 @@
 
 use App\Providers\AppServiceProvider;
 use App\Providers\TypeScriptTransformerServiceProvider;
+use Spatie\LaravelTypeScriptTransformer\TypeScriptTransformerApplicationServiceProvider;
 
-return [
+return array_filter([
     AppServiceProvider::class,
-    TypeScriptTransformerServiceProvider::class,
-];
+    class_exists(TypeScriptTransformerApplicationServiceProvider::class)
+        ? TypeScriptTransformerServiceProvider::class
+        : null,
+]);

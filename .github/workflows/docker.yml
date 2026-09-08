@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-
   pull_request:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: gclems/okaeri
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   docker:
@@ -19,8 +18,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      attestations: write
-      id-token: write
 
     steps:
       - name: Checkout
@@ -50,21 +47,15 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push
-        id: push
         uses: docker/build-push-action@v7
         with:
           context: .
           file: ./Dockerfile
-
           platforms: linux/arm64
-
           push: ${{ github.event_name != 'pull_request' }}
-
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
           provenance: true
           sbom: true

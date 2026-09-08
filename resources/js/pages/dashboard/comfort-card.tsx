@@ -2,9 +2,11 @@ import { useMemo } from "react";
 
 import { HouseHeartIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Icon } from "@iconify/react";
+import Humidity from "@meteocons/svg/fill/humidity.svg";
+import ThermometerAlarm from "@meteocons/svg/fill/thermometer-alarm.svg";
 import { Card, cn } from "shanty-ui";
 
+import { Meteocon } from "@/components/meteocon";
 import { RollingNumber } from "@/components/rolling-number";
 import { useDomoStore } from "@/features/domo/domo-store";
 import type { DomoRoom } from "@/types/models";
@@ -42,7 +44,7 @@ function ComfortCard() {
 				}
 			></Card.Header>
 			<Card.Body>
-				<ul className="space-y-2">
+				<ul className="">
 					{viewModels.map((vm) => (
 						<li key={vm.room.id}>
 							<RoomItem vm={vm} />
@@ -62,16 +64,16 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 				{vm.sensors.map((sensor) => (
 					<div key={sensor.id} className="flex gap-x-2">
 						{sensor.thermometer && (
-							<div className="flex items-baseline gap-x-1">
-								{+(sensor.thermometer.value ?? 0) > 25 && (
-									<Icon
-										icon="meteocons:thermometer-warmer-fill"
-										width="1rem"
-										height="1rem"
+							<div className="flex items-center gap-x-1">
+								{+(sensor.thermometer.value ?? 0) >= 26 && (
+									<Meteocon
+										src={ThermometerAlarm}
+										alt="Thermometer Alarm"
+										className="size-10"
 									/>
 								)}
 								<span
-									className={cn("text-metric text-lg", {
+									className={cn("text-metric text-lg -ml-2", {
 										"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
 										"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
 									})}
@@ -88,7 +90,7 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 						)}
 						{sensor.hygrometer && (
 							<div className="flex items-center text-sm">
-								<Icon icon="meteocons:humidity-fill" height="2rem" className="-mr-2" />
+								<Meteocon src={Humidity} alt="Humidity" className="size-8 -mr-2" />
 								<span className="text-metric">
 									<RollingNumber
 										number={+(sensor.hygrometer.value ?? 0)}

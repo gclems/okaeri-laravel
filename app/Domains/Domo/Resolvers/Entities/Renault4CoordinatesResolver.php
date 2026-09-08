@@ -22,8 +22,8 @@ final class Renault4CoordinatesResolver extends SlugSuffixEntityResolver
     {
         return new Coordinates(
             id: $entity->id,
-            latitude: $entity->state->attributes['latitude'],
-            longitude: $entity->state->attributes['longitude'],
+            latitude: $entity->state->attributes['latitude'] ?? 0,
+            longitude: $entity->state->attributes['longitude'] ?? 0,
         );
     }
 }

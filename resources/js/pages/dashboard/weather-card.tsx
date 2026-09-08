@@ -1,8 +1,27 @@
 import { useMemo } from "react";
 
-import { Icon } from "@iconify/react";
+import Barometer from "@meteocons/svg/fill/barometer.svg";
+import ClearDay from "@meteocons/svg/fill/clear-day.svg";
+import DustDay from "@meteocons/svg/fill/dust-day.svg";
+import Humidity from "@meteocons/svg/fill/humidity.svg";
+import Sunrise from "@meteocons/svg/fill/sunrise.svg";
+import Sunset from "@meteocons/svg/fill/sunset.svg";
+import Umbrella from "@meteocons/svg/fill/umbrella.svg";
+import UvIndex1 from "@meteocons/svg/fill/uv-index-1.svg";
+import UvIndex2 from "@meteocons/svg/fill/uv-index-2.svg";
+import UvIndex3 from "@meteocons/svg/fill/uv-index-3.svg";
+import UvIndex4 from "@meteocons/svg/fill/uv-index-4.svg";
+import UvIndex5 from "@meteocons/svg/fill/uv-index-5.svg";
+import UvIndex6 from "@meteocons/svg/fill/uv-index-6.svg";
+import UvIndex7 from "@meteocons/svg/fill/uv-index-7.svg";
+import UvIndex8 from "@meteocons/svg/fill/uv-index-8.svg";
+import UvIndex9 from "@meteocons/svg/fill/uv-index-9.svg";
+import UvIndex10 from "@meteocons/svg/fill/uv-index-10.svg";
+import UvIndex11 from "@meteocons/svg/fill/uv-index-11.svg";
+import Wind from "@meteocons/svg/fill/wind.svg";
 import { Card, cn } from "shanty-ui";
 
+import { Meteocon } from "@/components/meteocon";
 import { useClock } from "@/features/clock/use-clock";
 import { useToday } from "@/features/clock/use-today";
 import { useDomoStore } from "@/features/domo/domo-store";
@@ -10,6 +29,20 @@ import {
 	getWeatherConditionIcon,
 	getWeatherConditionLabel,
 } from "@/features/weather/weather-condition";
+
+const UV_INDEX_ICONS = [
+	UvIndex1,
+	UvIndex2,
+	UvIndex3,
+	UvIndex4,
+	UvIndex5,
+	UvIndex6,
+	UvIndex7,
+	UvIndex8,
+	UvIndex9,
+	UvIndex10,
+	UvIndex11,
+];
 
 function WeatherCard() {
 	const today = useToday();
@@ -28,7 +61,7 @@ function WeatherCard() {
 				title={
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-x-2 flex-1 truncate">
-							<Icon icon="meteocons:dust-day" className="size-8" /> Météo
+							<Meteocon src={DustDay} alt="Météo" className="size-8" /> Météo
 						</div>
 						<div className="text-xs text-muted relative">
 							{today.toLocaleDateString([], {
@@ -49,8 +82,11 @@ function WeatherCard() {
 						{weatherForecast ? (
 							<div className="flex flex-col @lg:flex-row items-center gap-x-4">
 								<div className="flex items-center gap-x-1 justify-center">
-									<Icon
-										icon={getWeatherConditionIcon(
+									<Meteocon
+										src={getWeatherConditionIcon(
+											weatherForecast.condition?.condition ?? null,
+										)}
+										alt={getWeatherConditionLabel(
 											weatherForecast.condition?.condition ?? null,
 										)}
 										className="size-24"
@@ -69,38 +105,31 @@ function WeatherCard() {
 								</div>
 								<div className="grid @lg:grid-cols-2 grid-cols-3 gap-x-4 gap-y-1 text-sm text-muted text-metric w-full">
 									<div className="flex items-center gap-x-1 justify-center">
-										<Icon icon="meteocons:humidity-fill" className="size-8" />
+										<Meteocon src={Humidity} alt="Humidité" className="size-8" />
 										{weatherForecast.humidity?.value?.toFixed(0) ?? "–"}%
 									</div>
 									<div className="flex items-center gap-x-1 justify-center">
-										<Icon icon="meteocons:wind-fill" className="size-8" />
+										<Meteocon src={Wind} alt="Vent" className="size-8" />
 										{weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
 										<span className="text-xs">{weatherForecast.windSpeed?.unit}</span>
 									</div>
 									<div className="flex items-center gap-x-1 justify-center">
-										<Icon icon="meteocons:umbrella-fill" className="size-8" />
+										<Meteocon src={Umbrella} alt="Pluie" className="size-8" />
 										{weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}%
 									</div>
 									<div className="flex items-center gap-x-1 justify-center">
-										<Icon
-											icon={getUvIndexIcon(weatherForecast.uvIndex?.value)}
+										<Meteocon
+											src={getUvIndexIcon(weatherForecast.uvIndex?.value)}
+											alt="Indice UV"
 											className="size-8"
 										/>
 										UV{weatherForecast.uvIndex?.value ?? "–"}
 									</div>
 									<div className="flex items-center gap-x-1 justify-center">
-										<Icon icon="meteocons:barometer-fill" className="size-8" />
+										<Meteocon src={Barometer} alt="Pression" className="size-8" />
 										{weatherForecast.pressure?.value?.toFixed(0) ?? "–"}
 										<span className="text-xs">{weatherForecast.pressure?.unit}</span>
 									</div>
-									{/* <div className="flex items-center gap-x-1 justify-center">
-										<Icon icon="meteocons:snowflake-fill" className="size-8" />
-										{weatherForecast.snowChance?.value?.toFixed(0) ?? "–"}%
-									</div>
-									<div className="flex items-center gap-x-1 justify-center">
-										<Icon icon="meteocons:thermometer-colder-fill" className="size-8" />
-										{weatherForecast.freezeChance?.value?.toFixed(0) ?? "–"}%
-									</div> */}
 								</div>
 							</div>
 						) : (
@@ -109,18 +138,9 @@ function WeatherCard() {
 					</div>
 					{!!sunPhase && (
 						<div className="grid grid-cols-3 @xl:grid-cols-1 gap-4">
-							<PhaseBlock
-								icon="meteocons:sunrise-fill"
-								time={new Date(sunPhase.sunrise_starts_at)}
-							/>
-							<PhaseBlock
-								icon="meteocons:clear-day-fill"
-								time={new Date(sunPhase.solar_noon_at)}
-							/>
-							<PhaseBlock
-								icon="meteocons:sunset-fill"
-								time={new Date(sunPhase.sunset_starts_at)}
-							/>
+							<PhaseBlock icon={Sunrise} time={new Date(sunPhase.sunrise_starts_at)} />
+							<PhaseBlock icon={ClearDay} time={new Date(sunPhase.solar_noon_at)} />
+							<PhaseBlock icon={Sunset} time={new Date(sunPhase.sunset_starts_at)} />
 						</div>
 					)}
 				</div>
@@ -130,10 +150,10 @@ function WeatherCard() {
 }
 
 function getUvIndexIcon(value: number | null | undefined): string {
-	if (value === null || value === undefined) return "meteocons:uv-index-fill";
+	if (value === null || value === undefined) return UvIndex1;
 
 	const level = Math.min(11, Math.max(1, Math.round(value)));
-	return `meteocons:uv-index-${level}-fill`;
+	return UV_INDEX_ICONS[level - 1];
 }
 
 function DayProgress() {
@@ -183,7 +203,7 @@ function PhaseBlock({ icon, time }: { icon: string; time: Date }) {
 				"text-muted": isPast,
 			})}
 		>
-			<Icon icon={icon} width="1.5rem" height="1.5rem" />
+			<Meteocon src={icon} alt="" className="size-6" />
 			<div className="text-metric text-sm">
 				{time.toLocaleTimeString([], {
 					hour: "2-digit",

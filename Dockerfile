@@ -4,19 +4,9 @@
 # Base PHP / FrankenPHP
 # ============================================================
 
-FROM dunglas/frankenphp:php8.5-bookworm AS base
+FROM ghcr.io/gclems/okaeri-laravel-base:php8.5 AS base
 
 WORKDIR /app
-
-RUN install-php-extensions \
-    intl \
-    mbstring \
-    pcntl \
-    pdo_sqlite \
-    zip \
-    opcache
-
-RUN cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 
 
 # ============================================================

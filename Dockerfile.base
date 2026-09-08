@@ -1,0 +1,23 @@
+# syntax=docker/dockerfile:1
+
+FROM dunglas/frankenphp:php8.5-bookworm
+
+WORKDIR /app
+
+# Outils utiles au diagnostic et aux healthchecks
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        curl \
+        procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Extensions PHP nécessaires à Okaeri
+RUN install-php-extensions \
+    intl \
+    mbstring \
+    pcntl \
+    pdo_sqlite \
+    zip \
+    opcache
+
+RUN cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini

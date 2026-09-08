@@ -151,3 +151,114 @@ jobs:
           cache-to: type=gha,mode=max,scope=okaeri
           provenance: true
           sbom: true
+
+  # ==========================================================
+  # Deploy to home server
+  # ==========================================================
+
+  deploy:
+    name: Deploy to homeserver
+    needs:
+      - build-okaeri
+
+    if: github.event_name == 'push'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          audience: ${{ secrets.TS_AUDIENCE }}
+          tags: tag:ci
+          ping: homeserver
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' '${{ secrets.SSH_PRIVATE_KEY }}' > ~/.ssh/okaeri-deploy
+          chmod 600 ~/.ssh/okaeri-deploy
+
+          ssh-keyscan -H homeserver >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        env:
+          OKAERI_IMAGE: ghcr.io/gclems/okaeri-laravel:${{ github.sha }}
+        run: |
+          ssh -i ~/.ssh/okaeri-deploy homeserver \
+            "OKAERI_IMAGE='${OKAERI_IMAGE}' docker compose \
+              -f ~/Projects/homeserver/compose.yaml \
+              pull okaeri reverb scheduler ha-listener unify-listener"
+
+          ssh -i ~/.ssh/okaeri-deploy homeserver \
+            "OKAERI_IMAGE='${OKAERI_IMAGE}' docker compose \
+              -f ~/Projects/homeserver/compose.yaml \
+              stop okaeri reverb scheduler ha-listener unify-listener"
+
+          ssh -i ~/.ssh/okaeri-deploy homeserver \
+            "OKAERI_IMAGE='${OKAERI_IMAGE}' docker compose \
+              -f ~/Projects/homeserver/compose.yaml \
+              run --rm --no-deps okaeri php artisan migrate --force"
+
+          ssh -i ~/.ssh/okaeri-deploy homeserver \
+            "OKAERI_IMAGE='${OKAERI_IMAGE}' docker compose \
+              -f ~/Projects/homeserver/compose.yaml \
+              up -d okaeri reverb scheduler ha-listener unify-listener"
+
+      - name: Wait for services
+        run: |
+          ssh -i ~/.ssh/okaeri-deploy homeserver '
+            set -e
+
+            services=(
+              okaeri
+              okaeri-reverb
+              okaeri-scheduler
+              okaeri-ha-listener
+              okaeri-unify-listener
+            )
+
+            for i in {1..30}; do
+              all_healthy=true
+
+              for service in "${services[@]}"; do
+                status=$(docker inspect \
+                  --format "{{if .State.Health}}{{.State.Health.Status}}{{else}}no-healthcheck{{end}}" \
+                  "$service" 2>/dev/null || echo "missing")
+
+                echo "$service: $status"
+
+                if [ "$status" != "healthy" ]; then
+                  all_healthy=false
+                fi
+              done
+
+              if [ "$all_healthy" = true ]; then
+                echo "All Okaeri services are healthy."
+                exit 0
+              fi
+
+              echo "Waiting for services..."
+              sleep 5
+            done
+
+            echo "Deployment failed: services did not become healthy."
+            docker compose \
+              -f ~/Projects/homeserver/compose.yaml \
+              ps
+
+            docker compose \
+              -f ~/Projects/homeserver/compose.yaml \
+              logs --tail=100 \
+              okaeri reverb scheduler ha-listener unify-listener
+
+            exit 1
+          '

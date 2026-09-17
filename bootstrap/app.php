@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Tailscale terminates TLS and forwards to the app over plain HTTP,
+        // so without this Laravel generates http:// asset/route URLs on a
+        // page served over https:// (browsers block them as mixed content).
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,

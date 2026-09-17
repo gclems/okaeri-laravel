@@ -194,29 +194,29 @@ jobs:
         env:
           OKAERI_IMAGE: ghcr.io/gclems/okaeri-laravel:${{ github.sha }}
         run: |
-          ssh -i ~/.ssh/okaeri-deploy homeserver \
+          ssh -i ~/.ssh/okaeri-deploy gclems@homeserver \
             "OKAERI_IMAGE='${OKAERI_IMAGE}' docker compose \
               -f ~/Projects/homeserver/compose.yaml \
               pull okaeri reverb scheduler ha-listener unify-listener"
 
-          ssh -i ~/.ssh/okaeri-deploy homeserver \
+          ssh -i ~/.ssh/okaeri-deploy gclems@homeserver \
             "OKAERI_IMAGE='${OKAERI_IMAGE}' docker compose \
               -f ~/Projects/homeserver/compose.yaml \
               stop okaeri reverb scheduler ha-listener unify-listener"
 
-          ssh -i ~/.ssh/okaeri-deploy homeserver \
+          ssh -i ~/.ssh/okaeri-deploy gclems@homeserver \
             "OKAERI_IMAGE='${OKAERI_IMAGE}' docker compose \
               -f ~/Projects/homeserver/compose.yaml \
               run --rm --no-deps okaeri php artisan migrate --force"
 
-          ssh -i ~/.ssh/okaeri-deploy homeserver \
+          ssh -i ~/.ssh/okaeri-deploy gclems@homeserver \
             "OKAERI_IMAGE='${OKAERI_IMAGE}' docker compose \
               -f ~/Projects/homeserver/compose.yaml \
               up -d okaeri reverb scheduler ha-listener unify-listener"
 
       - name: Wait for services
         run: |
-          ssh -i ~/.ssh/okaeri-deploy homeserver '
+          ssh -i ~/.ssh/okaeri-deploy gclems@homeserver '
             set -e
 
             services=(

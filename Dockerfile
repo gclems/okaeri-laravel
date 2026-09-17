@@ -33,6 +33,18 @@ RUN composer install \
 
 FROM vendor-dev AS frontend
 
+# Vite bakes VITE_* values into the compiled JS at build time, not at
+# container runtime — so they can't come from the server's .env file.
+ARG VITE_REVERB_APP_KEY
+ARG VITE_REVERB_HOST
+ARG VITE_REVERB_PORT
+ARG VITE_REVERB_SCHEME
+
+ENV VITE_REVERB_APP_KEY=${VITE_REVERB_APP_KEY} \
+    VITE_REVERB_HOST=${VITE_REVERB_HOST} \
+    VITE_REVERB_PORT=${VITE_REVERB_PORT} \
+    VITE_REVERB_SCHEME=${VITE_REVERB_SCHEME}
+
 # Node 26 uniquement pour le build
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

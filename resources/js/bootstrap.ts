@@ -12,7 +12,8 @@ if (typeof window !== "undefined") {
 		wsHost: import.meta.env.VITE_REVERB_HOST,
 		wsPort: Number(import.meta.env.VITE_REVERB_PORT),
 
-		forceTLS: false,
-		enabledTransports: ["ws"],
+		forceTLS: import.meta.env.VITE_REVERB_SCHEME === "https",
+		enabledTransports:
+			import.meta.env.VITE_REVERB_SCHEME === "https" ? ["wss"] : ["ws"],
 	});
 }

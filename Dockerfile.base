@@ -13,6 +13,7 @@ RUN apt-get update \
 
 # Extensions PHP nécessaires à Okaeri
 RUN install-php-extensions \
+    gd \
     intl \
     mbstring \
     pcntl \

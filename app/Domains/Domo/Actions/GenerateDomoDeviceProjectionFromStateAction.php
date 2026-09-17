@@ -12,9 +12,13 @@ final class GenerateDomoDeviceProjectionFromStateAction
 
     public function execute(DomoEntityState $state): void
     {
-        $device = $state->entity->device;
+        $entity = $state->entity;
 
-        $projectedDevice = $this->generalResolver->resolve($device);
+        if ($entity === null) {
+            return;
+        }
+
+        $projectedDevice = $this->generalResolver->resolve($entity->device);
 
         DeviceUpdated::dispatch($projectedDevice);
     }

@@ -29,7 +29,7 @@ final class HAWSClient
 
     private function baseUrl(): string
     {
-        return 'wss://'.config('homeassistant.url').'/api/websocket';
+        return config('homeassistant.scheme').'://'.config('homeassistant.url').'/api/websocket';
     }
 
     public function start(?Cancellation $cancellation = null): void

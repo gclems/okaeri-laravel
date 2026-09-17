@@ -160,6 +160,9 @@ jobs:
     name: Deploy to homeserver
     needs:
       - build-okaeri
+    if: |
+      always() &&
+      needs.build-okaeri.result == 'success'
 
     runs-on: ubuntu-latest
 

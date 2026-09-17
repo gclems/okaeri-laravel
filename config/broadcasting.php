@@ -37,12 +37,17 @@ return [
             'app_id' => env('REVERB_APP_ID'),
             'options' => [
                 // Server-to-server calls (this app pushing a broadcast to Reverb)
-                // happen from inside the ha-listener container, where "localhost"
-                // resolves to that container itself, not the reverb container.
-                // REVERB_SERVER_HOST is the Docker Compose service name so this
-                // resolves over the internal network; REVERB_HOST stays the
-                // externally-reachable host the browser/Echo connects to.
-                'host' => env('REVERB_SERVER_HOST', env('REVERB_HOST')),
+                // happen from inside the ha-listener/unify-listener containers,
+                // where "localhost" resolves to that container itself, not the
+                // reverb container. REVERB_INTERNAL_HOST is the Docker Compose
+                // service name so this resolves over the internal network;
+                // REVERB_HOST stays the externally-reachable host the
+                // browser/Echo connects to. This is intentionally distinct from
+                // REVERB_SERVER_HOST, which config/reverb.php uses as the bind
+                // address for the Reverb server itself (0.0.0.0) — reusing that
+                // variable here would make the Reverb server try to bind to the
+                // service hostname instead of listening on all interfaces.
+                'host' => env('REVERB_INTERNAL_HOST', env('REVERB_HOST')),
                 'port' => env('REVERB_PORT', 443),
                 'scheme' => env('REVERB_SCHEME', 'https'),
                 'useTLS' => env('REVERB_SCHEME', 'https') === 'https',

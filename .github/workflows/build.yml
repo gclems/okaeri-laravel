@@ -192,7 +192,7 @@ jobs:
 
       - name: Deploy
         env:
-          OKAERI_IMAGE: ghcr.io/gclems/okaeri-laravel:${{ github.sha }}
+          OKAERI_IMAGE: ghcr.io/gclems/okaeri-laravel:sha-${{ github.sha }}
         run: |
           ssh -i ~/.ssh/okaeri-deploy gclems@homeserver \
             "OKAERI_IMAGE='${OKAERI_IMAGE}' docker compose \

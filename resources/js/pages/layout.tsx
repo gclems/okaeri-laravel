@@ -17,10 +17,12 @@ import { SunPhaseUpdater } from "@/components/domo-store/sun-phase-updater";
 import { useClock } from "@/features/clock/use-clock";
 import { useDomoStore } from "@/features/domo/domo-store";
 import { useTheme } from "@/features/use-theme";
+import { useAppRestarted } from "@/features/websocket/use-app-restarted";
 import { getWeatherConditionBackground } from "@/features/weather/weather-condition";
 
 function Layout({ children }: { children: ReactNode }) {
 	useTheme();
+	useAppRestarted();
 	const now = useClock();
 
 	const weatherForecastsMap = useDomoStore((state) => state.weatherForecastsMap);

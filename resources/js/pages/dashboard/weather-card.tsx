@@ -18,7 +18,7 @@ import UvIndex9 from "@meteocons/svg/fill/uv-index-9.svg";
 import UvIndex10 from "@meteocons/svg/fill/uv-index-10.svg";
 import UvIndex11 from "@meteocons/svg/fill/uv-index-11.svg";
 import Wind from "@meteocons/svg/fill/wind.svg";
-import { Card, cn, Separator } from "shanty-ui";
+import { Card, cn } from "shanty-ui";
 
 import { Meteocon } from "@/components/meteocon";
 import { RollingTime } from "@/components/rolling-time";
@@ -64,19 +64,15 @@ function WeatherCard() {
 
 	return (
 		<Card
-			className="relative overflow-hidden bg-cover bg-left"
-			style={
-				banner
-					? {
-							backgroundImage: `url(${banner})`,
-						}
-					: undefined
-			}
+			className="@container relative overflow-hidden bg-cover bg-left h-57.5"
+			style={{
+				backgroundImage: `url(${banner})`,
+			}}
 		>
-			<Card.Body className="@container min-h-57.5 max-h-57.5 text-white">
+			<Card.Body className="text-white">
 				{weatherForecast && (
-					<div className="flex justify-end gap-x-4">
-						<div className="flex items-center gap-x-1 justify-center">
+					<div className="flex flex-col-reverse @lg:flex-row items-center justify-end gap-2">
+						<div className="flex items-center gap-x-1 justify-center bg-black/20 @xl:bg-transparent rounded-lg w-fit px-4">
 							<Meteocon
 								src={getWeatherConditionIcon(
 									weatherForecast?.condition?.condition ?? null,
@@ -99,9 +95,7 @@ function WeatherCard() {
 							</div>
 						</div>
 
-						<div className="h-full bg-white w-px" />
-
-						<div className="bg-black/20 p-4 rounded-lg  w-fit">
+						<div className="bg-black/20 p-4 rounded-lg w-fit">
 							<div className="space-x-1 text-metric">
 								<span className="">
 									{today.toLocaleDateString([], {
@@ -131,7 +125,7 @@ function WeatherCard() {
 					</div>
 				)}
 			</Card.Body>
-			<Card.Footer className="flex justify-end items-end text-white gap-x-4">
+			<Card.Footer className="hidden @xl:flex justify-end items-end text-white gap-x-4">
 				{weatherForecast && (
 					<>
 						<div className="flex bg-black/20 px-4 items-center rounded-lg w-fit gap-x-4">
@@ -196,7 +190,7 @@ function PhaseBlock({ icon, time }: { icon: string; time: Date }) {
 
 	return (
 		<div
-			className={cn("flex flex-col @xl:flex-row items-center gap-0.5", {
+			className={cn("flex flex-col items-center gap-0.5", {
 				"opacity-60": isPast,
 			})}
 		>

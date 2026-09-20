@@ -33,6 +33,12 @@
             "a11y": {
                 "noLabelWithoutControl": "off"
             },
+            "correctness": {
+                "noUnusedImports": {
+                    "level": "error",
+                    "fix": "safe"
+                }
+            },
             "suspicious": {
                 "noDoubleEquals": "error",
                 "noThenProperty": "error",

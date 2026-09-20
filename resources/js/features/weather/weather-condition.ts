@@ -85,16 +85,19 @@ function getWeatherConditionLabel(
 function getWeatherConditionBanner(
 	condition: WeatherConditionType | null,
 	date: Date = new Date(),
-): string | null {
-	if (!condition) {
-		return null;
+): string {
+	let baseName: string, isDay: boolean, variant: string;
+	if (condition) {
+		baseName = WEATHER_CONDITION_BANNERS[condition];
+		const minutesSinceMidnight = date.getHours() * 60 + date.getMinutes();
+		isDay = minutesSinceMidnight >= 7 * 60 && minutesSinceMidnight <= 19 * 60;
+		variant = isDay ? "day" : "night";
+	} else {
+		variant = "day";
+		baseName = "sunny";
 	}
 
-	const minutesSinceMidnight = date.getHours() * 60 + date.getMinutes();
-	const isDay = minutesSinceMidnight >= 7 * 60 && minutesSinceMidnight <= 19 * 60;
-	const variant = isDay ? "day" : "night";
-
-	return `/images/banner/${WEATHER_CONDITION_BANNERS[condition]}-${variant}.png`;
+	return `/images/banner/${baseName}-${variant}.png`;
 }
 
 export {

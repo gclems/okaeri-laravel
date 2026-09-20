@@ -92,7 +92,6 @@ body {
 	@apply absolute inset-0 -z-10;
 	background-image: url("./surface_background.png");
 	background-repeat: repeat;
-	opacity: 0.95;
 }
 
 [data-slot="button"] {
@@ -113,6 +112,17 @@ body {
 
 [data-slot="card-title"] {
 	@apply text-border;
+}
+
+[data-slot="popover-popup"] {
+	@apply border-2 border-border rounded-xl shadow-none relative isolate overflow-hidden bg-transparent!;
+}
+
+[data-slot="popover-popup"]::before {
+	content: "";
+	@apply absolute inset-0 -z-10;
+	background-image: url("./surface_background.png");
+	background-repeat: repeat;
 }
 
 [data-slot="switch"],

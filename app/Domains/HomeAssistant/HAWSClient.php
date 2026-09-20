@@ -86,6 +86,7 @@ final class HAWSClient
         string $service,
         ?array $serviceData = null,
         ?array $target = null,
+        bool $returnResponse = false,
         ?Cancellation $cancellation = null,
     ) {
         $payload = [
@@ -100,6 +101,10 @@ final class HAWSClient
 
         if ($target !== null) {
             $payload['target'] = $target;
+        }
+
+        if ($returnResponse) {
+            $payload['return_response'] = true;
         }
 
         return $this->requestOnce($payload, $cancellation);

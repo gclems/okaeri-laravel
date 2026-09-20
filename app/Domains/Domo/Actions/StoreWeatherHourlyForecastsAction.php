@@ -33,9 +33,9 @@ final class StoreWeatherHourlyForecastsAction
         );
 
         WeatherHourlyForecast::where('ha_device_id', $haDeviceId)
-            ->whereNotIn('date', $rows->pluck('date'))
+            ->where('date', '<', now()->startOfDay())
             ->delete();
 
-        WeatherHourlyForecastsUpdated::dispatch();
+        WeatherHourlyForecastsUpdated::dispatch($haDeviceId);
     }
 }

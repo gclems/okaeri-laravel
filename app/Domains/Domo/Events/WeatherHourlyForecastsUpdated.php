@@ -11,7 +11,9 @@ class WeatherHourlyForecastsUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct() {}
+    public function __construct(
+        public readonly string $haDeviceId,
+    ) {}
 
     public function broadcastAs(): string
     {

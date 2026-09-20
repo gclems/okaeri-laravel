@@ -44,6 +44,15 @@ readonly latitude: number | null,
 readonly longitude: number | null,
 readonly id: number,
 };
+export type DayWeatherForecast = {
+readonly date: string,
+readonly condition: WeatherConditionType | null,
+readonly temperature: number | null,
+readonly temperatureLow: number | null,
+readonly temperatureUnit: string | null,
+readonly humidity: number | null,
+readonly id: number,
+};
 export type Device = {
 readonly id: number,
 readonly name: string,
@@ -59,6 +68,14 @@ readonly unit: string | null,
 readonly id: number,
 };
 export type Entity = {
+readonly id: number,
+};
+export type HourWeatherForecast = {
+readonly date: string,
+readonly condition: WeatherConditionType | null,
+readonly temperature: number | null,
+readonly temperatureUnit: string | null,
+readonly humidity: number | null,
 readonly id: number,
 };
 export type Hygrometer = {
@@ -127,6 +144,10 @@ readonly rainChance: Percentage | null,
 readonly snowChance: Percentage | null,
 readonly uvIndex: IntegerValue | null,
 readonly condition: WeatherCondition | null,
+readonly dailyForecasts: DayWeatherForecast[],
+readonly hourlyForecasts: HourWeatherForecast[],
+readonly minTemperature: Thermometer | null,
+readonly maxTemperature: Thermometer | null,
 readonly id: number,
 readonly name: string,
 readonly isActive: boolean,

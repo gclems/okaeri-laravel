@@ -18,7 +18,7 @@ final class GenerateDomoModelsAction
      */
     public function execute(): Collection
     {
-        $devices = DomoDevice::with(['entities.state', 'room'])->get();
+        $devices = DomoDevice::with(['entities.state', 'room', 'dailyWeatherForecasts', 'hourlyWeatherForecasts'])->get();
 
         $results = collect();
         foreach ($devices as $device) {

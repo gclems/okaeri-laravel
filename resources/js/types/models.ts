@@ -25,7 +25,7 @@ export interface DomoEntity {
   // columns
   id: number
   ha_id: string
-  ha_device_id: number
+  ha_device_id: string
   name: string
   created_at: string | null
   updated_at: string | null
@@ -134,6 +134,43 @@ export interface SunPhase {
   updated_at: string | null
 }
 
+export interface WeatherDailyForecast {
+  // columns
+  id: number
+  ha_device_id: string
+  date: string
+  condition: WeatherConditionTypeEnum
+  temperature: number
+  temperature_low: number
+  temperature_unit: string
+  humidity: number | null
+  created_at: string | null
+  updated_at: string | null
+  // relations
+  device?: DomoDevice
+  // counts
+  // exists
+  device_exists?: boolean
+}
+
+export interface WeatherHourlyForecast {
+  // columns
+  id: number
+  ha_device_id: string
+  date: string
+  condition: WeatherConditionTypeEnum
+  temperature: number
+  temperature_unit: string
+  humidity: number | null
+  created_at: string | null
+  updated_at: string | null
+  // relations
+  device?: DomoDevice
+  // counts
+  // exists
+  device_exists?: boolean
+}
+
 export enum EntityAssignmentRoles {
   HueLight = 'hue_light',
   HueLightGroup = 'hue_light_group',
@@ -152,3 +189,23 @@ export enum EntityAssignmentRoles {
 }
 
 export type EntityAssignmentRolesEnum = `${EntityAssignmentRoles}`
+
+export enum WeatherConditionType {
+  Sunny = 'sunny',
+  ClearNight = 'clear-night',
+  PartlyCloudy = 'partlycloudy',
+  Cloudy = 'cloudy',
+  Fog = 'fog',
+  Windy = 'windy',
+  WindyVariant = 'windy-variant',
+  Rainy = 'rainy',
+  Pouring = 'pouring',
+  Lightning = 'lightning',
+  LightningRainy = 'lightning-rainy',
+  Hail = 'hail',
+  Snowy = 'snowy',
+  SnowyRainy = 'snowy-rainy',
+  Exceptional = 'exceptional',
+}
+
+export type WeatherConditionTypeEnum = `${WeatherConditionType}`

@@ -18,7 +18,7 @@ import UvIndex9 from "@meteocons/svg/fill/uv-index-9.svg";
 import UvIndex10 from "@meteocons/svg/fill/uv-index-10.svg";
 import UvIndex11 from "@meteocons/svg/fill/uv-index-11.svg";
 import Wind from "@meteocons/svg/fill/wind.svg";
-import { Card, cn } from "shanty-ui";
+import { Card, cn, Popover, ScrollArea } from "shanty-ui";
 
 import { Meteocon } from "@/components/meteocon";
 import { RollingTime } from "@/components/rolling-time";
@@ -29,6 +29,7 @@ import {
 	getWeatherConditionIcon,
 	getWeatherConditionLabel,
 } from "@/features/weather/weather-condition";
+import type { HourWeatherForecast, WeatherForecast } from "@/types/projections";
 
 const UV_INDEX_ICONS = [
 	UvIndex1,
@@ -46,7 +47,6 @@ const UV_INDEX_ICONS = [
 
 function WeatherCard() {
 	const today = useToday();
-	const now = useClock();
 	const sunPhasesMap = useDomoStore((state) => state.sunPhasesMap);
 	const sunPhase = sunPhasesMap.get(today.toISOString());
 
@@ -61,56 +61,9 @@ function WeatherCard() {
 			<Card.Body className="text-white">
 				{weatherForecast && (
 					<div className="flex flex-col-reverse @lg:flex-row items-center justify-end gap-2">
-						<div className="flex items-center gap-x-1 justify-center bg-black/20 @xl:bg-transparent rounded-lg w-fit px-4">
-							<Meteocon
-								src={getWeatherConditionIcon(
-									weatherForecast?.condition?.condition ?? null,
-								)}
-								alt={getWeatherConditionLabel(
-									weatherForecast.condition?.condition ?? null,
-								)}
-								className="size-24"
-							/>
-							<div className="flex flex-col">
-								<span className="text-metric font-semibold text-4xl">
-									{weatherForecast.temperature?.value?.toFixed(0) ?? "–"}
-									<span className="text-lg">°C</span>
-								</span>
-								<span className="">
-									{getWeatherConditionLabel(
-										weatherForecast.condition?.condition ?? null,
-									)}
-								</span>
-							</div>
-						</div>
+						<ForecastPopover weatherForecast={weatherForecast} />
 
-						<div className="bg-black/20 p-4 rounded-lg w-fit">
-							<div className="space-x-1 text-metric">
-								<span className="">
-									{today.toLocaleDateString([], {
-										weekday: "short",
-									})}
-								</span>
-								<span className="font-semibold text-lg">
-									{today.toLocaleDateString([], {
-										day: "2-digit",
-									})}
-								</span>
-								<span className="">
-									{today.toLocaleDateString([], {
-										month: "short",
-									})}
-								</span>
-								<span className="">
-									{today.toLocaleDateString([], {
-										year: "numeric",
-									})}
-								</span>
-							</div>
-							<div className="flex justify-center">
-								<RollingTime date={now} className="text-2xl font-bold" />
-							</div>
-						</div>
+						<DatePanel />
 					</div>
 				)}
 			</Card.Body>
@@ -191,6 +144,214 @@ function PhaseBlock({ icon, time }: { icon: string; time: Date }) {
 				})}
 			</div>
 		</div>
+	);
+}
+
+function DatePanel() {
+	const now = useClock();
+	return (
+		<div className="bg-black/20 p-4 rounded-lg w-fit">
+			<div className="space-x-1 text-metric">
+				<span className="">
+					{now.toLocaleDateString([], {
+						weekday: "short",
+					})}
+				</span>
+				<span className="font-semibold text-lg">
+					{now.toLocaleDateString([], {
+						day: "2-digit",
+					})}
+				</span>
+				<span className="">
+					{now.toLocaleDateString([], {
+						month: "short",
+					})}
+				</span>
+				<span className="">
+					{now.toLocaleDateString([], {
+						year: "numeric",
+					})}
+				</span>
+			</div>
+			<div className="flex justify-center">
+				<RollingTime date={now} className="text-2xl font-bold" />
+			</div>
+		</div>
+	);
+}
+
+function ForecastPopover({
+	weatherForecast,
+}: {
+	weatherForecast: WeatherForecast;
+}) {
+	const now = useClock();
+
+	const currentHour = useMemo(() => {
+		const date = new Date(now);
+		date.setMinutes(0, 0, 0);
+		return date.getTime();
+	}, [now]);
+
+	const conditionIcon = getWeatherConditionIcon(
+		weatherForecast?.condition?.condition ?? null,
+	);
+
+	const conditionLabel = getWeatherConditionLabel(
+		weatherForecast?.condition?.condition ?? null,
+	);
+
+	const hourlyForecastsByDay = useMemo(() => {
+		const grouped: Record<string, HourWeatherForecast[]> = {};
+
+		const tomorrow = new Date();
+		tomorrow.setDate(tomorrow.getDate() + 2);
+		tomorrow.setHours(0, 0, 0, 0);
+
+		for (const forecast of weatherForecast.hourlyForecasts) {
+			const date = new Date(forecast.date);
+
+			if (date.getTime() < currentHour || date.getTime() >= tomorrow.getTime()) {
+				continue;
+			}
+
+			const day = new Date(date);
+			day.setHours(0, 0, 0, 0);
+			const dayKey = day.toISOString();
+
+			if (!grouped[dayKey]) {
+				grouped[dayKey] = [];
+			}
+
+			grouped[dayKey].push(forecast);
+		}
+
+		return grouped;
+	}, [weatherForecast.hourlyForecasts, currentHour]);
+
+	return (
+		<Popover>
+			<Popover.Trigger
+				nativeButton={false}
+				render={<div />}
+				className="flex items-center gap-x-1 justify-center bg-black/20 @xl:bg-transparent rounded-lg w-fit px-4"
+			>
+				<Meteocon src={conditionIcon} alt={conditionLabel} className="size-24" />
+				<div className="flex flex-col">
+					<span className="text-metric font-semibold text-4xl">
+						{weatherForecast.temperature?.value?.toFixed(0) ?? "–"}
+						<span className="text-lg">°C</span>
+					</span>
+					<span className="">{conditionLabel}</span>
+				</div>
+			</Popover.Trigger>
+			<Popover.Popup size="sm">
+				<div className="flex gap-x-2 items-center">
+					<Meteocon src={conditionIcon} alt={conditionLabel} className="size-24" />
+					<div className="text-metric">
+						<div className=" font-semibold text-xl">{conditionLabel}</div>
+						<div>
+							{weatherForecast.minTemperature?.value?.toFixed(0) ?? "–"}
+							{weatherForecast.minTemperature?.unit ?? ""}/
+							{weatherForecast.maxTemperature?.value?.toFixed(0) ?? "–"}
+							{weatherForecast.maxTemperature?.unit ?? ""}
+						</div>
+					</div>
+				</div>
+
+				{hourlyForecastsByDay && (
+					<ScrollArea horizontal className="w-full max-w-90">
+						<ul className="flex gap-x-1">
+							{Object.keys(hourlyForecastsByDay).map((day) => {
+								const dayDate = new Date(day);
+
+								return (
+									<li key={day}>
+										<div className="sticky left-0 w-fit text-metric text-sm">
+											{dayDate.toLocaleDateString("fr-FR", {
+												weekday: "short",
+											})}
+										</div>
+										<ul className="flex gap-x-1">
+											{hourlyForecastsByDay[day].map((hourlyForecast) => {
+												const forecastTime = new Date(hourlyForecast.date);
+												forecastTime.setMinutes(0, 0, 0);
+
+												return (
+													<li
+														key={hourlyForecast.id}
+														className={cn(
+															"flex flex-col items-center bg-black/10 rounded-lg p-1",
+															{
+																"border-2 border-border bg-primary text-primary-foreground":
+																	currentHour === forecastTime.getTime(),
+															},
+														)}
+													>
+														<Meteocon
+															src={getWeatherConditionIcon(hourlyForecast?.condition ?? null)}
+															alt=""
+															className="size-6"
+														/>
+														<div className="text-sm">
+															{forecastTime.toLocaleString("fr-FR", {
+																hour: "2-digit",
+																minute: "2-digit",
+															})}
+														</div>
+														<div className="text-metric text-xs">
+															{hourlyForecast.temperature?.toFixed(0) ?? "–"}
+															{hourlyForecast.temperatureUnit ?? ""}
+														</div>
+													</li>
+												);
+											})}
+										</ul>
+									</li>
+								);
+							})}
+						</ul>
+					</ScrollArea>
+				)}
+
+				{weatherForecast.dailyForecasts && (
+					<ScrollArea horizontal className="w-full max-w-90 mt-2">
+						<ul className="flex gap-x-1">
+							{weatherForecast.dailyForecasts
+								.sort((a, b) => a.date.localeCompare(b.date))
+								.map((dailyForecast) => {
+									const forecastDate = new Date(dailyForecast.date);
+
+									return (
+										<li
+											key={dailyForecast.id}
+											className="flex flex-col items-center bg-black/10 rounded-lg p-1 w-20"
+										>
+											<Meteocon
+												src={getWeatherConditionIcon(dailyForecast?.condition ?? null)}
+												alt=""
+												className="size-6"
+											/>
+											<div className="text-sm">
+												{forecastDate.toLocaleDateString("fr-FR", {
+													weekday: "short",
+													day: "2-digit",
+													month: "2-digit",
+												})}
+											</div>
+
+											<div className="text-metric text-sm">
+												{dailyForecast.temperature?.toFixed(0) ?? "–"}
+												{dailyForecast.temperatureUnit ?? ""}
+											</div>
+										</li>
+									);
+								})}
+						</ul>
+					</ScrollArea>
+				)}
+			</Popover.Popup>
+		</Popover>
 	);
 }
 

@@ -10,7 +10,7 @@ import { LightingCard } from "./lighting-card";
 import { NetworkCard } from "./network-card";
 import { WeatherCard } from "./weather-card";
 
-export default function Welcome() {
+export default function Dashboard() {
 	return (
 		<>
 			<Head title="" />

@@ -3,6 +3,9 @@
 namespace App\Domains\Domo\Resolvers\Devices;
 
 use App\Domains\Domo\Models\Devices\WeatherForecast;
+use App\Domains\Domo\Models\Entities\Thermometer;
+use App\Domains\Domo\Resolvers\Entities\DayWeatherForecastResolver;
+use App\Domains\Domo\Resolvers\Entities\HourWeatherForecastResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceCloudCoverResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceFreezeChanceResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceHumidityResolver;
@@ -16,6 +19,8 @@ use App\Domains\Domo\Resolvers\Entities\MeteoFranceWeatherConditionResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceWindGustResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceWindSpeedResolver;
 use App\Models\DomoDevice;
+use App\Models\WeatherDailyForecast;
+use App\Models\WeatherHourlyForecast;
 
 final class MeteoFranceWeatherForecastResolver implements DeviceResolver
 {
@@ -32,6 +37,8 @@ final class MeteoFranceWeatherForecastResolver implements DeviceResolver
         private readonly MeteoFranceSnowChanceResolver $snowChanceResolver,
         private readonly MeteoFranceUvIndexResolver $uvIndexResolver,
         private readonly MeteoFranceWeatherConditionResolver $weatherConditionResolver,
+        private readonly DayWeatherForecastResolver $dayWeatherForecastResolver,
+        private readonly HourWeatherForecastResolver $hourWeatherForecastResolver,
     ) {}
 
     public function supports(DomoDevice $device): bool
@@ -42,6 +49,8 @@ final class MeteoFranceWeatherForecastResolver implements DeviceResolver
 
     public function resolve(DomoDevice $device): WeatherForecast
     {
+        $device->loadMissing(['dailyWeatherForecasts', 'hourlyWeatherForecasts']);
+
         $temperatureEntity = null;
         $humidityEntity = null;
         $pressureEntity = null;
@@ -97,6 +106,9 @@ final class MeteoFranceWeatherForecastResolver implements DeviceResolver
             }
         });
 
+        $todayDailyForecast = $device->dailyWeatherForecasts
+            ->first(fn (WeatherDailyForecast $forecast) => $forecast->date->isToday());
+
         return new WeatherForecast(
             $device->id,
             $device->name,
@@ -113,6 +125,30 @@ final class MeteoFranceWeatherForecastResolver implements DeviceResolver
             $snowChanceEntity,
             $uvIndexEntity,
             $conditionEntity,
+            array_values(
+                $device->dailyWeatherForecasts
+                    ->map(fn (WeatherDailyForecast $forecast) => $this->dayWeatherForecastResolver->resolve($forecast))
+                    ->all(),
+            ),
+            array_values(
+                $device->hourlyWeatherForecasts
+                    ->map(fn (WeatherHourlyForecast $forecast) => $this->hourWeatherForecastResolver->resolve($forecast))
+                    ->all(),
+            ),
+            $todayDailyForecast
+                ? new Thermometer(
+                    id: $todayDailyForecast->id,
+                    value: $todayDailyForecast->temperature_low,
+                    unit: $todayDailyForecast->temperature_unit,
+                )
+                : null,
+            $todayDailyForecast
+                ? new Thermometer(
+                    id: $todayDailyForecast->id,
+                    value: $todayDailyForecast->temperature,
+                    unit: $todayDailyForecast->temperature_unit,
+                )
+                : null,
         );
     }
 }

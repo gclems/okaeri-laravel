@@ -1,7 +1,7 @@
 import { ElectricHome01Icon, HomeWifiIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link, usePage } from "@inertiajs/react";
-import { Separator, Sidebar, useSidebar } from "shanty-ui";
+import { Sidebar, useSidebar } from "shanty-ui";
 
 import { home } from "@/routes";
 import homeArchitect from "@/routes/settings/home-architect";
@@ -21,8 +21,8 @@ function AppSidebar() {
 					<img src="/images/logo_image.png" alt="Logo" className="max-w-24 w-full" />
 					<img src="/images/logo_title_both.png" alt="Logo" className="max-w-36" />
 				</button>
-				<Separator className="my-4 bg-border" />
-				<div className="flex-1">
+
+				<div className="flex-1 mt-4">
 					<Sidebar.Item
 						render={<Link href={home()} />}
 						isActive={currentRouteName === "home"}
@@ -31,8 +31,6 @@ function AppSidebar() {
 						Dashboard
 					</Sidebar.Item>
 				</div>
-
-				<Separator className="bg-border my-4" />
 
 				<Sidebar.Item
 					render={<Link href={homeArchitect.index()} />}

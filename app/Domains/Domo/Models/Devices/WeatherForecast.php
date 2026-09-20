@@ -3,6 +3,8 @@
 namespace App\Domains\Domo\Models\Devices;
 
 use App\Domains\Domo\Models\Entities\Barometer;
+use App\Domains\Domo\Models\Entities\DayWeatherForecast;
+use App\Domains\Domo\Models\Entities\HourWeatherForecast;
 use App\Domains\Domo\Models\Entities\Hygrometer;
 use App\Domains\Domo\Models\Entities\IntegerValue;
 use App\Domains\Domo\Models\Entities\Percentage;
@@ -15,6 +17,10 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 #[TypeScript]
 final class WeatherForecast extends Device
 {
+    /**
+     * @param  list<DayWeatherForecast>  $dailyForecasts
+     * @param  list<HourWeatherForecast>  $hourlyForecasts
+     */
     public function __construct(
         int $id,
         string $name,
@@ -31,6 +37,10 @@ final class WeatherForecast extends Device
         public readonly ?Percentage $snowChance,
         public readonly ?IntegerValue $uvIndex,
         public readonly ?WeatherCondition $condition,
+        public readonly array $dailyForecasts,
+        public readonly array $hourlyForecasts,
+        public readonly ?Thermometer $minTemperature,
+        public readonly ?Thermometer $maxTemperature,
     ) {
         parent::__construct(
             id: $id,

@@ -15,7 +15,7 @@ function ScreensaverClock() {
 			<img src="/images/logo_image.png" alt="Logo" className="max-w-64 w-full" />
 			<RollingTime
 				date={now}
-				className="text-[clamp(5rem,18vw,12rem)] leading-none text-foreground"
+				className="text-[clamp(5rem,18vw,12rem)] leading-none text-border"
 			/>
 			<p className="text-heading text-xl text-muted-foreground sm:text-2xl">
 				{now.toLocaleDateString("fr-FR", {
@@ -80,7 +80,7 @@ function AppScreensaver() {
 				<motion.div
 					aria-label="Écran de veille. Cliquez pour revenir à l’application."
 					data-slot="screensaver"
-					className="fixed inset-0 z-99999 isolate flex cursor-pointer select-none flex-col items-center justify-center gap-5 bg-background"
+					className="fixed inset-0 z-99999 isolate flex cursor-pointer select-none flex-col items-center justify-center gap-5"
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}

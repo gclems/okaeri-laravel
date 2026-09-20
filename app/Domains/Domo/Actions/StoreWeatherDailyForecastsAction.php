@@ -37,6 +37,6 @@ final class StoreWeatherDailyForecastsAction
             ->whereNotIn('date', $rows->pluck('date'))
             ->delete();
 
-        WeatherDailyForecastsUpdated::dispatch();
+        WeatherDailyForecastsUpdated::dispatch($haDeviceId);
     }
 }

@@ -15,17 +15,18 @@ export default function Welcome() {
 		<>
 			<Head title="" />
 
+			<WeatherCard />
+
 			<div className="@container mt-6">
 				<div className="flex gap-4 flex-col @xl:flex-row">
 					<div className="flex-1 grid grid-cols-3 gap-4 content-start">
-						<div className="col-span-3">
-							<WeatherCard />
+						<div className="col-span-3"></div>
+
+						<div className="col-span-3 grid grid-cols-2 @xl:grid-cols-3">
+							<AirConditioningCard />
+
+							<EnergyConsumptionCard />
 						</div>
-
-						<AirConditioningCard />
-
-						<EnergyConsumptionCard />
-
 						<LightingCard />
 
 						<CarCard />

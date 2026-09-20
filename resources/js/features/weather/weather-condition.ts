@@ -34,6 +34,24 @@ const WEATHER_CONDITION_ICONS: Record<WeatherConditionType, string> = {
 	exceptional: Hurricane,
 };
 
+const WEATHER_CONDITION_BANNERS: Record<WeatherConditionType, string> = {
+	sunny: "sunny",
+	"clear-night": "sunny",
+	partlycloudy: "cloudy",
+	cloudy: "cloudy",
+	fog: "cloudy",
+	windy: "cloudy",
+	"windy-variant": "cloudy",
+	rainy: "rainy",
+	pouring: "rainy",
+	lightning: "storm",
+	"lightning-rainy": "storm",
+	hail: "storm",
+	snowy: "snowy",
+	"snowy-rainy": "snowy",
+	exceptional: "storm",
+};
+
 const WEATHER_CONDITION_LABELS: Record<WeatherConditionType, string> = {
 	sunny: "Ensoleillé",
 	"clear-night": "Ciel dégagé",
@@ -64,4 +82,23 @@ function getWeatherConditionLabel(
 	return condition ? WEATHER_CONDITION_LABELS[condition] : "Inconnu";
 }
 
-export { getWeatherConditionIcon, getWeatherConditionLabel };
+function getWeatherConditionBanner(
+	condition: WeatherConditionType | null,
+	date: Date = new Date(),
+): string | null {
+	if (!condition) {
+		return null;
+	}
+
+	const minutesSinceMidnight = date.getHours() * 60 + date.getMinutes();
+	const isDay = minutesSinceMidnight >= 7 * 60 && minutesSinceMidnight <= 19 * 60;
+	const variant = isDay ? "day" : "night";
+
+	return `/images/banner/${WEATHER_CONDITION_BANNERS[condition]}-${variant}.png`;
+}
+
+export {
+	getWeatherConditionBanner,
+	getWeatherConditionIcon,
+	getWeatherConditionLabel,
+};

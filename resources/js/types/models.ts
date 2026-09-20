@@ -9,6 +9,8 @@ export interface DomoDevice {
   created_at: string | null
   updated_at: string | null
   raw?: Array<unknown> | null
+  manufacturer: string | null
+  model: string | null
   // relations
   entities?: DomoEntity[]
   room?: DomoRoom
@@ -28,13 +30,21 @@ export interface DomoEntity {
   created_at: string | null
   updated_at: string | null
   raw?: Array<unknown> | null
+  platform: string | null
+  // mutators
+  domain: unknown
   // relations
   device?: DomoDevice
+  state?: DomoEntityState
+  state_histories?: DomoEntityStateHistory[]
   assignments?: DomoEntityAssignment[]
   // counts
+  state_histories_count?: number
   assignments_count?: number
   // exists
   device_exists?: boolean
+  state_exists?: boolean
+  state_histories_exists?: boolean
   assignments_exists?: boolean
 }
 
@@ -66,9 +76,25 @@ export interface DomoEntityState {
   // overrides
   attributes: Record<string, unknown>
   // relations
-  entity?: DomoEntity[]
+  entity?: DomoEntity
   // counts
-  entity_count?: number
+  // exists
+  entity_exists?: boolean
+}
+
+export interface DomoEntityStateHistory {
+  // columns
+  id: number
+  ha_entity_id: string
+  value: string
+  raw?: Array<unknown> | null
+  created_at: string | null
+  updated_at: string | null
+  // overrides
+  attributes: Record<string, unknown>
+  // relations
+  entity?: DomoEntity
+  // counts
   // exists
   entity_exists?: boolean
 }

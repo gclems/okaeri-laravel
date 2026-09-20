@@ -37,6 +37,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntity whereUpdatedAt($value)
  *
  * @property-read DomoEntityState|null $state
+ * @property-read Collection<int, DomoEntityStateHistory> $stateHistories
+ * @property-read int|null $state_histories_count
  *
  * @mixin \Eloquent
  */
@@ -68,6 +70,11 @@ class DomoEntity extends Model
     public function state(): HasOne
     {
         return $this->hasOne(DomoEntityState::class, 'ha_entity_id', 'ha_id');
+    }
+
+    public function stateHistories(): HasMany
+    {
+        return $this->hasMany(DomoEntityStateHistory::class, 'ha_entity_id', 'ha_id');
     }
 
     public function assignments(): HasMany

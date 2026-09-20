@@ -65,7 +65,7 @@
                 "organizeImports": {
                     "level": "on",
                     "options": {
-                        "identifierOrder": "lexicographic",
+                        "identifierOrder": "natural",
                         "groups": [
                             "react",
                             ":BLANK_LINE:",

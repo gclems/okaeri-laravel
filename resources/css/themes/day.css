@@ -8,9 +8,9 @@
 	--radius-xl: calc(var(--radius-base) * 2);
 
 	--background: oklch(0.9772 0.0017 325.59);
-	--surface: oklch(0.9759 0.0029 264.54);
+	--surface: oklch(0.9843 0.004 106.47);
 	--foreground: oklch(0.311 0.05 270.71);
-	--border: oklch(0.9114 0.0042 301.42);
+	--border: oklch(0.2917 0.0567 268.77);
 
 	--tooltip: oklch(0.1985 0.0123 353.84);
 	--tooltip-foreground: oklch(0.6956 0 353.84);

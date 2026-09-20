@@ -1,14 +1,13 @@
-import { EnergyIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Card } from "shanty-ui";
 
 function EnergyConsumptionCard() {
 	return (
-		<Card className="bg-linear-to-t from-energy/20 to-transparent">
+		<Card>
 			<Card.Header
 				title={
 					<div className="flex items-center gap-x-2">
-						<HugeiconsIcon icon={EnergyIcon} className="fill-energy" /> Énergie
+						<img src="/images/energy_small.png" alt="Energy" className="w-8" />{" "}
+						Énergie
 					</div>
 				}
 			/>

@@ -26,7 +26,6 @@ import { useClock } from "@/features/clock/use-clock";
 import { useToday } from "@/features/clock/use-today";
 import { useDomoStore } from "@/features/domo/domo-store";
 import {
-	getWeatherConditionBanner,
 	getWeatherConditionIcon,
 	getWeatherConditionLabel,
 } from "@/features/weather/weather-condition";
@@ -57,18 +56,8 @@ function WeatherCard() {
 		[weatherForecastsMap],
 	);
 
-	const banner = getWeatherConditionBanner(
-		weatherForecast?.condition?.condition ?? null,
-		now,
-	);
-
 	return (
-		<Card
-			className="@container relative overflow-hidden bg-cover bg-left h-57.5"
-			style={{
-				backgroundImage: `url(${banner})`,
-			}}
-		>
+		<Card className="@container relative overflow-hidden bg-transparent bg-none! border-none! before:content-none! h-57.5">
 			<Card.Body className="text-white">
 				{weatherForecast && (
 					<div className="flex flex-col-reverse @lg:flex-row items-center justify-end gap-2">

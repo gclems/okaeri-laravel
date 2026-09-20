@@ -17,14 +17,13 @@ export default function Welcome() {
 
 			<WeatherCard />
 
-			<div className="@container mt-6">
-				<div className="flex gap-4 flex-col @xl:flex-row">
-					<div className="flex-1 grid grid-cols-3 gap-4 content-start">
+			<div className="@container mt-2">
+				<div className="flex gap-2 flex-col @xl:flex-row">
+					<div className="flex-1 grid grid-cols-3 gap-2 content-start">
 						<div className="col-span-3"></div>
 
-						<div className="col-span-3 grid grid-cols-2 @xl:grid-cols-3">
+						<div className="col-span-3 grid grid-cols-2 @xl:grid-cols-3 gap-2">
 							<AirConditioningCard />
-
 							<EnergyConsumptionCard />
 						</div>
 						<LightingCard />
@@ -33,7 +32,7 @@ export default function Welcome() {
 
 						<NetworkCard />
 					</div>
-					<div className="@xl:w-72 space-y-4">
+					<div className="@xl:w-72 space-y-2">
 						<DoorCard />
 						<ComfortCard />
 						<BatteriesCard />

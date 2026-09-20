@@ -1,20 +1,16 @@
 import { useMemo, useState } from "react";
 
-import {
-	ChartAverageIcon,
-	InternetAntenna02Icon,
-	QrCodeIcon,
-} from "@hugeicons/core-free-icons";
+import { ChartAverageIcon, QrCodeIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { motion } from "motion/react";
 import {
 	Area,
 	AreaChart,
 	CartesianGrid,
+	createHorizontalChart,
 	Tooltip,
 	XAxis,
 	YAxis,
-	createHorizontalChart,
 } from "recharts";
 import { Button, Card } from "shanty-ui";
 
@@ -40,12 +36,12 @@ function NetworkCard() {
 	}
 
 	return (
-		<Card className="bg-linear-to-tl from-lighting/20 to-transparent">
+		<Card>
 			<Card.Header
 				title={
 					<div className="flex items-center justify-between">
 						<div className="flex gap-x-2 items-center">
-							<HugeiconsIcon icon={InternetAntenna02Icon} />
+							<img src="/images/router_small.png" alt="Router" className="h-6" />
 							Réseau
 						</div>
 
@@ -224,7 +220,7 @@ function QrCode() {
 			<img
 				src={WifiQrCodeController.show.url()}
 				alt="Qr Code"
-				className={`max-h-full max-w-full aspect-square rounded-lg ${qrCodeLoaded ? "opacity-100" : "opacity-0"}`}
+				className={`border-2 border-border max-h-full max-w-full aspect-square rounded-lg ${qrCodeLoaded ? "opacity-100" : "opacity-0"}`}
 				onLoad={() => setQrCodeLoaded(true)}
 				onError={() => setQrCodeError(true)}
 			/>

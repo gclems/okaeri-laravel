@@ -1,14 +1,13 @@
-import { DoorIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Card } from "shanty-ui";
 
 function DoorCard() {
 	return (
-		<Card className="bg-linear-to-br from-transparent to-security/10">
+		<Card>
 			<Card.Header
 				title={
 					<div className="flex items-center gap-x-2">
-						<HugeiconsIcon icon={DoorIcon} /> Porte d'entrée
+						<img src="/images/door_small.png" alt="Door" className="h-6" /> Porte
+						d'entrée
 					</div>
 				}
 			/>

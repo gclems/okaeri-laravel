@@ -48,11 +48,6 @@
 body {
 	@apply font-sans text-base text-foreground;
 }
-
-[data-slot="sidebar-item-button"] {
-	@apply bg-surface! hover:bg-background!;
-}
-
 [data-slot="card-title"] {
 	@apply text-heading;
 }
@@ -63,16 +58,64 @@ body {
 
 [data-slot="sidebar-item"] {
 	@apply border-r-4 border-transparent;
+	@apply hover:border-border/50!;
 }
 
 [data-slot="sidebar-item"]:has([data-active="true"]) {
-	@apply border-primary text-foreground!;
+	@apply border-primary text-primary-foreground! bg-border!;
+}
+
+[data-slot="sidebar-item-button"] {
+	@apply bg-transparent!;
+	@apply hover:bg-border/50! hover:text-background!;
+	@apply rounded-none!;
 }
 
 [data-slot="sidebar-item-button"][data-active="true"] {
-	@apply text-foreground!;
+	@apply text-primary-foreground! bg-border!;
+}
+
+[data-slot="sidebar-inner"] {
+	@apply relative isolate overflow-hidden;
+}
+
+[data-slot="sidebar-inner"]::before {
+	content: "";
+	@apply absolute inset-0 -z-10;
+	background-image: url("./surface_background.png");
+	background-repeat: repeat;
+	opacity: 0.95;
+}
+
+[data-slot="screensaver"]::before {
+	content: "";
+	@apply absolute inset-0 -z-10;
+	background-image: url("./surface_background.png");
+	background-repeat: repeat;
+	opacity: 0.95;
 }
 
 [data-slot="button"] {
 	@apply focus:outline-0;
+}
+
+[data-slot="card"] {
+	@apply border-2 shadow-none relative isolate bg-transparent!;
+}
+
+[data-slot="card"]::before {
+	content: "";
+	@apply absolute inset-0 -z-10;
+	background-image: url("./surface_background.png");
+	background-repeat: repeat;
+	opacity: 0.95;
+}
+
+[data-slot="card-title"] {
+	@apply text-border;
+}
+
+[data-slot="switch"],
+[data-slot="switch-thumb"] {
+	@apply border-2 border-border;
 }

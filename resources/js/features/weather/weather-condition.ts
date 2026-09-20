@@ -34,10 +34,10 @@ const WEATHER_CONDITION_ICONS: Record<WeatherConditionType, string> = {
 	exceptional: Hurricane,
 };
 
-const WEATHER_CONDITION_BANNERS: Record<WeatherConditionType, string> = {
+const WEATHER_CONDITION_IMAGES: Record<WeatherConditionType, string> = {
 	sunny: "sunny",
 	"clear-night": "sunny",
-	partlycloudy: "cloudy",
+	partlycloudy: "partly-cloudy",
 	cloudy: "cloudy",
 	fog: "cloudy",
 	windy: "cloudy",
@@ -82,13 +82,13 @@ function getWeatherConditionLabel(
 	return condition ? WEATHER_CONDITION_LABELS[condition] : "Inconnu";
 }
 
-function getWeatherConditionBanner(
+function getWeatherConditionBackground(
 	condition: WeatherConditionType | null,
 	date: Date = new Date(),
 ): string {
 	let baseName: string, isDay: boolean, variant: string;
 	if (condition) {
-		baseName = WEATHER_CONDITION_BANNERS[condition];
+		baseName = WEATHER_CONDITION_IMAGES[condition];
 		const minutesSinceMidnight = date.getHours() * 60 + date.getMinutes();
 		isDay = minutesSinceMidnight >= 7 * 60 && minutesSinceMidnight <= 19 * 60;
 		variant = isDay ? "day" : "night";
@@ -97,11 +97,11 @@ function getWeatherConditionBanner(
 		baseName = "sunny";
 	}
 
-	return `/images/banner/${baseName}-${variant}.png`;
+	return `/images/backgrounds/${baseName}-${variant}.jpg`;
 }
 
 export {
-	getWeatherConditionBanner,
+	getWeatherConditionBackground,
 	getWeatherConditionIcon,
 	getWeatherConditionLabel,
 };

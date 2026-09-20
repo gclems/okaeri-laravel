@@ -11,17 +11,15 @@ function AppSidebar() {
 	const sidebar = useSidebar();
 
 	return (
-		<Sidebar collapsible="icon">
+		<Sidebar collapsible="offcanvas" variant="floating">
 			<Sidebar.Content className="flex-1">
 				<button
 					type="button"
 					onClick={() => sidebar.setOpen(!sidebar.open)}
-					className="flex flex-col items-center gap-1 mt-6 px-2 cursor-pointer"
+					className="flex flex-col items-center gap-1 px-2 cursor-pointer"
 				>
 					<img src="/images/logo_image.png" alt="Logo" className="max-w-24 w-full" />
-					{sidebar.open && (
-						<img src="/images/logo_title_both.png" alt="Logo" className="max-w-36" />
-					)}
+					<img src="/images/logo_title_both.png" alt="Logo" className="max-w-36" />
 				</button>
 				<Separator className="my-4 bg-border" />
 				<div className="flex-1">

@@ -1,24 +1,32 @@
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Button, Card } from "shanty-ui";
+import { Button, cn, useSidebar } from "shanty-ui";
 
 function AppTopBar() {
+	const { open, setOpen } = useSidebar();
+
 	return (
-		<Card size="xs" className="shrink-0">
-			<Card.Body className="min-h-4">
-				<div className="flex items-center justify-between gap-x-4">
-					<Button
-						size="sm"
-						variant="ghost"
-						color="primary"
-						square
-						onClick={() => window.location.reload()}
-					>
-						<HugeiconsIcon icon={RefreshIcon} />
-					</Button>
-				</div>
-			</Card.Body>
-		</Card>
+		<div className="flex gap-x-2">
+			<Button variant="ghost" color="primary" onClick={() => setOpen(!open)}>
+				<img src="/images/logo_image.png" alt="Logo" className="size-8" />
+			</Button>
+			<div
+				className={cn(
+					"shrink-0 bg-white/20 bg-none! border-none! before:content-none!",
+					"flex items-center justify-between gap-x-2",
+				)}
+			>
+				<Button
+					size="sm"
+					variant="outlined"
+					color="neutral"
+					square
+					onClick={() => window.location.reload()}
+				>
+					<HugeiconsIcon icon={RefreshIcon} />
+				</Button>
+			</div>
+		</div>
 	);
 }
 

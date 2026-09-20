@@ -29,25 +29,19 @@ function CarCard() {
 }
 
 function CarItem({ car }: { car: Car }) {
-	console.log(car);
 	return (
-		<Card className="@container bg-linear-to-br from-car/15 to-transparent">
+		<Card className="@container">
 			<Card.Header
 				title={
-					<div className="flex justify-between items-center gap-4">
+					<div>
 						<div className="flex gap-x-2 items-center">
-							<img src="/renault_4_small.png" alt="Renault 4" className="w-10" />{" "}
+							<img
+								src="/images/renault_4_small.png"
+								alt="Renault 4"
+								className="w-10"
+							/>{" "}
 							Renault 4
 						</div>
-						{car.mileage && (
-							<span className="text-metric font-thin text-base">
-								<RollingNumber
-									number={+(car.mileage.value ?? 0)}
-									formatter={(n) => new Intl.NumberFormat("fr-FR").format(n)}
-								/>
-								{car.mileage.unit}
-							</span>
-						)}
 					</div>
 				}
 			></Card.Header>
@@ -122,6 +116,16 @@ function CarItem({ car }: { car: Car }) {
 								]}
 							/>
 						</MapContainer>
+					</div>
+				)}
+
+				{car.mileage && (
+					<div className="text-metric font-thin text-base">
+						<RollingNumber
+							number={+(car.mileage.value ?? 0)}
+							formatter={(n) => new Intl.NumberFormat("fr-FR").format(n)}
+						/>
+						{car.mileage.unit}
 					</div>
 				)}
 			</Card.Body>

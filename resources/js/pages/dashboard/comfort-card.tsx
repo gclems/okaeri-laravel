@@ -1,7 +1,5 @@
 import { useMemo } from "react";
 
-import { HouseHeartIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import Humidity from "@meteocons/svg/fill/humidity.svg";
 import ThermometerAlarm from "@meteocons/svg/fill/thermometer-alarm.svg";
 import { Card, cn } from "shanty-ui";
@@ -35,11 +33,12 @@ function ComfortCard() {
 	}, [climateSensorsMap, roomsMap]);
 
 	return (
-		<Card className="bg-linear-to-bl to-comfort/20 from-transparent">
+		<Card>
 			<Card.Header
 				title={
 					<div className="flex gap-x-2 items-center">
-						<HugeiconsIcon icon={HouseHeartIcon} /> Confort
+						<img src="/images/comfort_small.png" alt="Confort" className="h-6" />{" "}
+						Confort
 					</div>
 				}
 			></Card.Header>

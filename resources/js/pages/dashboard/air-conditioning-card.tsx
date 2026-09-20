@@ -1,14 +1,16 @@
-import { SmartAcIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Card } from "shanty-ui";
 
 function AirConditioningCard() {
 	return (
-		<Card className="bg-linear-to-br from-transparent to-temperature-low/20">
+		<Card>
 			<Card.Header
 				title={
 					<div className="flex items-center gap-x-2">
-						<HugeiconsIcon icon={SmartAcIcon} className="text-temperature-low" />{" "}
+						<img
+							src="/images/air_conditioning_small.png"
+							alt="Air Conditioning"
+							className="w-8"
+						/>{" "}
 						Climatisation
 					</div>
 				}

@@ -79,7 +79,8 @@ function AppScreensaver() {
 			{visible && (
 				<motion.div
 					aria-label="Écran de veille. Cliquez pour revenir à l’application."
-					className="fixed inset-0 z-99999 flex cursor-pointer select-none flex-col items-center justify-center gap-5 bg-background"
+					data-slot="screensaver"
+					className="fixed inset-0 z-99999 isolate flex cursor-pointer select-none flex-col items-center justify-center gap-5 bg-background"
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}

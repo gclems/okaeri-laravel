@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
-import { Lightbulb, PowerOffIcon } from "@hugeicons/core-free-icons";
+import { PowerOffIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useHttp } from "@inertiajs/react";
-import { Button, Card, Switch, cn } from "shanty-ui";
+import { Button, Card, cn, Switch } from "shanty-ui";
 
 import LightingController from "@/actions/App/Http/Controllers/LightingController";
 import { AnimatedNumber } from "@/components/animated-number";
@@ -67,11 +67,11 @@ function LightingCard() {
 	};
 
 	return (
-		<Card className="bg-linear-to-tl from-lighting/20 to-transparent">
+		<Card>
 			<Card.Header
 				title={
 					<div className="flex gap-x-2 items-center">
-						<HugeiconsIcon icon={Lightbulb} className="text-lighting" />
+						<img src="/images/lightbulb_small.png" alt="Lightbulb" className="h-6" />
 						Éclairage
 					</div>
 				}
@@ -127,7 +127,7 @@ function ViewModelItem({
 					return (
 						<div key={bulb.id} className="flex items-center gap-x-0.5">
 							<div
-								className={"size-3 rounded-full border"}
+								className={"size-3 rounded-full border-2"}
 								style={{
 									background: bulb.light.isOn ? safeRGB : "transparent",
 									borderColor: bulb.light.isOn ? "var(--foreground)" : "var(--border)",

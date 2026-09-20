@@ -41,11 +41,12 @@ function BatteriesCard() {
 	if (devicesWithBattery.length === 0) return null;
 
 	return (
-		<Card className="bg-linear-to-tl from-transparent to-energy/20">
+		<Card>
 			<Card.Header
 				title={
 					<div className="flex items-center gap-x-2">
-						<HugeiconsIcon icon={BatteryMedium01Icon} /> Batteries
+						<img src="/images/battery_small.png" alt="Batteries" className="h-6" />{" "}
+						Batteries
 					</div>
 				}
 			/>

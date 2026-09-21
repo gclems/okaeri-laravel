@@ -79,7 +79,7 @@ function LightingCard() {
 			<Card.Body>
 				<ul className="space-y-2">
 					{viewModels.map((vm) => (
-						<li key={vm.room.id}>
+						<li className="not-last:border-b border-muted pb-2" key={vm.room.id}>
 							<ViewModelItem vm={vm} onToggle={handleGroupToggle} />
 						</li>
 					))}

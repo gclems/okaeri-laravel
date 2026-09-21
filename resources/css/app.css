@@ -75,23 +75,20 @@ body {
 	@apply text-primary-foreground! bg-border!;
 }
 
+@utility surface-texture {
+	&::before {
+		content: "";
+		@apply absolute inset-0 -z-10 bg-repeat opacity-98;
+		background-image: url("./surface_background.png");
+	}
+}
+
 [data-slot="sidebar-inner"] {
-	@apply relative isolate overflow-hidden;
+	@apply relative isolate overflow-hidden surface-texture;
 }
 
-[data-slot="sidebar-inner"]::before {
-	content: "";
-	@apply absolute inset-0 -z-10;
-	background-image: url("./surface_background.png");
-	background-repeat: repeat;
-	opacity: 0.95;
-}
-
-[data-slot="screensaver"]::before {
-	content: "";
-	@apply absolute inset-0 -z-10;
-	background-image: url("./surface_background.png");
-	background-repeat: repeat;
+[data-slot="screensaver"] {
+	@apply surface-texture before:opacity-100;
 }
 
 [data-slot="button"] {
@@ -99,15 +96,7 @@ body {
 }
 
 [data-slot="card"] {
-	@apply border-2 shadow-none relative isolate bg-transparent!;
-}
-
-[data-slot="card"]::before {
-	content: "";
-	@apply absolute inset-0 -z-10;
-	background-image: url("./surface_background.png");
-	background-repeat: repeat;
-	opacity: 0.95;
+	@apply border-2 shadow-none relative isolate bg-transparent! surface-texture;
 }
 
 [data-slot="card-title"] {
@@ -115,17 +104,18 @@ body {
 }
 
 [data-slot="popover-popup"] {
-	@apply border-2 border-border rounded-xl shadow-none relative isolate overflow-hidden bg-transparent!;
-}
-
-[data-slot="popover-popup"]::before {
-	content: "";
-	@apply absolute inset-0 -z-10;
-	background-image: url("./surface_background.png");
-	background-repeat: repeat;
+	@apply border-2 border-border rounded-xl shadow-none relative isolate overflow-hidden bg-transparent! surface-texture;
 }
 
 [data-slot="switch"],
 [data-slot="switch-thumb"] {
 	@apply border-2 border-border;
+}
+
+[data-slot="scroll-bar"] {
+	@apply bg-transparent;
+}
+
+[data-slot="scroll-bar-thumb"] {
+	@apply bg-transparent;
 }

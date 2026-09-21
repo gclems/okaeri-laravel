@@ -70,34 +70,7 @@ function WeatherCard() {
 			<Card.Footer className="hidden @xl:flex justify-end items-end text-white gap-x-4">
 				{weatherForecast && (
 					<>
-						<div className="flex bg-black/20 px-4 items-center rounded-lg w-fit gap-x-4">
-							<div className="flex gap-x-0.5 items-center">
-								<Meteocon src={Humidity} alt="Humidité" className="size-8" />
-								{weatherForecast.humidity?.value?.toFixed(0) ?? "–"}%
-							</div>
-							<div className="flex gap-x-0.5 items-center">
-								<Meteocon src={Wind} alt="Vent" className="size-8" />
-								{weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
-								<span className="text-xs">{weatherForecast.windSpeed?.unit}</span>
-							</div>
-							<div className="flex gap-x-0.5 items-center">
-								<Meteocon src={Umbrella} alt="Pluie" className="size-8" />
-								{weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}%
-							</div>
-							<div className="flex gap-x-0.5 items-center">
-								<Meteocon
-									src={getUvIndexIcon(weatherForecast.uvIndex?.value)}
-									alt="Indice UV"
-									className="size-8"
-								/>
-								UV{weatherForecast.uvIndex?.value ?? "–"}
-							</div>
-							<div className="flex gap-x-0.5 items-center">
-								<Meteocon src={Barometer} alt="Pression" className="size-8" />
-								{weatherForecast.pressure?.value?.toFixed(0) ?? "–"}
-								<span className="text-xs">{weatherForecast.pressure?.unit}</span>
-							</div>
-						</div>
+						<ConditionsBar weatherForecast={weatherForecast} />
 						<div className="bg-black/20 px-4 rounded-lg w-fit">
 							{!!sunPhase && (
 								<div className="grid grid-cols-3 gap-4">
@@ -352,6 +325,43 @@ function ForecastPopover({
 				)}
 			</Popover.Popup>
 		</Popover>
+	);
+}
+
+function ConditionsBar({
+	weatherForecast,
+}: {
+	weatherForecast: WeatherForecast;
+}) {
+	return (
+		<div className="flex bg-black/20 px-4 items-center rounded-lg w-fit gap-x-4">
+			<div className="flex gap-x-0.5 items-center">
+				<Meteocon src={Humidity} alt="Humidité" className="size-8" />
+				{weatherForecast.humidity?.value?.toFixed(0) ?? "–"}%
+			</div>
+			<div className="flex gap-x-0.5 items-center">
+				<Meteocon src={Wind} alt="Vent" className="size-8" />
+				{weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
+				<span className="text-xs">{weatherForecast.windSpeed?.unit}</span>
+			</div>
+			<div className="flex gap-x-0.5 items-center">
+				<Meteocon src={Umbrella} alt="Pluie" className="size-8" />
+				{weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}%
+			</div>
+			<div className="flex gap-x-0.5 items-center">
+				<Meteocon
+					src={getUvIndexIcon(weatherForecast.uvIndex?.value)}
+					alt="Indice UV"
+					className="size-8"
+				/>
+				UV{weatherForecast.uvIndex?.value ?? "–"}
+			</div>
+			<div className="flex gap-x-0.5 items-center">
+				<Meteocon src={Barometer} alt="Pression" className="size-8" />
+				{weatherForecast.pressure?.value?.toFixed(0) ?? "–"}
+				<span className="text-xs">{weatherForecast.pressure?.unit}</span>
+			</div>
+		</div>
 	);
 }
 

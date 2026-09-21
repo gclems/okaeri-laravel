@@ -15,9 +15,9 @@ function ScreensaverClock() {
 			<img src="/images/logo_image.png" alt="Logo" className="max-w-64 w-full" />
 			<RollingTime
 				date={now}
-				className="text-[clamp(5rem,18vw,12rem)] leading-none text-border"
+				className="text-[clamp(5rem,18vw,12rem)] leading-none text-primary"
 			/>
-			<p className="text-heading text-xl text-muted-foreground sm:text-2xl">
+			<p className="text-heading text-xl text-primary sm:text-2xl">
 				{now.toLocaleDateString("fr-FR", {
 					weekday: "long",
 					day: "numeric",
@@ -87,7 +87,7 @@ function AppScreensaver() {
 					transition={{ duration: 0.4 }}
 				>
 					<ScreensaverClock />
-					<p className="absolute bottom-10 text-sm text-muted-foreground/70">
+					<p className="absolute bottom-10 text-sm text-primary/70">
 						Cliquez pour continuer
 					</p>
 				</motion.div>

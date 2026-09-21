@@ -1,10 +1,7 @@
 @import "tailwindcss";
 @import "shanty-ui/css/shanty-ui.css";
 
-/* @import "shanty-ui/css/themes/default.css"; */
-@import "./themes/morning.css";
 @import "./themes/day.css";
-@import "./themes/evening.css";
 @import "./themes/night.css";
 
 @source "../views";
@@ -48,6 +45,11 @@
 body {
 	@apply font-sans text-base text-foreground;
 }
+
+[data-slot="card"] {
+	@apply border-3 border-primary shadow-none relative isolate bg-transparent! surface-texture;
+}
+
 [data-slot="card-title"] {
 	@apply text-heading;
 }
@@ -56,23 +58,27 @@ body {
 	@apply text-metric;
 }
 
+[data-slot="sidebar-container"] {
+    @apply mb-4 border-3! border-primary!
+}
+
 [data-slot="sidebar-item"] {
 	@apply border-r-4 border-transparent;
-	@apply hover:border-border/50!;
+	/* @apply hover:border-border/50!; */
 }
 
 [data-slot="sidebar-item"]:has([data-active="true"]) {
-	@apply border-primary text-primary-foreground! bg-border!;
+	@apply border-secondary text-primary-foreground! bg-primary!;
 }
 
 [data-slot="sidebar-item-button"] {
 	@apply bg-transparent!;
-	@apply hover:bg-border/50! hover:text-background!;
+	@apply hover:bg-primary/50! hover:text-background!;
 	@apply rounded-none!;
 }
 
 [data-slot="sidebar-item-button"][data-active="true"] {
-	@apply text-primary-foreground! bg-border!;
+	@apply text-primary-foreground! bg-primary!;
 }
 
 @utility surface-texture {
@@ -95,21 +101,27 @@ body {
 	@apply focus:outline-0;
 }
 
-[data-slot="card"] {
-	@apply border-2 shadow-none relative isolate bg-transparent! surface-texture;
-}
-
-[data-slot="card-title"] {
-	@apply text-border;
-}
-
 [data-slot="popover-popup"] {
-	@apply border-2 border-border rounded-xl shadow-none relative isolate overflow-hidden bg-transparent! surface-texture;
+	@apply border-3 border-primary rounded-xl shadow-none relative isolate overflow-hidden bg-transparent! surface-texture;
+}
+
+[data-slot="drawer-popup"] {
+	@apply border-3! border-primary! rounded-xl! shadow-none bg-transparent! surface-texture;
+    @apply isolate overflow-hidden;
+    @apply top-3 bottom-3 h-auto;
+}
+
+[data-slot="drawer-popup"][data-side="left"] {
+    @apply left-3;
 }
 
 [data-slot="switch"],
 [data-slot="switch-thumb"] {
-	@apply border-2 border-border;
+	@apply border-3 border-primary;
+}
+
+[data-slot="switch"][data-checked] {
+	@apply bg-secondary;
 }
 
 [data-slot="scroll-bar"] {

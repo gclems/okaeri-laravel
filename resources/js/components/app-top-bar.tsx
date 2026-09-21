@@ -1,15 +1,14 @@
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Button, cn, useSidebar } from "shanty-ui";
+import { Button, cn } from "shanty-ui";
+
+import { AppSidebar } from "./app-sidebar";
 
 function AppTopBar() {
-	const { open, setOpen } = useSidebar();
-
 	return (
 		<div className="flex gap-x-2">
-			<Button variant="ghost" color="primary" onClick={() => setOpen(!open)}>
-				<img src="/images/logo_image.png" alt="Logo" className="size-8" />
-			</Button>
+			<AppSidebar />
+
 			<div
 				className={cn(
 					"shrink-0 bg-white/20 bg-none! border-none! before:content-none!",

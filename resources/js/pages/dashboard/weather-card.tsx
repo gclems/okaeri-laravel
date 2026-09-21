@@ -18,7 +18,7 @@ import UvIndex9 from "@meteocons/svg/fill/uv-index-9.svg";
 import UvIndex10 from "@meteocons/svg/fill/uv-index-10.svg";
 import UvIndex11 from "@meteocons/svg/fill/uv-index-11.svg";
 import Wind from "@meteocons/svg/fill/wind.svg";
-import { Card, cn, Popover, ScrollArea } from "shanty-ui";
+import { cn, Popover, ScrollArea } from "shanty-ui";
 
 import { Meteocon } from "@/components/meteocon";
 import { RollingTime } from "@/components/rolling-time";
@@ -57,8 +57,8 @@ function WeatherCard() {
 	);
 
 	return (
-		<Card className="@container relative overflow-hidden bg-transparent bg-none! border-none! before:content-none! h-57.5">
-			<Card.Body className="text-white">
+		<div className="@container relative overflow-hidden bg-transparent">
+			<div className="text-white">
 				{weatherForecast && (
 					<div className="flex flex-col-reverse @lg:flex-row items-center justify-end gap-2">
 						<ForecastPopover weatherForecast={weatherForecast} />
@@ -66,8 +66,8 @@ function WeatherCard() {
 						<DatePanel />
 					</div>
 				)}
-			</Card.Body>
-			<Card.Footer className="hidden @xl:flex justify-end items-end text-white gap-x-4">
+			</div>
+			<div className="hidden @xl:flex justify-end items-end text-white gap-x-4 mt-16">
 				{weatherForecast && (
 					<>
 						<ConditionsBar weatherForecast={weatherForecast} />
@@ -85,8 +85,8 @@ function WeatherCard() {
 						</div>
 					</>
 				)}
-			</Card.Footer>
-		</Card>
+			</div>
+		</div>
 	);
 }
 

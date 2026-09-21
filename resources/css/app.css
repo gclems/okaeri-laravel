@@ -79,7 +79,7 @@ body {
 	&::before {
 		content: "";
 		@apply absolute inset-0 -z-10 bg-repeat opacity-98;
-		background-image: url("./surface_background.png");
+		background-image: url("./surface_background.jpg");
 	}
 }
 

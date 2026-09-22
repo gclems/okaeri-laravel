@@ -17,11 +17,11 @@ import { useClock } from "@/features/clock/use-clock";
 import { useDomoStore } from "@/features/domo/domo-store";
 import { useTheme } from "@/features/use-theme";
 import { getWeatherConditionBackground } from "@/features/weather/weather-condition";
-import { useAppRestarted } from "@/features/websocket/use-app-restarted";
+import { useAppUpdated } from "@/features/websocket/use-app-restarted";
 
 function Layout({ children }: { children: ReactNode }) {
 	useTheme();
-	useAppRestarted();
+	useAppUpdated();
 	const now = useClock();
 
 	const weatherForecastsMap = useDomoStore((state) => state.weatherForecastsMap);

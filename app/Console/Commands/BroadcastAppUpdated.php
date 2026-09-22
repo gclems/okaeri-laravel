@@ -2,20 +2,20 @@
 
 namespace App\Console\Commands;
 
-use App\Events\AppRestarted;
+use App\Events\AppUpdated;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('app:broadcast-restarted')]
+#[Signature('app:broadcast-updated')]
 #[Description('Broadcasts that the application has just started, so open clients can refresh themselves')]
-class BroadcastAppRestarted extends Command
+class BroadcastAppUpdated extends Command
 {
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
-        AppRestarted::dispatch();
+        AppUpdated::dispatch();
     }
 }

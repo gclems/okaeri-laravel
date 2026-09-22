@@ -95,7 +95,7 @@ services:
         post_start:
             - command: >
                   sh -c "until curl -sf http://localhost/up >/dev/null 2>&1; do sleep 0.5; done;
-                  php artisan app:broadcast-restarted"
+                  php artisan app:broadcast-updated"
     scheduler:
         build:
             context: './vendor/laravel/sail/runtimes/8.5'

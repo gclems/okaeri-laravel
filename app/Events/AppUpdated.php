@@ -8,7 +8,7 @@ use Illuminate\Contracts\Broadcasting\ShouldRescue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AppRestarted implements ShouldBroadcastNow, ShouldRescue
+class AppUpdated implements ShouldBroadcastNow, ShouldRescue
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -16,7 +16,9 @@ class AppRestarted implements ShouldBroadcastNow, ShouldRescue
 
     public function broadcastAs(): string
     {
-        return 'AppRestarted';
+        logger()->info('AppUpdated event dispatched');
+
+        return 'AppUpdated';
     }
 
     public function broadcastOn(): array

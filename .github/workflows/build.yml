@@ -268,3 +268,10 @@ jobs:
 
             exit 1
           '
+
+      - name: Notify clients of update
+        run: |
+          ssh -i ~/.ssh/okaeri-deploy gclems@homeserver \
+            "docker compose \
+              -f ~/Projects/homeserver/compose.yaml \
+              exec -T okaeri php artisan app:broadcast-updated"

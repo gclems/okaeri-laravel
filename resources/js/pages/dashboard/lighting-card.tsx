@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { PowerOffIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useHttp } from "@inertiajs/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Button, Card, cn, Switch } from "shanty-ui";
 
 import LightingController from "@/actions/App/Http/Controllers/LightingController";
@@ -120,30 +121,39 @@ function ViewModelItem({
 					}}
 				/>
 			</div>
-			<div className="flex gap-x-2">
-				{vm.bulbs.map((bulb) => {
-					const safeRGB = bulb.light.rgb ?? "white";
-					const percent = (bulb.light.brightness ?? 0) * 100;
-					return (
-						<div key={bulb.id} className="flex items-center gap-x-0.5">
-							<div
-								className={"size-3 rounded-full border-2"}
-								style={{
-									background: bulb.light.isOn ? safeRGB : "transparent",
-									borderColor: bulb.light.isOn ? "var(--foreground)" : "var(--border)",
-								}}
-							/>
-							<div
-								className={cn("text-xs text-metric", {
-									"opacity-30": !bulb.light.isOn,
-								})}
-							>
-								<AnimatedNumber number={percent} formatter={(n) => n.toFixed(0)} />%
-							</div>
-						</div>
-					);
-				})}
-			</div>
+			<AnimatePresence>
+				{vm.isOn && (
+					<motion.div
+						className="flex gap-x-2"
+						initial={{ height: 0, opacity: 0 }}
+						animate={{ height: "auto", opacity: 1 }}
+						exit={{ height: 0, opacity: 0 }}
+					>
+						{vm.bulbs.map((bulb) => {
+							const safeRGB = bulb.light.rgb ?? "white";
+							const percent = (bulb.light.brightness ?? 0) * 100;
+							return (
+								<div key={bulb.id} className="flex items-center gap-x-0.5">
+									<div
+										className={"size-3 rounded-full border-2"}
+										style={{
+											background: bulb.light.isOn ? safeRGB : "transparent",
+											borderColor: bulb.light.isOn ? "var(--foreground)" : "var(--border)",
+										}}
+									/>
+									<div
+										className={cn("text-xs text-metric", {
+											"opacity-30": !bulb.light.isOn,
+										})}
+									>
+										<AnimatedNumber number={percent} formatter={(n) => n.toFixed(0)} />%
+									</div>
+								</div>
+							);
+						})}
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }

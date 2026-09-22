@@ -12,7 +12,7 @@ function DoorCard() {
 				}
 			/>
 			<Card.Body>
-				<div className="flex items-center justify-center h-80 w-full text-muted">
+				<div className="flex items-center justify-center h-50 w-full text-muted">
 					Todo
 				</div>
 			</Card.Body>

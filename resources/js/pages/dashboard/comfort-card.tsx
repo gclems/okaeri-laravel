@@ -1,9 +1,15 @@
 import { useMemo } from "react";
 
 import Humidity from "@meteocons/svg/fill/humidity.svg";
-import ThermometerAlarm from "@meteocons/svg/fill/thermometer-alarm.svg";
-import { Card, cn } from "shanty-ui";
+import Thermometer from "@meteocons/svg/fill/thermometer.svg";
+import { Card, cn, Separator } from "shanty-ui";
 
+import {
+	Carousel,
+	CarouselContent,
+	CarouselDots,
+	CarouselItem,
+} from "@/components/embla-carousel";
 import { Meteocon } from "@/components/meteocon";
 import { RollingNumber } from "@/components/rolling-number";
 import { useDomoStore } from "@/features/domo/domo-store";
@@ -43,13 +49,21 @@ function ComfortCard() {
 				}
 			></Card.Header>
 			<Card.Body>
-				<ul className="">
-					{viewModels.map((vm) => (
-						<li key={vm.room.id}>
-							<RoomItem vm={vm} />
-						</li>
-					))}
-				</ul>
+				<Carousel
+					opts={{
+						loop: true,
+					}}
+					autoplay
+				>
+					<CarouselContent>
+						{viewModels.map((vm) => (
+							<CarouselItem key={vm.room.id}>
+								<RoomItem vm={vm} />
+							</CarouselItem>
+						))}
+					</CarouselContent>
+					<CarouselDots />
+				</Carousel>
 			</Card.Body>
 		</Card>
 	);
@@ -57,22 +71,16 @@ function ComfortCard() {
 
 function RoomItem({ vm }: { vm: RoomViewModel }) {
 	return (
-		<div className="flex items-center gap-x-4">
-			<div className="flex-1 truncate">{vm.room.name}</div>
+		<div>
+			<div className="text-center text-muted">{vm.room.name}</div>
 			<div>
 				{vm.sensors.map((sensor) => (
-					<div key={sensor.id} className="flex gap-x-2">
+					<div key={sensor.id} className="flex items-center">
 						{sensor.thermometer && (
-							<div className="flex items-center gap-x-1">
-								{+(sensor.thermometer.value ?? 0) >= 26 && (
-									<Meteocon
-										src={ThermometerAlarm}
-										alt="Thermometer Alarm"
-										className="size-10"
-									/>
-								)}
+							<div className="flex items-center gap-x-1 flex-1">
+								<Meteocon src={Thermometer} alt="Thermometer" className="size-16" />
 								<span
-									className={cn("text-metric text-lg -ml-2", {
+									className={cn("text-metric text-xl font-semibold -ml-4", {
 										"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
 										"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
 									})}
@@ -87,14 +95,20 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 								</span>
 							</div>
 						)}
+						{sensor.thermometer && sensor.hygrometer && (
+							<Separator orientation="vertical" className="bg-border h-8" />
+						)}
 						{sensor.hygrometer && (
-							<div className="flex items-center text-sm">
-								<Meteocon src={Humidity} alt="Humidity" className="size-8 -mr-2" />
-								<span className="text-metric">
+							<div className="flex items-center text-sm flex-1">
+								<Meteocon src={Humidity} alt="Humidity" className="size-12" />
+								<span className="text-metric -ml-2 text-xl font-semibold">
 									<RollingNumber
 										number={+(sensor.hygrometer.value ?? 0)}
 										formatter={(value) => value.toFixed(1).toString()}
 									/>
+								</span>
+								<span className="text-muted text-xs">
+									{sensor.hygrometer.unit as string}
 								</span>
 							</div>
 						)}

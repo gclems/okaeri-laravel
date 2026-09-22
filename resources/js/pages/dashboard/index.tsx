@@ -15,9 +15,11 @@ export default function Dashboard() {
 		<>
 			<Head title="" />
 
-			<WeatherCard />
+			<div className="flex justify-end">
+				<WeatherCard />
+			</div>
 
-			<div className="@container mt-2">
+			<div className="@container mt-10">
 				<div className="flex gap-2 flex-col @xl:flex-row">
 					<div className="flex-1 grid grid-cols-3 gap-2 content-start">
 						<div className="col-span-3"></div>

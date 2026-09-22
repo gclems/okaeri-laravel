@@ -18,7 +18,7 @@ import UvIndex9 from "@meteocons/svg/fill/uv-index-9.svg";
 import UvIndex10 from "@meteocons/svg/fill/uv-index-10.svg";
 import UvIndex11 from "@meteocons/svg/fill/uv-index-11.svg";
 import Wind from "@meteocons/svg/fill/wind.svg";
-import { cn, Popover, ScrollArea } from "shanty-ui";
+import { cn, Popover, ScrollArea, Separator } from "shanty-ui";
 
 import { Meteocon } from "@/components/meteocon";
 import { RollingTime } from "@/components/rolling-time";
@@ -56,36 +56,39 @@ function WeatherCard() {
 		[weatherForecastsMap],
 	);
 
-	return (
-		<div className="@container relative overflow-hidden bg-transparent">
-			<div className="text-white">
-				{weatherForecast && (
-					<div className="flex flex-col-reverse @lg:flex-row items-center justify-end gap-2">
-						<ForecastPopover weatherForecast={weatherForecast} />
+	if (!weatherForecast) return null;
 
-						<DatePanel />
-					</div>
-				)}
+	return (
+		<div
+			className={cn(
+				"@container relative",
+				"w-full max-w-md",
+				"bg-transparent backdrop-blur-sm",
+				"border-white/50 border",
+				"shadow-xs shadow-white/50",
+				"rounded-xl",
+				"py-1 space-y-1",
+				"text-white/80",
+			)}
+		>
+			<div className="flex items-center gap-x-8">
+				<ForecastPopover weatherForecast={weatherForecast} />
+				<Separator
+					orientation="vertical"
+					className="bg-white/50 h-20 w-px shrink-0 grow-0"
+				/>
+				<DatePanel />
 			</div>
-			<div className="hidden @xl:flex justify-end items-end text-white gap-x-4 mt-16">
-				{weatherForecast && (
-					<>
-						<ConditionsBar weatherForecast={weatherForecast} />
-						<div className="bg-black/20 px-4 rounded-lg w-fit">
-							{!!sunPhase && (
-								<div className="grid grid-cols-3 gap-4">
-									<PhaseBlock
-										icon={Sunrise}
-										time={new Date(sunPhase.sunrise_starts_at)}
-									/>
-									<PhaseBlock icon={ClearDay} time={new Date(sunPhase.solar_noon_at)} />
-									<PhaseBlock icon={Sunset} time={new Date(sunPhase.sunset_starts_at)} />
-								</div>
-							)}
-						</div>
-					</>
-				)}
-			</div>
+			<Separator orientation="horizontal" className="bg-white/50 w-full" />
+			<ConditionsBar weatherForecast={weatherForecast} />
+			<Separator orientation="horizontal" className="bg-white/50 w-full" />
+			{!!sunPhase && (
+				<div className="grid grid-cols-3 gap-4">
+					<PhaseBlock icon={Sunrise} time={new Date(sunPhase.sunrise_starts_at)} />
+					<PhaseBlock icon={ClearDay} time={new Date(sunPhase.solar_noon_at)} />
+					<PhaseBlock icon={Sunset} time={new Date(sunPhase.sunset_starts_at)} />
+				</div>
+			)}
 		</div>
 	);
 }
@@ -123,8 +126,8 @@ function PhaseBlock({ icon, time }: { icon: string; time: Date }) {
 function DatePanel() {
 	const now = useClock();
 	return (
-		<div className="bg-black/20 p-4 rounded-lg w-fit">
-			<div className="space-x-1 text-metric">
+		<div className="flex-1">
+			<div className="space-x-1 text-metric flex justify-center">
 				<span className="">
 					{now.toLocaleDateString([], {
 						weekday: "short",
@@ -207,7 +210,7 @@ function ForecastPopover({
 			<Popover.Trigger
 				nativeButton={false}
 				render={<div />}
-				className="flex items-center gap-x-1 justify-center bg-black/20 @xl:bg-transparent rounded-lg w-fit px-4"
+				className="flex items-center gap-x-1 justify-center px-4 flex-1"
 			>
 				<Meteocon src={conditionIcon} alt={conditionLabel} className="size-24" />
 				<div className="flex flex-col">
@@ -334,7 +337,7 @@ function ConditionsBar({
 	weatherForecast: WeatherForecast;
 }) {
 	return (
-		<div className="flex bg-black/20 px-4 items-center rounded-lg w-fit gap-x-4">
+		<div className="flex px-4 items-center gap-x-4">
 			<div className="flex gap-x-0.5 items-center">
 				<Meteocon src={Humidity} alt="Humidité" className="size-8" />
 				{weatherForecast.humidity?.value?.toFixed(0) ?? "–"}%

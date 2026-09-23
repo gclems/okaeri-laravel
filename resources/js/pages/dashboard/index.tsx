@@ -22,22 +22,20 @@ export default function Dashboard() {
 			<div className="@container mt-10">
 				<div className="flex gap-2 flex-col @xl:flex-row">
 					<div className="flex-1 grid grid-cols-3 gap-2 content-start">
-						<div className="col-span-3"></div>
+						<div />
+						<ComfortCard />
+						<AirConditioningCard />
 
-						<div className="col-span-3 grid grid-cols-2 @xl:grid-cols-3 gap-2">
-							<AirConditioningCard />
-							<EnergyConsumptionCard />
+						<div className="col-span-2">
+							<CarCard />
 						</div>
 						<LightingCard />
-
-						<CarCard />
-
-						<NetworkCard />
+						<BatteriesCard />
 					</div>
 					<div className="@xl:w-72 space-y-2">
 						<DoorCard />
-						<ComfortCard />
-						<BatteriesCard />
+						<EnergyConsumptionCard />
+						<NetworkCard />
 					</div>
 				</div>
 			</div>

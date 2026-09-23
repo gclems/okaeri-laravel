@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 
 import {
-	ArrowRight04Icon,
-	AutomotiveBattery02Icon,
 	ElectricPlugsIcon,
-	Login02Icon,
 	Plug01Icon,
 	RoadIcon,
 	UnplugIcon,
@@ -12,14 +9,13 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import L from "leaflet";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
-import { Card, cn } from "shanty-ui";
+import { Card, cn, Separator } from "shanty-ui";
 
 import { RollingNumber } from "@/components/rolling-number";
 import { useDomoStore } from "@/features/domo/domo-store";
 import type { Car } from "@/types/projections";
 import "leaflet/dist/leaflet.css";
 
-import { getBatteryLevelColor } from "@/features/renault/battery";
 import { getChargingTime } from "@/features/renault/charing-time";
 
 const carIcon = L.divIcon({
@@ -44,72 +40,22 @@ function CarCard() {
 }
 
 function CarItem({ car }: { car: Car }) {
+	const batteryLevel = car.battery?.value ?? 0;
+	const isPlugged = car.isPlugged.value;
+	const isCharging = car.isCharging.value;
+	const chargingTime = getChargingTime(car.remainingChargingMinutes?.value ?? 0);
+
 	return (
 		<Card className="@container">
-			<Card.Header
-				title={
-					<div>
-						<div className="flex gap-x-2 items-center">
-							<img
-								src="/images/renault_4_small.png"
-								alt="Renault 4"
-								className="w-10"
-							/>{" "}
-							Renault 4
-						</div>
-					</div>
-				}
-			></Card.Header>
-
-			<Card.Body className=" space-y-2  text-metric">
-				<div className="grid @xs:grid-cols-2 gap-1">
-					{(car.battery || car.autonomy) && (
-						<div className="flex items-center justify-between">
-							{car.battery && (
-								<div className="flex gap-x-2">
-									<HugeiconsIcon icon={AutomotiveBattery02Icon} />
-									<div className="flex items-center gap-x-2">
-										{car.battery && (
-											<span
-												className={cn(
-													"font-semibold text-lg",
-													getBatteryLevelColor(+(car.battery.value ?? 0)),
-												)}
-											>
-												<RollingNumber number={+(car.battery.value ?? 0)} />
-												<span>{car.battery.unit ?? ""}</span>
-											</span>
-										)}
-									</div>
-								</div>
-							)}
-							{car.autonomy && (
-								<div className="flex gap-x-2">
-									<HugeiconsIcon icon={RoadIcon} size="1.25rem" />
-									<span className="text-sm text-metric">
-										<RollingNumber number={+(car.autonomy.value ?? 0)} />
-										<span>{car.autonomy.unit ?? ""}</span>
-									</span>
-								</div>
-							)}
-						</div>
-					)}
-
-					<PlugAndChargeStatus car={car} />
-				</div>
-				{car.energyFlapOpened && !car.isPlugged && (
-					<div className="flex gap-x-2 text-destructive">
-						<HugeiconsIcon icon={Login02Icon} size="1.25rem" /> Trappe ouverte
-					</div>
-				)}
+			<Card.Body className="flex flex-col @xl:flex-row gap-3">
 				{car.coordinates && (
-					<div className="col-span-2 w-full aspect-video">
+					<div className="flex-1 order-2 @xl:order-1">
 						<MapContainer
 							center={[car.coordinates.latitude ?? 0, car.coordinates.longitude ?? 0]}
 							zoom={16}
-							scrollWheelZoom={false}
-							dragging={false}
-							zoomControl={false}
+							scrollWheelZoom
+							dragging
+							zoomControl
 							attributionControl
 							className="h-full w-full"
 						>
@@ -131,67 +77,101 @@ function CarItem({ car }: { car: Car }) {
 						</MapContainer>
 					</div>
 				)}
-
-				{car.mileage && (
-					<div className="text-metric font-thin text-base">
-						<span className="text-sm mr-2">Kilométrage:</span>
-						<RollingNumber
-							number={+(car.mileage.value ?? 0)}
-							formatter={(n) => new Intl.NumberFormat("fr-FR").format(n)}
-						/>
-						{car.mileage.unit}
+				<div className="flex-1 order-1 @xl:order-2">
+					<div className="flex gap-x-2 items-center text-lg font-semibold">
+						<img src="/images/renault_4_small.png" alt="Renault 4" className="w-10" />
+						&nbsp; Renault 4
 					</div>
-				)}
+
+					<div className="mt-4 text-metric flex items-baseline justify-between">
+						<div
+							className={cn("font-semibold text-2xl", {
+								"text-destructive": batteryLevel <= 20,
+								"text-warning": batteryLevel > 20 && batteryLevel <= 50,
+								"text-info": batteryLevel > 50 && batteryLevel < 70,
+								"text-success": batteryLevel >= 70,
+							})}
+						>
+							{batteryLevel}
+							{car.battery?.unit ?? "%"}
+						</div>
+						{car.autonomy && (
+							<div>
+								{/* <HugeiconsIcon icon={RoadIcon} size="1.25rem" /> */}
+								<span className="text-sm text-metric">
+									~
+									<RollingNumber number={+(car.autonomy.value ?? 0)} />
+									<span>{car.autonomy.unit ?? ""}</span>
+								</span>
+							</div>
+						)}
+					</div>
+					<div className="w-full rounded-full h-2 bg-muted/30 overflow-hidden">
+						<div
+							className={cn("h-full", {
+								"bg-destructive": batteryLevel <= 20,
+								"bg-warning": batteryLevel > 20 && batteryLevel <= 50,
+								"bg-info": batteryLevel > 50 && batteryLevel < 70,
+								"bg-success": batteryLevel >= 70,
+							})}
+							style={{
+								width: `${batteryLevel}%`,
+							}}
+						/>
+					</div>
+
+					<div className="flex justify-between mt-4 text-metric text-sm items-center">
+						<div className="font-semibold flex">
+							<HugeiconsIcon
+								icon={
+									isPlugged ? (isCharging ? ElectricPlugsIcon : Plug01Icon) : UnplugIcon
+								}
+								size="1rem"
+							/>
+							&nbsp;{isPlugged ? "Branchée" : "Débranchée"}
+						</div>
+						<div className="">{isCharging ? "En charge" : "Pas en charge"}</div>
+					</div>
+					{(chargingTime.hours > 0 || chargingTime.minutes > 0) && (
+						<div className="flex justify-between text-metric text-xs items-center pl-8">
+							<div className="font-semibold flex">Temps restant</div>
+							<div className="">
+								<RollingNumber number={chargingTime.hours} />h
+								<RollingNumber
+									number={chargingTime.minutes}
+									formatter={(num) => num.toString().padStart(2, "0")}
+								/>
+							</div>
+						</div>
+					)}
+
+					<Separator className="my-2 bg-border/50" />
+					<div className="flex justify-between text-metric text-sm items-center">
+						<div className="font-semibold flex">
+							<HugeiconsIcon icon={RoadIcon} size="1rem" />
+							&nbsp;Kilométrage
+						</div>
+						<div className="">
+							<RollingNumber
+								number={+(car.mileage?.value ?? 0)}
+								formatter={(n) => new Intl.NumberFormat("fr-FR").format(n)}
+							/>
+							{car.mileage?.unit ?? "Km"}
+						</div>
+					</div>
+
+					{car.energyFlapOpened && (
+						<div
+							className={cn("mt-4 text-metric text-sm", {
+								"text-destructive font-semibold text-lg": !isPlugged,
+							})}
+						>
+							Trappe de charge ouverte
+						</div>
+					)}
+				</div>
 			</Card.Body>
 		</Card>
-	);
-}
-
-function PlugAndChargeStatus({ car }: { car: Car }) {
-	const isPlugged = car.isPlugged.value;
-	const isCharging = car.isCharging.value;
-	const chargingTime = getChargingTime(car.remainingChargingMinutes?.value ?? 0);
-
-	return (
-		<>
-			<div className="flex items-center justify-between">
-				<div className="flex items-center gap-x-1">
-					<HugeiconsIcon
-						icon={
-							isPlugged ? (isCharging ? ElectricPlugsIcon : Plug01Icon) : UnplugIcon
-						}
-					/>
-					<span className="text-sm">
-						{isCharging ? "Charge en cours" : isPlugged ? "Branchée" : "Débranchée"}
-					</span>
-				</div>
-
-				{isCharging && (
-					<div className="flex items-center gap-x-1">
-						<span>
-							{!chargingTime && "???"}
-							{!!chargingTime && (
-								<span className="font-semibold text-metric">
-									<RollingNumber number={chargingTime.hours} />h
-									<RollingNumber
-										number={chargingTime.minutes}
-										formatter={(num) => num.toString().padStart(2, "0")}
-									/>
-								</span>
-							)}
-						</span>
-					</div>
-				)}
-			</div>
-			<div className="flex items-center gap-x-1">
-				{isCharging && (
-					<>
-						<HugeiconsIcon icon={ArrowRight04Icon} size="1.25rem" />
-						<span className="text-sm text-metric">{`${car.targetChargeLevel?.value ?? "?"}%`}</span>
-					</>
-				)}
-			</div>
-		</>
 	);
 }
 

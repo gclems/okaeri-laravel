@@ -34,7 +34,7 @@ function BatteriesCard() {
 				...Array.from(carsMap.values()),
 				...Array.from(switchesMap.values()),
 			]
-				.filter((device) => !!device.battery)
+				.filter((device) => !!device.battery && (device.battery.value ?? 0) <= 20)
 				.sort((a, b) => (a.battery?.value ?? 0) - (b.battery?.value ?? 0));
 		}, [lightsMap, climateSensorsMap, carsMap, switchesMap]);
 

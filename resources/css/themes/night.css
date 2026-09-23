@@ -1,0 +1,74 @@
+:root[data-theme="night"] {
+	--radius-base: 6px;
+
+	--radius-xs: calc(var(--radius-base) * 0.25);
+	--radius-sm: calc(var(--radius-base) * 0.5);
+	--radius-md: var(--radius-base);
+	--radius-lg: calc(var(--radius-base) * 1.5);
+	--radius-xl: calc(var(--radius-base) * 2);
+
+	--background: oklch(0.2917 0.0567 268.77);
+	--surface: oklch(0.2917 0.0567 268.77);
+	--foreground: oklch(78.577% 0.00009 271.152);
+	--border: oklch(0.2917 0.0567 268.77);
+
+	--tooltip: oklch(0.1985 0.0123 353.84);
+	--tooltip-foreground: oklch(0.6956 0 353.84);
+
+	--input: oklch(0.9731 0 0);
+	--input-foreground: oklch(0.2341 0.0186 107.75);
+	--input-placeholder: oklch(0.2917 0.0567 268.77);
+	--input-border: oklch(0.9114 0.0042 301.42);
+
+	--modal: oklch(0.9759 0.0029 264.54);
+	--modal-foreground: oklch(0.2917 0.0567 268.77);
+
+	--muted: oklch(0.6677 0.0323 262.48);
+	--muted-foreground: oklch(0.6677 0.0323 262.48);
+
+	--accent: oklch(0.9235 0.0341 257.85);
+	--accent-foreground: oklch(0.562 0.2362 261.21);
+
+	--primary: oklch(0.2917 0.0567 268.77);
+	--primary-foreground: oklch(78.577% 0.00009 271.152);
+
+	--secondary: oklch(0.8208 0.1293 131.99);
+	--secondary-foreground: oklch(100% 0 0);
+
+	--neutral: oklch(0.6956 0 353.84);
+	--neutral-foreground: oklch(0.1985 0.0123 353.84);
+
+	--success: oklch(0.8208 0.1293 131.99);
+	--success-foreground: oklch(100% 0 0);
+
+	--info: oklch(0.7332 0.126 271.95);
+	--info-foreground: oklch(0.1985 0.0123 353.84);
+
+	--warning: oklch(0.8391 0.1507 94.38);
+	--warning-foreground: oklch(1 0 0);
+
+	--destructive: oklch(0.6459 0.2128 30.72);
+	--destructive-foreground: oklch(100% 0 0);
+
+	--energy: oklch(94.002% 0.16691 113.592);
+	--lighting: oklch(84.782% 0.11542 90.278);
+	--comfort: oklch(73.205% 0.09059 158.433);
+	--temperature: oklch(70% 0.15 35);
+	--humidity: oklch(68% 0.14 240);
+	--pressure: oklch(72% 0.12 170);
+
+	--network: oklch(72% 0.12 170);
+	--download: oklch(0.6522 0.1235 284.59);
+	--upload: oklch(0.7791 0.0972 155.93);
+
+	--security: oklch(60% 0.22 28);
+	--automation: oklch(66% 0.18 290);
+	--car: oklch(88.449% 0.08587 182.932);
+
+	--temperature-excessive: oklch(59.029% 0.23425 29.159);
+	--temperature-low: oklch(77.127% 0.12352 236.719);
+
+	--background-texture: url("../surface_background_dark.jpg");
+	--db-foreground: oklch(92.797% 0.00011 271.152);
+	--db-outline: oklch(0.2917 0.0567 268.77);
+}

@@ -28,6 +28,9 @@
 	--color-security: var(--security);
 	--color-automation: var(--automation);
 	--color-car: var(--car);
+
+	--color-db-foreground: var(--db-foreground);
+	--color-db-outline: var(--db-outline);
 }
 
 @utility text-heading {
@@ -43,24 +46,24 @@
 }
 
 @utility text-db {
-	@apply font-semibold text-white;
+	@apply font-semibold text-db-foreground;
 	text-shadow:
-		-2px -2px 0 var(--color-primary),
-		-1px -2px 0 var(--color-primary),
-		0 -2px 0 var(--color-primary),
-		1px -2px 0 var(--color-primary),
-		2px -2px 0 var(--color-primary),
-		-2px -1px 0 var(--color-primary),
-		2px -1px 0 var(--color-primary),
-		-2px 0 0 var(--color-primary),
-		2px 0 0 var(--color-primary),
-		-2px 1px 0 var(--color-primary),
-		2px 1px 0 var(--color-primary),
-		-2px 2px 0 var(--color-primary),
-		-1px 2px 0 var(--color-primary),
-		0 2px 0 var(--color-primary),
-		1px 2px 0 var(--color-primary),
-		2px 2px 0 var(--color-primary);
+		-2px -2px 0 var(--color-db-outline),
+		-1px -2px 0 var(--color-db-outline),
+		0 -2px 0 var(--color-db-outline),
+		1px -2px 0 var(--color-db-outline),
+		2px -2px 0 var(--color-db-outline),
+		-2px -1px 0 var(--color-db-outline),
+		2px -1px 0 var(--color-db-outline),
+		-2px 0 0 var(--color-db-outline),
+		2px 0 0 var(--color-db-outline),
+		-2px 1px 0 var(--color-db-outline),
+		2px 1px 0 var(--color-db-outline),
+		-2px 2px 0 var(--color-db-outline),
+		-1px 2px 0 var(--color-db-outline),
+		0 2px 0 var(--color-db-outline),
+		1px 2px 0 var(--color-db-outline),
+		2px 2px 0 var(--color-db-outline);
 }
 
 body {
@@ -91,7 +94,7 @@ body {
 	&::before {
 		content: "";
 		@apply absolute inset-0 -z-10 bg-repeat opacity-98;
-		background-image: url("./surface_background.jpg");
+		background-image: var(--background-texture);
 	}
 }
 

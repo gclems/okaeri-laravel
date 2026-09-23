@@ -16,6 +16,8 @@ import Wind from "@meteocons/svg/fill/wind.svg";
 
 import type { WeatherConditionType } from "@/types/projections";
 
+import { isDay } from "../use-theme";
+
 const WEATHER_CONDITION_ICONS: Record<WeatherConditionType, string> = {
 	sunny: ClearDay,
 	"clear-night": ClearNight,
@@ -86,12 +88,10 @@ function getWeatherConditionBackground(
 	condition: WeatherConditionType | null,
 	date: Date = new Date(),
 ): string {
-	let baseName: string, isDay: boolean, variant: string;
+	let baseName: string, variant: string;
 	if (condition) {
 		baseName = WEATHER_CONDITION_IMAGES[condition];
-		const minutesSinceMidnight = date.getHours() * 60 + date.getMinutes();
-		isDay = minutesSinceMidnight >= 7 * 60 && minutesSinceMidnight <= 19 * 60;
-		variant = isDay ? "day" : "night";
+		variant = isDay(date) ? "day" : "night";
 	} else {
 		variant = "day";
 		baseName = "sunny";

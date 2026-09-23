@@ -83,7 +83,7 @@ function CarItem({ car }: { car: Car }) {
 							title={
 								<>
 									<img src="/images/renault_4_small.png" alt="Renault 4" />{" "}
-									<span className="capitalize text-white text-db">{car.name}</span>
+									<span className="capitalize">{car.name}</span>
 								</>
 							}
 						/>

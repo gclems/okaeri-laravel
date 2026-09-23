@@ -272,13 +272,13 @@ function ConditionsBar({
 		<div className="flex flex-col -ml-4">
 			<div className="flex items-center">
 				<Meteocon src={Rain} alt="Pluie" className="size-12" />
-				<div className="text-metric -ml-2 -mb-2 -mt-2">
+				<div className="text-metric -mb-2 -mt-2">
 					<div>{weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}%</div>
 				</div>
 			</div>
 			<div className="flex items-center">
 				<Meteocon src={WindSock} alt="Vent" className="size-12" />
-				<div className="text-metric -ml-2 -mb-2 -mt-2">
+				<div className="text-metric -mb-2 -mt-2">
 					<div>
 						{weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
 						<span className="text-xs">{weatherForecast.windSpeed?.unit}</span>
@@ -287,7 +287,7 @@ function ConditionsBar({
 			</div>
 			<div className="flex items-center">
 				<Meteocon src={Humidity} alt="Humidité" className="size-12" />
-				<div className="text-metric -ml-2 -mb-2 -mt-2">
+				<div className="text-metric -mb-2 -mt-2">
 					<div className="font-semibold">
 						{weatherForecast.humidity?.value?.toFixed(0) ?? "–"}%
 					</div>

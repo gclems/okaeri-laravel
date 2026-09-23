@@ -67,4 +67,8 @@
 
 	--temperature-excessive: oklch(59.029% 0.23425 29.159);
 	--temperature-low: oklch(77.127% 0.12352 236.719);
+
+	--background-texture: url("../surface_background.jpg");
+	--db-foreground: oklch(0.9843 0.004 106.47);
+	--db-outline: oklch(0.2917 0.0567 268.77);
 }

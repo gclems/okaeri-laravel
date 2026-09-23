@@ -1,38 +1,20 @@
-// import type { SunPhase } from "@/features/sun/sun-functions";
-// import { useSun } from "@/features/sun/use-sun";
-// import { useSunPhase } from "@/features/sun/use-sun-phase";
+import { useClock } from "./clock/use-clock";
 
-// import { type OkaeriTheme, applyTheme } from "./theme";
+export function isDay(date: Date = new Date()) {
+	const minutesSinceMidnight = date.getHours() * 60 + date.getMinutes();
 
-// const themeFromSunPhase = {
-// 	sunrise: "morning",
-// 	day: "day",
-// 	sunset: "evening",
-// 	night: "night",
-// } satisfies Record<SunPhase, OkaeriTheme>;
+	// Define day as between 7:00 AM and 7:00 PM
+	const dayStart = 7 * 60; // 7:00 AM in minutes
+	const dayEnd = 19 * 60; // 7:00 PM in minutes
+
+	return minutesSinceMidnight >= dayStart && minutesSinceMidnight < dayEnd;
+}
 
 export function useTheme() {
-	applyTheme("day");
-	return "day";
-	// const sunQuery = useSun();
-	// const sunPhase = useSunPhase(sunQuery.data);
-
-	// const [theme, setTheme] = useState<OkaeriTheme>("morning");
-
-	// useEffect(() => {
-	// 	// const nextTheme = themeFromSunPhase[sunPhase as SunPhase] ?? "day";
-	// 	const nextTheme = "morning";
-	// 	setTheme(nextTheme);
-	// 	applyTheme(nextTheme);
-	// // }, [sunPhase]);
-
-	// return {
-	// 	theme,
-	// 	setTheme: (theme: OkaeriTheme) => {
-	// 		setTheme(theme);
-	// 		applyTheme(theme);
-	// 	},
-	// };
+	const now = useClock();
+	const theme = isDay(now) ? "day" : "night";
+	applyTheme(theme);
+	return theme;
 }
 
 function applyTheme(theme: string) {

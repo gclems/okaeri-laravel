@@ -143,7 +143,7 @@ body {
 
 [data-slot="switch"],
 [data-slot="switch-thumb"] {
-	@apply border-3 border-primary;
+	@apply border border-primary;
 }
 
 [data-slot="switch"][data-checked] {
@@ -160,11 +160,15 @@ body {
 
 .leaflet-control-zoom {
 	@apply bg-white! rounded-xl! overflow-hidden!;
-	@apply border-3! border-primary!;
+	@apply border! border-primary!;
 }
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
 	@apply bg-transparent;
+}
+
+@theme {
+	--animate-charging: charging 1.5s ease-out infinite;
 }
 
 @keyframes charging {
@@ -190,7 +194,7 @@ body {
 	}
 
 	100% {
-		transform: translateX(300%);
+		transform: translateX(800%);
 		opacity: 0;
 	}
 }
@@ -202,6 +206,6 @@ body {
 	}
 
 	50% {
-		filter: brightness(1.15);
+		filter: brightness(1.05);
 	}
 }

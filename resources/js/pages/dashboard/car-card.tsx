@@ -49,7 +49,7 @@ function CarItem({ car }: { car: Car }) {
 		<Card className="@container">
 			<Card.Body className="flex flex-col @lg:flex-row gap-3">
 				{car.coordinates && (
-					<div className="order-2 @lg:order-1 @lg:flex-1 h-48 @lg:h-auto border-3 border-primary rounded-xl overflow-hidden">
+					<div className="order-2 @lg:order-1 @lg:flex-1 h-48 @lg:h-auto border border-primary rounded-xl overflow-hidden">
 						<MapContainer
 							center={[car.coordinates.latitude ?? 0, car.coordinates.longitude ?? 0]}
 							zoom={16}
@@ -80,7 +80,7 @@ function CarItem({ car }: { car: Car }) {
 				<div className="flex-2 order-1 @lg:order-2">
 					<Card.Header
 						title={
-							<div className="flex gap-x-2 items-center -ml-4">
+							<div className="flex gap-x-2 items-center -ml-2">
 								<img src="/images/renault_4_small.png" alt="Renault 4" />{" "}
 								<span className="capitalize text-white text-db">{car.name}</span>
 							</div>
@@ -106,10 +106,10 @@ function CarItem({ car }: { car: Car }) {
 						{car.autonomy && (
 							<div>
 								{/* <HugeiconsIcon icon={RoadIcon} size="1.25rem" /> */}
-								<span className="text-sm text-metric">
+								<span className="text-lg text-metric">
 									~
 									<RollingNumber number={+(car.autonomy.value ?? 0)} />
-									<span>{car.autonomy.unit ?? ""}</span>
+									<span>&nbsp;{car.autonomy.unit ?? ""}</span>
 								</span>
 							</div>
 						)}
@@ -130,7 +130,7 @@ function CarItem({ car }: { car: Car }) {
 						>
 							{isCharging && (
 								<div className="absolute inset-0">
-									<div className="absolute inset-y-0 -left-1/2 w-1/2 bg-linear-to-r from-transparent via-white to-transparent animate-[charging_1.5s_ease-out_infinite]" />
+									<div className="absolute inset-y-0 -left-1/8 w-1/8 bg-linear-to-r from-transparent via-white to-transparent animate-charging" />
 								</div>
 							)}
 						</div>
@@ -167,7 +167,7 @@ function CarItem({ car }: { car: Car }) {
 							<HugeiconsIcon icon={RoadIcon} size="1rem" />
 							&nbsp;Kilométrage
 						</div>
-						<div className="">
+						<div className="text-lg">
 							<RollingNumber
 								number={+(car.mileage?.value ?? 0)}
 								formatter={(n) => new Intl.NumberFormat("fr-FR").format(n)}
@@ -178,8 +178,8 @@ function CarItem({ car }: { car: Car }) {
 
 					{car.energyFlapOpened && (
 						<div
-							className={cn("mt-4 text-metric text-sm text-center", {
-								"text-lg text-db": !isPlugged,
+							className={cn("mt-4 text-metric text-sm", {
+								"text-xl font-semibold text-destructive": !isPlugged,
 							})}
 						>
 							Trappe de charge ouverte

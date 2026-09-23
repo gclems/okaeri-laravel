@@ -89,8 +89,8 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 										formatter={(value) => value.toFixed(1).toString()}
 									/>
 								</span>
-								<span className="text-muted text-xs">
-									{sensor.thermometer.unit as string}
+								<span className="text-muted">
+									&nbsp;{sensor.thermometer.unit as string}
 								</span>
 							</div>
 						)}
@@ -106,8 +106,8 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 										formatter={(value) => value.toFixed(1).toString()}
 									/>
 								</span>
-								<span className="text-muted text-xs">
-									{sensor.hygrometer.unit as string}
+								<span className="text-muted">
+									&nbsp;{sensor.hygrometer.unit as string}
 								</span>
 							</div>
 						)}

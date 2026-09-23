@@ -4,7 +4,7 @@ import { PowerOffIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useHttp } from "@inertiajs/react";
 import { AnimatePresence, motion } from "motion/react";
-import { Button, Card, cn, Switch } from "shanty-ui";
+import { Button, Card, Switch } from "shanty-ui";
 
 import LightingController from "@/actions/App/Http/Controllers/LightingController";
 import { AnimatedNumber } from "@/components/animated-number";
@@ -78,9 +78,9 @@ function LightingCard() {
 				}
 			/>
 			<Card.Body>
-				<ul className="space-y-2">
+				<ul className="space-y-4">
 					{viewModels.map((vm) => (
-						<li className="not-last:border-b border-muted pb-2" key={vm.room.id}>
+						<li className="border-muted pb-2" key={vm.room.id}>
 							<ViewModelItem vm={vm} onToggle={handleGroupToggle} />
 						</li>
 					))}
@@ -137,15 +137,11 @@ function ViewModelItem({
 									<div
 										className={"size-3 rounded-full border-2"}
 										style={{
-											background: bulb.light.isOn ? safeRGB : "transparent",
-											borderColor: bulb.light.isOn ? "var(--foreground)" : "var(--border)",
+											background: safeRGB,
+											borderColor: "var(--primary)",
 										}}
 									/>
-									<div
-										className={cn("text-xs text-metric", {
-											"opacity-30": !bulb.light.isOn,
-										})}
-									>
+									<div className="text-xs text-metric">
 										<AnimatedNumber number={percent} formatter={(n) => n.toFixed(0)} />%
 									</div>
 								</div>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ChartAverageIcon, QrCodeIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -6,7 +6,6 @@ import { motion } from "motion/react";
 import {
 	Area,
 	AreaChart,
-	CartesianGrid,
 	createHorizontalChart,
 	Tooltip,
 	XAxis,
@@ -35,6 +34,14 @@ function NetworkCard() {
 		setMode((current) => (current === "monitoring" ? "qrCode" : "monitoring"));
 	}
 
+	useEffect(() => {
+		if (mode !== "qrCode") return;
+
+		const timeout = setTimeout(() => setMode("monitoring"), 2 * 60 * 1000);
+
+		return () => clearTimeout(timeout);
+	}, [mode]);
+
 	return (
 		<Card>
 			<Card.Header
@@ -45,11 +52,13 @@ function NetworkCard() {
 							Réseau
 						</div>
 
-						<Button variant="ghost" onClick={toggleMode}>
-							<HugeiconsIcon
-								icon={mode === "monitoring" ? QrCodeIcon : ChartAverageIcon}
-							/>
-						</Button>
+						<div className="text-foreground">
+							<Button variant="ghost" color="primary" onClick={toggleMode}>
+								<HugeiconsIcon
+									icon={mode === "monitoring" ? QrCodeIcon : ChartAverageIcon}
+								/>
+							</Button>
+						</div>
 					</div>
 				}
 			/>
@@ -116,14 +125,14 @@ function Monitoring() {
 			)}
 			{network.length > 0 && (
 				<>
-					<Typed.AreaChart
+					{/* <Typed.AreaChart
 						style={{
 							width: "100%",
 							maxWidth: "700px",
 							maxHeight: "70vh",
 							aspectRatio: 16 / 9,
 						}}
-						className="border-3 rounded-xl overflow-hidden border-primary"
+						className="rounded-xl overflow-hidden border-primary"
 						responsive
 						data={network}
 					>
@@ -162,7 +171,7 @@ function Monitoring() {
 							animationBegin={200}
 							animationDuration={1300}
 						/>
-					</Typed.AreaChart>
+					</Typed.AreaChart> */}
 					<div className="text-xs">
 						<div className="flex items-baseline">
 							<span className="text-download">Descendant</span>
@@ -209,7 +218,7 @@ function QrCode() {
 	const [qrCodeError, setQrCodeError] = useState(false);
 
 	return (
-		<div className="relative size-full">
+		<div className="relative flex justify-center">
 			{!qrCodeLoaded && !qrCodeError && (
 				<div className="absolute inset-0 flex items-center justify-center text-muted text-sm animate-pulse">
 					Chargement...
@@ -223,7 +232,7 @@ function QrCode() {
 			<img
 				src={WifiQrCodeController.show.url()}
 				alt="Qr Code"
-				className={`border-3 border-primary max-h-full max-w-full aspect-square rounded-lg ${qrCodeLoaded ? "opacity-100" : "opacity-0"}`}
+				className={`border-3 border-primary max-h-full max-w-1/2 aspect-square rounded-lg ${qrCodeLoaded ? "opacity-100" : "opacity-0"}`}
 				onLoad={() => setQrCodeLoaded(true)}
 				onError={() => setQrCodeError(true)}
 			/>

@@ -10,6 +10,7 @@ import {
 	UnplugIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import L from "leaflet";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { Card, cn } from "shanty-ui";
 
@@ -20,6 +21,20 @@ import "leaflet/dist/leaflet.css";
 
 import { getBatteryLevelColor } from "@/features/renault/battery";
 import { getChargingTime } from "@/features/renault/charing-time";
+
+const carIcon = L.divIcon({
+	html: `<img src="/images/renault_4_map_marker.png" alt="Renault 4" class="size-10 drop-shadow-lg" />`,
+	className: "",
+	iconSize: [40, 40],
+	iconAnchor: [20, 20],
+});
+
+const carChargingIcon = L.divIcon({
+	html: `<img src="/images/renault_4_map_marker_charging.png" alt="Renault 4" class="size-10 drop-shadow-lg" />`,
+	className: "",
+	iconSize: [40, 40],
+	iconAnchor: [20, 20],
+});
 
 function CarCard() {
 	const carsMap = useDomoStore((state) => state.carsMap);
@@ -90,10 +105,7 @@ function CarItem({ car }: { car: Car }) {
 				{car.coordinates && (
 					<div className="col-span-2 w-full aspect-video">
 						<MapContainer
-							center={[
-								+(car.coordinates.latitude ?? 0),
-								+(car.coordinates.longitude ?? 0),
-							]}
+							center={[car.coordinates.latitude ?? 0, car.coordinates.longitude ?? 0]}
 							zoom={16}
 							scrollWheelZoom={false}
 							dragging={false}
@@ -106,14 +118,15 @@ function CarItem({ car }: { car: Car }) {
 								url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 							/>
 							<RecenterMap
-								latitude={+(car.coordinates.latitude ?? 0)}
-								longitude={+(car.coordinates.longitude ?? 0)}
+								latitude={car.coordinates.latitude ?? 0}
+								longitude={car.coordinates.longitude ?? 0}
 							/>
 							<Marker
 								position={[
-									+(car.coordinates.latitude ?? 0),
-									+(car.coordinates.longitude ?? 0),
+									car.coordinates.latitude ?? 0,
+									car.coordinates.longitude ?? 0,
 								]}
+								icon={car.isActive ? carChargingIcon : carIcon}
 							/>
 						</MapContainer>
 					</div>
@@ -121,6 +134,7 @@ function CarItem({ car }: { car: Car }) {
 
 				{car.mileage && (
 					<div className="text-metric font-thin text-base">
+						<span className="text-sm mr-2">Kilométrage:</span>
 						<RollingNumber
 							number={+(car.mileage.value ?? 0)}
 							formatter={(n) => new Intl.NumberFormat("fr-FR").format(n)}

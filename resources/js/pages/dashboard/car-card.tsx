@@ -108,16 +108,23 @@ function CarItem({ car }: { car: Car }) {
 					</div>
 					<div className="w-full rounded-full h-2 bg-muted/30 overflow-hidden">
 						<div
-							className={cn("h-full", {
-								"bg-destructive": batteryLevel <= 20,
+							className={cn("h-full relative overflow-hidden rounded-full", {
+								"bg-destructive border-destructive/3": batteryLevel <= 20,
 								"bg-warning": batteryLevel > 20 && batteryLevel <= 50,
 								"bg-info": batteryLevel > 50 && batteryLevel < 70,
 								"bg-success": batteryLevel >= 70,
+								"animate-[charging-glow_1.5s_ease-in-out_infinite]": isCharging,
 							})}
 							style={{
 								width: `${batteryLevel}%`,
 							}}
-						/>
+						>
+							{isCharging && (
+								<div className="absolute inset-0">
+									<div className="absolute inset-y-0 -left-1/2 w-1/2 bg-linear-to-r from-transparent via-white to-transparent animate-[charging_1.5s_ease-out_infinite]" />
+								</div>
+							)}
+						</div>
 					</div>
 
 					<div className="flex justify-between mt-4 text-metric text-sm items-center">

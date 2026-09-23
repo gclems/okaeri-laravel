@@ -42,6 +42,27 @@
 	letter-spacing: -0.03em;
 }
 
+@utility text-db {
+	@apply font-semibold text-white;
+	text-shadow:
+		-2px -2px 0 var(--color-primary),
+		-1px -2px 0 var(--color-primary),
+		0 -2px 0 var(--color-primary),
+		1px -2px 0 var(--color-primary),
+		2px -2px 0 var(--color-primary),
+		-2px -1px 0 var(--color-primary),
+		2px -1px 0 var(--color-primary),
+		-2px 0 0 var(--color-primary),
+		2px 0 0 var(--color-primary),
+		-2px 1px 0 var(--color-primary),
+		2px 1px 0 var(--color-primary),
+		-2px 2px 0 var(--color-primary),
+		-1px 2px 0 var(--color-primary),
+		0 2px 0 var(--color-primary),
+		1px 2px 0 var(--color-primary),
+		2px 2px 0 var(--color-primary);
+}
+
 body {
 	@apply font-sans text-base text-foreground;
 }
@@ -51,7 +72,12 @@ body {
 }
 
 [data-slot="card-title"] {
-	@apply text-heading;
+	@apply text-xl;
+	@apply text-db;
+}
+
+[data-slot="card-title"] img {
+	@apply size-10 object-cover border-3 border-primary rounded-full;
 }
 
 [data-slot="data-list-value"] {
@@ -59,7 +85,7 @@ body {
 }
 
 [data-slot="sidebar-container"] {
-    @apply mb-4 border-3! border-primary!
+	@apply mb-4 border-3! border-primary!;
 }
 
 [data-slot="sidebar-item"] {
@@ -107,12 +133,12 @@ body {
 
 [data-slot="drawer-popup"] {
 	@apply border-3! border-primary! rounded-xl! shadow-none bg-transparent! surface-texture;
-    @apply isolate overflow-hidden;
-    @apply top-3 bottom-3 h-auto;
+	@apply isolate overflow-hidden;
+	@apply top-3 bottom-3 h-auto;
 }
 
 [data-slot="drawer-popup"][data-side="left"] {
-    @apply left-3;
+	@apply left-3;
 }
 
 [data-slot="switch"],
@@ -132,6 +158,15 @@ body {
 	@apply bg-transparent;
 }
 
+.leaflet-control-zoom {
+	@apply bg-white! rounded-xl! overflow-hidden!;
+	@apply border-3! border-primary!;
+}
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	@apply bg-transparent;
+}
+
 @keyframes charging {
 	0% {
 		transform: translateX(0);
@@ -142,13 +177,13 @@ body {
 		opacity: 0.25;
 	}
 
-    40% {
-        opacity: 0.5
-    }
+	40% {
+		opacity: 0.5;
+	}
 
-    60% {
-        opacity: 0.5
-    }
+	60% {
+		opacity: 0.5;
+	}
 
 	80% {
 		opacity: 0.25;
@@ -161,7 +196,8 @@ body {
 }
 
 @keyframes charging-glow {
-	0%, 100% {
+	0%,
+	100% {
 		filter: brightness(1);
 	}
 

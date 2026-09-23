@@ -38,8 +38,8 @@
 	--neutral: oklch(0.6956 0 353.84);
 	--neutral-foreground: oklch(0.1985 0.0123 353.84);
 
-	--success: oklch(0.7312 0.1094 152.19);
-	--success-foreground: oklch(0.1985 0.0123 353.84);
+	--success: oklch(0.8208 0.1293 131.99);
+	--success-foreground: oklch(100% 0 0);
 
 	--info: oklch(0.7332 0.126 271.95);
 	--info-foreground: oklch(0.1985 0.0123 353.84);

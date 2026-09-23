@@ -123,15 +123,16 @@ function Monitoring() {
 							maxHeight: "70vh",
 							aspectRatio: 16 / 9,
 						}}
+						className="border-3 rounded-xl overflow-hidden border-primary"
 						responsive
 						data={network}
 					>
 						<defs>
-							<linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+							<linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="3">
 								<stop offset="5%" stopColor="var(--download)" stopOpacity={0.8} />
 								<stop offset="95%" stopColor="var(--download)" stopOpacity={0} />
 							</linearGradient>
-							<linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+							<linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="3">
 								<stop offset="5%" stopColor="var(--upload)" stopOpacity={0.8} />
 								<stop offset="95%" stopColor="var(--upload)" stopOpacity={0} />
 							</linearGradient>
@@ -141,6 +142,7 @@ function Monitoring() {
 							type="basis"
 							dataKey="rxRateBps"
 							stroke="var(--download)"
+							strokeWidth={3}
 							activeDot={{ stroke: "var(--download)" }}
 							fillOpacity={1}
 							fill="url(#colorUv)"
@@ -152,6 +154,7 @@ function Monitoring() {
 							type="basis"
 							dataKey="txRateBps"
 							stroke="var(--upload)"
+							strokeWidth={3}
 							activeDot={{ stroke: "var(--upload)" }}
 							fillOpacity={1}
 							fill="url(#colorPv)"
@@ -220,7 +223,7 @@ function QrCode() {
 			<img
 				src={WifiQrCodeController.show.url()}
 				alt="Qr Code"
-				className={`border-2 border-border max-h-full max-w-full aspect-square rounded-lg ${qrCodeLoaded ? "opacity-100" : "opacity-0"}`}
+				className={`border-3 border-primary max-h-full max-w-full aspect-square rounded-lg ${qrCodeLoaded ? "opacity-100" : "opacity-0"}`}
 				onLoad={() => setQrCodeLoaded(true)}
 				onError={() => setQrCodeError(true)}
 			/>

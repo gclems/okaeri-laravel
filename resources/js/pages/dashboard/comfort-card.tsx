@@ -43,8 +43,7 @@ function ComfortCard() {
 			<Card.Header
 				title={
 					<div className="flex gap-x-2 items-center">
-						<img src="/images/comfort_small.png" alt="Confort" className="h-6" />{" "}
-						Confort
+						<img src="/images/comfort_small.png" alt="Confort" /> Confort
 					</div>
 				}
 			></Card.Header>
@@ -72,7 +71,7 @@ function ComfortCard() {
 function RoomItem({ vm }: { vm: RoomViewModel }) {
 	return (
 		<div>
-			<div className="text-center text-muted">{vm.room.name}</div>
+			<div className="text-center">{vm.room.name}</div>
 			<div>
 				{vm.sensors.map((sensor) => (
 					<div key={sensor.id} className="flex items-center">
@@ -80,7 +79,7 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 							<div className="flex items-center gap-x-1 flex-1">
 								<Meteocon src={Thermometer} alt="Thermometer" className="size-16" />
 								<span
-									className={cn("text-metric text-xl font-semibold -ml-4", {
+									className={cn("text-metric text-2xl font-semibold -ml-4", {
 										"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
 										"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
 									})}
@@ -101,7 +100,7 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 						{sensor.hygrometer && (
 							<div className="flex items-center text-sm flex-1">
 								<Meteocon src={Humidity} alt="Humidity" className="size-12" />
-								<span className="text-metric -ml-2 text-xl font-semibold">
+								<span className="text-metric -ml-2 text-2xl font-semibold">
 									<RollingNumber
 										number={+(sensor.hygrometer.value ?? 0)}
 										formatter={(value) => value.toFixed(1).toString()}

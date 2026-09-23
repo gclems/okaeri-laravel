@@ -49,7 +49,7 @@ function CarItem({ car }: { car: Car }) {
 		<Card className="@container">
 			<Card.Body className="flex flex-col @lg:flex-row gap-3">
 				{car.coordinates && (
-					<div className="order-2 @lg:order-1 @lg:flex-1 h-48 @lg:h-auto">
+					<div className="order-2 @lg:order-1 @lg:flex-1 h-48 @lg:h-auto border-3 border-primary rounded-xl overflow-hidden">
 						<MapContainer
 							center={[car.coordinates.latitude ?? 0, car.coordinates.longitude ?? 0]}
 							zoom={16}
@@ -78,19 +78,27 @@ function CarItem({ car }: { car: Car }) {
 					</div>
 				)}
 				<div className="flex-2 order-1 @lg:order-2">
-					<div className="flex text-lg font-semibold">
-						<img src="/images/renault_4_small.png" alt="Renault 4" className="w-10" />
-						&nbsp;<span className="capitalize">{car.name}</span>
-					</div>
+					<Card.Header
+						title={
+							<div className="flex gap-x-2 items-center -ml-4">
+								<img src="/images/renault_4_small.png" alt="Renault 4" />{" "}
+								<span className="capitalize text-white text-db">{car.name}</span>
+							</div>
+						}
+					/>
 
 					<div className="mt-4 text-metric flex items-baseline justify-between">
 						<div
-							className={cn("font-semibold text-2xl", {
-								"text-destructive": batteryLevel <= 20,
-								"text-warning": batteryLevel > 20 && batteryLevel <= 50,
-								"text-info": batteryLevel > 50 && batteryLevel < 70,
-								"text-success": batteryLevel >= 70,
-							})}
+							className={cn(
+								"text-2xl test",
+								{
+									"text-destructive!": batteryLevel <= 20,
+									"text-warning!": batteryLevel > 20 && batteryLevel <= 50,
+									"text-info!": batteryLevel > 50 && batteryLevel < 70,
+									"text-success!": batteryLevel >= 70,
+								},
+								"text-db",
+							)}
 						>
 							{batteryLevel}
 							{car.battery?.unit ?? "%"}
@@ -106,13 +114,14 @@ function CarItem({ car }: { car: Car }) {
 							</div>
 						)}
 					</div>
-					<div className="w-full rounded-full h-2 bg-muted/30 overflow-hidden">
+					<div className="w-full rounded-full h-4 border-3 border-primary bg-transparent overflow-hidden">
 						<div
 							className={cn("h-full relative overflow-hidden rounded-full", {
-								"bg-destructive border-destructive/3": batteryLevel <= 20,
+								"bg-destructive": batteryLevel <= 20,
 								"bg-warning": batteryLevel > 20 && batteryLevel <= 50,
 								"bg-info": batteryLevel > 50 && batteryLevel < 70,
 								"bg-success": batteryLevel >= 70,
+								"border-r-3 border-primary": batteryLevel > 0 && batteryLevel < 100,
 								"animate-[charging-glow_1.5s_ease-in-out_infinite]": isCharging,
 							})}
 							style={{
@@ -169,8 +178,8 @@ function CarItem({ car }: { car: Car }) {
 
 					{car.energyFlapOpened && (
 						<div
-							className={cn("mt-4 text-metric text-sm", {
-								"text-destructive font-semibold text-lg": !isPlugged,
+							className={cn("mt-4 text-metric text-sm text-center", {
+								"text-lg text-db": !isPlugged,
 							})}
 						>
 							Trappe de charge ouverte

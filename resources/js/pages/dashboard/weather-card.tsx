@@ -64,8 +64,8 @@ function WeatherCard() {
 				"@container relative",
 				"w-full max-w-md",
 				"bg-white/10 backdrop-blur-sm",
-				"border-white/50 border",
-				"shadow-xs shadow-white/50",
+				"border-white/25 border",
+				"shadow-xs shadow-white/25",
 				"rounded-xl",
 				"py-1 space-y-1",
 				"text-white/80",
@@ -75,13 +75,13 @@ function WeatherCard() {
 				<ForecastPopover weatherForecast={weatherForecast} />
 				<Separator
 					orientation="vertical"
-					className="bg-white/50 h-20 w-px shrink-0 grow-0"
+					className="bg-white/25 h-10 w-px shrink-0 grow-0"
 				/>
 				<DatePanel />
 			</div>
-			<Separator orientation="horizontal" className="bg-white/50 w-full" />
+			<Separator orientation="horizontal" className="bg-white/25 w-full" />
 			<ConditionsBar weatherForecast={weatherForecast} />
-			<Separator orientation="horizontal" className="bg-white/50 w-full" />
+			<Separator orientation="horizontal" className="bg-white/25 w-full" />
 			{!!sunPhase && (
 				<div className="grid grid-cols-3 gap-4">
 					<PhaseBlock icon={Sunrise} time={new Date(sunPhase.sunrise_starts_at)} />
@@ -218,7 +218,7 @@ function ForecastPopover({
 					className="size-18 @xl:size-24"
 				/>
 				<div className="flex flex-col">
-					<span className="text-metric font-semibold text-4xl">
+					<span className="text-metric font-semibold text-4xl text-db">
 						{weatherForecast.temperature?.value?.toFixed(0) ?? "–"}
 						<span className="text-lg">°C</span>
 					</span>

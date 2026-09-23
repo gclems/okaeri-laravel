@@ -41,8 +41,8 @@ function CarCard() {
 
 function CarItem({ car }: { car: Car }) {
 	const batteryLevel = car.battery?.value ?? 0;
-	const isPlugged = car.isPlugged.value ?? false;
-	const isCharging = car.isCharging.value ?? false;
+	const isPlugged = car.isPlugged?.value ?? false;
+	const isCharging = car.isCharging?.value ?? false;
 	const chargingTime = getChargingTime(car.remainingChargingMinutes?.value ?? 0);
 
 	return (
@@ -137,9 +137,9 @@ function CarItem({ car }: { car: Car }) {
 							/>
 							&nbsp;{isPlugged ? "Branchée" : "Débranchée"}
 						</div>
-						<div className="">{isCharging ? "En charge" : "Pas en charge"}</div>
+						{isPlugged && <div>{isCharging ? "En charge" : "Pas en charge"}</div>}
 					</div>
-					{(chargingTime.hours > 0 || chargingTime.minutes > 0) && (
+					{isCharging && (
 						<div className="flex justify-between text-metric text-xs items-center pl-6">
 							<div className="font-semibold flex">Temps restant</div>
 							<div className="">

@@ -15,7 +15,7 @@ final class Renault4CoordinatesResolver extends SlugSuffixEntityResolver
 
     protected function suffix(): string
     {
-        return 'emplacement';
+        return 'localisation';
     }
 
     public function resolve(DomoEntity $entity, DomoDevice $device): Coordinates

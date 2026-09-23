@@ -15,7 +15,7 @@ final class Renault4TargetChargeResolver extends SlugSuffixEntityResolver
 
     protected function suffix(): string
     {
-        return 'target_charge_level';
+        return 'niveau_de_charge_cible';
     }
 
     public function resolve(DomoEntity $entity, DomoDevice $device): Battery

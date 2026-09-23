@@ -47,8 +47,8 @@ function Layout({ children }: { children: ReactNode }) {
 					}}
 				>
 					<main className="relative flex-1 h-full min-h-full max-h-full overflow-auto flex flex-col p-2 gap-y-2">
+						{children}
 						<AppTopBar />
-						<div>{children}</div>
 					</main>
 				</motion.div>
 			</ShantyRoot>

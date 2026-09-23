@@ -19,20 +19,21 @@ export default function Dashboard() {
 				<WeatherCard />
 			</div>
 
-			<div className="@container mt-4">
-				<div className="flex gap-2 flex-col @xl:flex-row">
-					<div className="flex-1 grid grid-cols-3 gap-2 content-start">
-						<div />
+			<div className="mt-4">
+				<div className="flex gap-2 flex-col lg:flex-row">
+					<div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-2 content-start">
+						<div className="lg:block hidden" />
 						<ComfortCard />
 						<AirConditioningCard />
 
-						<div className="col-span-2">
+						<div className="lg:col-span-2">
 							<CarCard />
 						</div>
+
 						<LightingCard />
 						<BatteriesCard />
 					</div>
-					<div className="@xl:w-72 space-y-2">
+					<div className="lg:w-72 space-y-2">
 						<DoorCard />
 						<EnergyConsumptionCard />
 						<NetworkCard />

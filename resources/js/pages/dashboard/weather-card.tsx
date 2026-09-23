@@ -71,7 +71,7 @@ function WeatherCard() {
 				"text-white/80",
 			)}
 		>
-			<div className="flex items-center gap-x-8">
+			<div className="flex items-center gap-x-2 @xl:gap-x-8">
 				<ForecastPopover weatherForecast={weatherForecast} />
 				<Separator
 					orientation="vertical"
@@ -210,9 +210,13 @@ function ForecastPopover({
 			<Popover.Trigger
 				nativeButton={false}
 				render={<div />}
-				className="flex items-center gap-x-1 justify-center px-4 flex-1"
+				className="flex items-center gap-x-1 @xl:gap-x-4 justify-center px-1 @xl:px-4 flex-1"
 			>
-				<Meteocon src={conditionIcon} alt={conditionLabel} className="size-24" />
+				<Meteocon
+					src={conditionIcon}
+					alt={conditionLabel}
+					className="size-18 @xl:size-24"
+				/>
 				<div className="flex flex-col">
 					<span className="text-metric font-semibold text-4xl">
 						{weatherForecast.temperature?.value?.toFixed(0) ?? "–"}
@@ -236,7 +240,7 @@ function ForecastPopover({
 				</div>
 
 				{hourlyForecastsByDay && (
-					<ScrollArea horizontal className="w-full max-w-90">
+					<ScrollArea horizontal className="w-full @xl:max-w-90 max-w-60">
 						<ul className="flex gap-x-1">
 							{Object.keys(hourlyForecastsByDay).map((day) => {
 								const dayDate = new Date(day);
@@ -291,7 +295,7 @@ function ForecastPopover({
 				)}
 
 				{weatherForecast.dailyForecasts && (
-					<ScrollArea horizontal className="w-full max-w-90 mt-2">
+					<ScrollArea horizontal className="w-full @xl:max-w-90 max-w-60">
 						<ul className="flex gap-x-1">
 							{weatherForecast.dailyForecasts
 								.sort((a, b) => a.date.localeCompare(b.date))
@@ -337,7 +341,7 @@ function ConditionsBar({
 	weatherForecast: WeatherForecast;
 }) {
 	return (
-		<div className="flex px-4 items-center gap-x-4">
+		<div className="grid grid-cols-3 @xl:grid-cols-5 px-2 @xl:px-4 items-center gap-x-4">
 			<div className="flex gap-x-0.5 items-center">
 				<Meteocon src={Humidity} alt="Humidité" className="size-8" />
 				{weatherForecast.humidity?.value?.toFixed(0) ?? "–"}%

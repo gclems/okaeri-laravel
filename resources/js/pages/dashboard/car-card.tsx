@@ -47,9 +47,9 @@ function CarItem({ car }: { car: Car }) {
 
 	return (
 		<Card className="@container">
-			<Card.Body className="flex flex-col @xl:flex-row gap-3">
+			<Card.Body className="flex flex-col @lg:flex-row gap-3">
 				{car.coordinates && (
-					<div className="flex-1 order-2 @xl:order-1">
+					<div className="order-2 @lg:order-1 @lg:flex-1 h-48 @lg:h-auto">
 						<MapContainer
 							center={[car.coordinates.latitude ?? 0, car.coordinates.longitude ?? 0]}
 							zoom={16}
@@ -77,7 +77,7 @@ function CarItem({ car }: { car: Car }) {
 						</MapContainer>
 					</div>
 				)}
-				<div className="flex-2 order-1 @xl:order-2">
+				<div className="flex-2 order-1 @lg:order-2">
 					<div className="flex text-lg font-semibold">
 						<img src="/images/renault_4_small.png" alt="Renault 4" className="w-10" />
 						&nbsp;<span className="capitalize">{car.name}</span>

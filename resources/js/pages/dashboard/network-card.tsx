@@ -3,29 +3,13 @@ import { useEffect, useMemo, useState } from "react";
 import { ChartAverageIcon, QrCodeIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { motion } from "motion/react";
-import {
-	Area,
-	AreaChart,
-	createHorizontalChart,
-	Tooltip,
-	XAxis,
-	YAxis,
-} from "recharts";
 import { Button, Card } from "shanty-ui";
 
 import WifiQrCodeController from "@/actions/App/Http/Controllers/WifiQrCodeController";
 import { useClock } from "@/features/clock/use-clock";
-import { type Network, useDomoStore } from "@/features/domo/domo-store";
+import { useDomoStore } from "@/features/domo/domo-store";
 
 import { bitsToString } from "../../helpers/network";
-
-const Typed = createHorizontalChart<Network, Date, number>()({
-	Area,
-	AreaChart,
-	XAxis,
-	YAxis,
-	Tooltip,
-});
 
 function NetworkCard() {
 	const [mode, setMode] = useState<"monitoring" | "qrCode">("monitoring");
@@ -43,25 +27,21 @@ function NetworkCard() {
 	}, [mode]);
 
 	return (
-		<Card>
+		<Card className="relative">
 			<Card.Header
 				title={
-					<div className="flex items-center justify-between">
-						<div className="flex gap-x-2 items-center">
-							<img src="/images/router_small.png" alt="Router" className="h-6" />
-							Réseau
-						</div>
-
-						<div className="text-foreground">
-							<Button variant="ghost" color="primary" onClick={toggleMode}>
-								<HugeiconsIcon
-									icon={mode === "monitoring" ? QrCodeIcon : ChartAverageIcon}
-								/>
-							</Button>
-						</div>
-					</div>
+					<>
+						<img src="/images/router_small.png" alt="Router" className="h-6" /> Réseau
+					</>
 				}
 			/>
+			<div className="text-foreground absolute top-4 right-4">
+				<Button variant="ghost" color="primary" onClick={toggleMode}>
+					<HugeiconsIcon
+						icon={mode === "monitoring" ? QrCodeIcon : ChartAverageIcon}
+					/>
+				</Button>
+			</div>
 			<Card.Body className="grid overflow-hidden">
 				<motion.div
 					className="col-start-1 row-start-1"

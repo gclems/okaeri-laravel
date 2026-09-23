@@ -78,14 +78,16 @@ function CarItem({ car }: { car: Car }) {
 					</div>
 				)}
 				<div className="flex-2 order-1 @lg:order-2">
-					<Card.Header
-						title={
-							<div className="flex gap-x-2 items-center -ml-2">
-								<img src="/images/renault_4_small.png" alt="Renault 4" />{" "}
-								<span className="capitalize text-white text-db">{car.name}</span>
-							</div>
-						}
-					/>
+					<div className="-ml-4">
+						<Card.Header
+							title={
+								<>
+									<img src="/images/renault_4_small.png" alt="Renault 4" />{" "}
+									<span className="capitalize text-white text-db">{car.name}</span>
+								</>
+							}
+						/>
+					</div>
 
 					<div className="mt-4 text-metric flex items-baseline justify-between">
 						<div

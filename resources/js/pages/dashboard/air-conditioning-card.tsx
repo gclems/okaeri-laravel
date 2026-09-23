@@ -5,14 +5,14 @@ function AirConditioningCard() {
 		<Card>
 			<Card.Header
 				title={
-					<div className="flex items-center gap-x-2">
+					<>
 						<img
 							src="/images/air_conditioning_small.png"
 							alt="Air Conditioning"
 							className="w-8"
 						/>{" "}
 						Climatisation
-					</div>
+					</>
 				}
 			/>
 			<Card.Body>

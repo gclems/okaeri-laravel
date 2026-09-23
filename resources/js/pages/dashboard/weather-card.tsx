@@ -1,29 +1,13 @@
 import { useMemo } from "react";
 
-import Barometer from "@meteocons/svg/fill/barometer.svg";
-import ClearDay from "@meteocons/svg/fill/clear-day.svg";
 import Humidity from "@meteocons/svg/fill/humidity.svg";
-import Sunrise from "@meteocons/svg/fill/sunrise.svg";
-import Sunset from "@meteocons/svg/fill/sunset.svg";
-import Umbrella from "@meteocons/svg/fill/umbrella.svg";
-import UvIndex1 from "@meteocons/svg/fill/uv-index-1.svg";
-import UvIndex2 from "@meteocons/svg/fill/uv-index-2.svg";
-import UvIndex3 from "@meteocons/svg/fill/uv-index-3.svg";
-import UvIndex4 from "@meteocons/svg/fill/uv-index-4.svg";
-import UvIndex5 from "@meteocons/svg/fill/uv-index-5.svg";
-import UvIndex6 from "@meteocons/svg/fill/uv-index-6.svg";
-import UvIndex7 from "@meteocons/svg/fill/uv-index-7.svg";
-import UvIndex8 from "@meteocons/svg/fill/uv-index-8.svg";
-import UvIndex9 from "@meteocons/svg/fill/uv-index-9.svg";
-import UvIndex10 from "@meteocons/svg/fill/uv-index-10.svg";
-import UvIndex11 from "@meteocons/svg/fill/uv-index-11.svg";
-import Wind from "@meteocons/svg/fill/wind.svg";
-import { cn, Popover, ScrollArea, Separator } from "shanty-ui";
+import Rain from "@meteocons/svg/fill/rain.svg";
+import WindSock from "@meteocons/svg/fill/windsock.svg";
+import { Card, cn, Popover, ScrollArea } from "shanty-ui";
 
 import { Meteocon } from "@/components/meteocon";
 import { RollingTime } from "@/components/rolling-time";
 import { useClock } from "@/features/clock/use-clock";
-import { useToday } from "@/features/clock/use-today";
 import { useDomoStore } from "@/features/domo/domo-store";
 import {
 	getWeatherConditionIcon,
@@ -31,25 +15,7 @@ import {
 } from "@/features/weather/weather-condition";
 import type { HourWeatherForecast, WeatherForecast } from "@/types/projections";
 
-const UV_INDEX_ICONS = [
-	UvIndex1,
-	UvIndex2,
-	UvIndex3,
-	UvIndex4,
-	UvIndex5,
-	UvIndex6,
-	UvIndex7,
-	UvIndex8,
-	UvIndex9,
-	UvIndex10,
-	UvIndex11,
-];
-
 function WeatherCard() {
-	const today = useToday();
-	const sunPhasesMap = useDomoStore((state) => state.sunPhasesMap);
-	const sunPhase = sunPhasesMap.get(today.toISOString());
-
 	const weatherForecastsMap = useDomoStore((state) => state.weatherForecastsMap);
 	const weatherForecast = useMemo(
 		() => Array.from(weatherForecastsMap.values())[0],
@@ -59,99 +25,62 @@ function WeatherCard() {
 	if (!weatherForecast) return null;
 
 	return (
-		<div
-			className={cn(
-				"@container relative",
-				"w-full max-w-md",
-				"bg-white/10 backdrop-blur-sm",
-				"border-white/25 border",
-				"shadow-xs shadow-white/25",
-				"rounded-xl",
-				"py-1 space-y-1",
-				"text-white/80",
-			)}
-		>
-			<div className="flex items-center gap-x-2 @xl:gap-x-8">
-				<ForecastPopover weatherForecast={weatherForecast} />
-				<Separator
-					orientation="vertical"
-					className="bg-white/25 h-10 w-px shrink-0 grow-0"
-				/>
-				<DatePanel />
-			</div>
-			<Separator orientation="horizontal" className="bg-white/25 w-full" />
-			<ConditionsBar weatherForecast={weatherForecast} />
-			<Separator orientation="horizontal" className="bg-white/25 w-full" />
-			{!!sunPhase && (
-				<div className="grid grid-cols-3 gap-4">
-					<PhaseBlock icon={Sunrise} time={new Date(sunPhase.sunrise_starts_at)} />
-					<PhaseBlock icon={ClearDay} time={new Date(sunPhase.solar_noon_at)} />
-					<PhaseBlock icon={Sunset} time={new Date(sunPhase.sunset_starts_at)} />
+		<Card size="sm">
+			<Card.Body className="w-fit min-w-120">
+				<div className="w-full flex flex-row gap-x-4">
+					<div className="flex-1">
+						<ForecastPopover weatherForecast={weatherForecast} />
+					</div>
+					<div>
+						<ConditionsBar weatherForecast={weatherForecast} />
+					</div>
+					<div className="flex-1 flex flex-col">
+						<div className="flex-1">
+							<Card.Header
+								title={
+									<div className="flex items-center gap-x-2 flex-row-reverse w-full">
+										<img src="/images/weather_small.png" alt="Météo" /> Météo
+									</div>
+								}
+							/>
+						</div>
+						<div className="mt-4 flex flex-col items-end justify-end">
+							<DatePanel />
+						</div>
+					</div>
 				</div>
-			)}
-		</div>
-	);
-}
-
-function getUvIndexIcon(value: number | null | undefined): string {
-	if (value === null || value === undefined) return UvIndex1;
-
-	const level = Math.min(11, Math.max(1, Math.round(value)));
-	return UV_INDEX_ICONS[level - 1];
-}
-
-function PhaseBlock({ icon, time }: { icon: string; time: Date }) {
-	const now = useClock();
-	const isPast = useMemo(() => {
-		return time.getTime() < now.getTime();
-	}, [time, now]);
-
-	return (
-		<div
-			className={cn("flex flex-col items-center gap-0.5", {
-				"opacity-60": isPast,
-			})}
-		>
-			<Meteocon src={icon} alt="" className="size-6" />
-			<div className="text-metric text-sm">
-				{time.toLocaleTimeString([], {
-					hour: "2-digit",
-					minute: "2-digit",
-				})}
-			</div>
-		</div>
+			</Card.Body>
+		</Card>
 	);
 }
 
 function DatePanel() {
 	const now = useClock();
 	return (
-		<div className="flex-1">
-			<div className="space-x-1 text-metric flex justify-center">
-				<span className="">
+		<div className="text-right">
+			<div className="space-x-1 text-metric flex items-baseline">
+				<span>
 					{now.toLocaleDateString([], {
 						weekday: "short",
 					})}
 				</span>
-				<span className="font-semibold text-lg">
+				<span>
 					{now.toLocaleDateString([], {
 						day: "2-digit",
 					})}
 				</span>
-				<span className="">
+				<span>
 					{now.toLocaleDateString([], {
 						month: "short",
 					})}
 				</span>
-				<span className="">
+				<span>
 					{now.toLocaleDateString([], {
 						year: "numeric",
 					})}
 				</span>
 			</div>
-			<div className="flex justify-center">
-				<RollingTime date={now} className="text-2xl font-bold" />
-			</div>
+			<RollingTime date={now} className="text-2xl font-bold" />
 		</div>
 	);
 }
@@ -210,21 +139,20 @@ function ForecastPopover({
 			<Popover.Trigger
 				nativeButton={false}
 				render={<div />}
-				className="flex items-center gap-x-1 @xl:gap-x-4 justify-center px-1 @xl:px-4 flex-1"
+				className="flex flex-col justify-center items-center"
 			>
 				<Meteocon
 					src={conditionIcon}
 					alt={conditionLabel}
-					className="size-18 @xl:size-24"
+					className="size-24 -mt-4"
 				/>
-				<div className="flex flex-col">
-					<span className="text-metric font-semibold text-4xl text-db">
-						{weatherForecast.temperature?.value?.toFixed(0) ?? "–"}
-						<span className="text-lg">°C</span>
-					</span>
-					<span className="">{conditionLabel}</span>
+				<div className="-mt-4 mb-3">{conditionLabel}</div>
+				<div className="text-metric font-semibold text-4xl">
+					{weatherForecast.temperature?.value?.toFixed(0) ?? "–"}
+					<span className="text-lg">°C</span>
 				</div>
 			</Popover.Trigger>
+
 			<Popover.Popup size="sm">
 				<div className="flex gap-x-2 items-center">
 					<Meteocon src={conditionIcon} alt={conditionLabel} className="size-24" />
@@ -341,32 +269,29 @@ function ConditionsBar({
 	weatherForecast: WeatherForecast;
 }) {
 	return (
-		<div className="grid grid-cols-3 @xl:grid-cols-5 px-2 @xl:px-4 items-center gap-x-4">
-			<div className="flex gap-x-0.5 items-center">
-				<Meteocon src={Humidity} alt="Humidité" className="size-8" />
-				{weatherForecast.humidity?.value?.toFixed(0) ?? "–"}%
+		<div className="flex flex-col -ml-4">
+			<div className="flex items-center">
+				<Meteocon src={Rain} alt="Pluie" className="size-12" />
+				<div className="text-metric -ml-2 -mb-2 -mt-2">
+					<div>{weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}%</div>
+				</div>
 			</div>
-			<div className="flex gap-x-0.5 items-center">
-				<Meteocon src={Wind} alt="Vent" className="size-8" />
-				{weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
-				<span className="text-xs">{weatherForecast.windSpeed?.unit}</span>
+			<div className="flex items-center">
+				<Meteocon src={WindSock} alt="Vent" className="size-12" />
+				<div className="text-metric -ml-2 -mb-2 -mt-2">
+					<div>
+						{weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
+						<span className="text-xs">{weatherForecast.windSpeed?.unit}</span>
+					</div>
+				</div>
 			</div>
-			<div className="flex gap-x-0.5 items-center">
-				<Meteocon src={Umbrella} alt="Pluie" className="size-8" />
-				{weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}%
-			</div>
-			<div className="flex gap-x-0.5 items-center">
-				<Meteocon
-					src={getUvIndexIcon(weatherForecast.uvIndex?.value)}
-					alt="Indice UV"
-					className="size-8"
-				/>
-				UV{weatherForecast.uvIndex?.value ?? "–"}
-			</div>
-			<div className="flex gap-x-0.5 items-center">
-				<Meteocon src={Barometer} alt="Pression" className="size-8" />
-				{weatherForecast.pressure?.value?.toFixed(0) ?? "–"}
-				<span className="text-xs">{weatherForecast.pressure?.unit}</span>
+			<div className="flex items-center">
+				<Meteocon src={Humidity} alt="Humidité" className="size-12" />
+				<div className="text-metric -ml-2 -mb-2 -mt-2">
+					<div className="font-semibold">
+						{weatherForecast.humidity?.value?.toFixed(0) ?? "–"}%
+					</div>
+				</div>
 			</div>
 		</div>
 	);

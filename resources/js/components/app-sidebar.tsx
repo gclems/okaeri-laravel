@@ -16,7 +16,7 @@ function AppSidebar() {
 			>
 				<HugeiconsIcon icon={Menu01Icon} />
 			</Drawer.Trigger>
-			<Drawer.Popup size="sm" side="left" className="p-0 pt-4">
+			<Drawer.Popup size="sm" side="left" className="p-0 pt-4 rounded-4xl!">
 				<div className="h-full overflow-hidden w-full flex flex-col gap-y-4">
 					<Drawer.Trigger
 						render={<button type="button" />}

@@ -42,12 +42,12 @@ function ComfortCard() {
 		<Card>
 			<Card.Header
 				title={
-					<div className="flex gap-x-2 items-center">
+					<>
 						<img src="/images/comfort_small.png" alt="Confort" /> Confort
-					</div>
+					</>
 				}
-			></Card.Header>
-			<Card.Body>
+			/>
+			<Card.Body className="px-0!">
 				<Carousel
 					opts={{
 						loop: true,
@@ -70,16 +70,16 @@ function ComfortCard() {
 
 function RoomItem({ vm }: { vm: RoomViewModel }) {
 	return (
-		<div>
+		<div className="@container">
 			<div className="text-center">{vm.room.name}</div>
 			<div>
 				{vm.sensors.map((sensor) => (
 					<div key={sensor.id} className="flex items-center">
 						{sensor.thermometer && (
-							<div className="flex items-center gap-x-1 flex-1">
+							<div className="flex items-center justify-center gap-x-1 flex-1">
 								<Meteocon src={Thermometer} alt="Thermometer" className="size-16" />
 								<span
-									className={cn("text-metric text-2xl font-semibold -ml-4", {
+									className={cn("text-metric text-lg @md:text-2xl font-semibold -ml-4", {
 										"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
 										"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
 									})}
@@ -98,9 +98,9 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 							<Separator orientation="vertical" className="bg-border h-8" />
 						)}
 						{sensor.hygrometer && (
-							<div className="flex items-center text-sm flex-1">
+							<div className="flex items-center justify-center text-sm flex-1">
 								<Meteocon src={Humidity} alt="Humidity" className="size-12" />
-								<span className="text-metric -ml-2 text-2xl font-semibold">
+								<span className="text-metric -ml-2 text-lg @md:text-2xl font-semibold">
 									<RollingNumber
 										number={+(sensor.hygrometer.value ?? 0)}
 										formatter={(value) => value.toFixed(1).toString()}

@@ -12,16 +12,16 @@ import { WeatherCard } from "./weather-card";
 
 export default function Dashboard() {
 	return (
-		<>
+		<div className="[--dashboard-spacing:1rem]">
 			<Head title="" />
 
-			<div className="flex justify-end">
+			<div className="flex justify-end my-(--dashboard-spacing)">
 				<WeatherCard />
 			</div>
 
-			<div className="mt-4">
-				<div className="flex gap-2 flex-col lg:flex-row">
-					<div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-2 content-start">
+			<div>
+				<div className="flex gap-(--dashboard-spacing) flex-col lg:flex-row">
+					<div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-(--dashboard-spacing) content-start">
 						<div className="lg:block hidden" />
 						<ComfortCard />
 						<AirConditioningCard />
@@ -33,13 +33,13 @@ export default function Dashboard() {
 						<LightingCard />
 						<BatteriesCard />
 					</div>
-					<div className="lg:w-72 space-y-2">
+					<div className="lg:w-72 space-y-(--dashboard-spacing)">
 						<DoorCard />
 						<EnergyConsumptionCard />
 						<NetworkCard />
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }

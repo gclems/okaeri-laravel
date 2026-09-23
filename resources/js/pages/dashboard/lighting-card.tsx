@@ -71,10 +71,10 @@ function LightingCard() {
 		<Card>
 			<Card.Header
 				title={
-					<div className="flex gap-x-2 items-center">
+					<>
 						<img src="/images/lightbulb_small.png" alt="Lightbulb" className="h-6" />
 						Éclairage
-					</div>
+					</>
 				}
 			/>
 			<Card.Body>

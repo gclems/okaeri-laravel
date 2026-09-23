@@ -5,10 +5,10 @@ function DoorCard() {
 		<Card>
 			<Card.Header
 				title={
-					<div className="flex items-center gap-x-2">
+					<>
 						<img src="/images/door_small.png" alt="Door" className="h-6" /> Porte
 						d'entrée
-					</div>
+					</>
 				}
 			/>
 			<Card.Body>

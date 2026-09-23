@@ -44,10 +44,10 @@ function BatteriesCard() {
 		<Card>
 			<Card.Header
 				title={
-					<div className="flex items-center gap-x-2">
+					<>
 						<img src="/images/battery_small.png" alt="Batteries" className="h-6" />{" "}
 						Batteries
-					</div>
+					</>
 				}
 			/>
 			<Card.Body>

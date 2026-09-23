@@ -5,10 +5,10 @@ function EnergyConsumptionCard() {
 		<Card>
 			<Card.Header
 				title={
-					<div className="flex items-center gap-x-2">
+					<>
 						<img src="/images/energy_small.png" alt="Energy" className="w-8" />{" "}
 						Énergie
-					</div>
+					</>
 				}
 			/>
 			<Card.Body>

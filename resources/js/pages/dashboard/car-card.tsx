@@ -41,8 +41,8 @@ function CarCard() {
 
 function CarItem({ car }: { car: Car }) {
 	const batteryLevel = car.battery?.value ?? 0;
-	const isPlugged = car.isPlugged.value;
-	const isCharging = car.isCharging.value;
+	const isPlugged = car.isPlugged.value ?? false;
+	const isCharging = car.isCharging.value ?? false;
 	const chargingTime = getChargingTime(car.remainingChargingMinutes?.value ?? 0);
 
 	return (
@@ -72,7 +72,7 @@ function CarItem({ car }: { car: Car }) {
 									car.coordinates.latitude ?? 0,
 									car.coordinates.longitude ?? 0,
 								]}
-								icon={car.isActive ? carChargingIcon : carIcon}
+								icon={isCharging ? carChargingIcon : carIcon}
 							/>
 						</MapContainer>
 					</div>

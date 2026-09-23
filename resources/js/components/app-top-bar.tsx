@@ -6,7 +6,7 @@ import { AppSidebar } from "./app-sidebar";
 
 function AppTopBar() {
 	return (
-		<div className="flex gap-x-2">
+		<div className="absolute top-4 left-4 flex gap-x-2">
 			<AppSidebar />
 
 			<div

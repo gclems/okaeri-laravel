@@ -63,7 +63,7 @@ function WeatherCard() {
 			className={cn(
 				"@container relative",
 				"w-full max-w-md",
-				"bg-transparent backdrop-blur-sm",
+				"bg-white/10 backdrop-blur-sm",
 				"border-white/50 border",
 				"shadow-xs shadow-white/50",
 				"rounded-xl",

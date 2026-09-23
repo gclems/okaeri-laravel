@@ -77,10 +77,10 @@ function CarItem({ car }: { car: Car }) {
 						</MapContainer>
 					</div>
 				)}
-				<div className="flex-1 order-1 @xl:order-2">
-					<div className="flex gap-x-2 items-center text-lg font-semibold">
+				<div className="flex-2 order-1 @xl:order-2">
+					<div className="flex text-lg font-semibold">
 						<img src="/images/renault_4_small.png" alt="Renault 4" className="w-10" />
-						&nbsp; Renault 4
+						&nbsp;<span className="capitalize">{car.name}</span>
 					</div>
 
 					<div className="mt-4 text-metric flex items-baseline justify-between">
@@ -133,7 +133,7 @@ function CarItem({ car }: { car: Car }) {
 						<div className="">{isCharging ? "En charge" : "Pas en charge"}</div>
 					</div>
 					{(chargingTime.hours > 0 || chargingTime.minutes > 0) && (
-						<div className="flex justify-between text-metric text-xs items-center pl-8">
+						<div className="flex justify-between text-metric text-xs items-center pl-6">
 							<div className="font-semibold flex">Temps restant</div>
 							<div className="">
 								<RollingNumber number={chargingTime.hours} />h

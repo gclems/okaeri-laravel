@@ -10,6 +10,7 @@ use App\Domains\Domo\Models\Entities\IntegerValue;
 use App\Domains\Domo\Models\Entities\Percentage;
 use App\Domains\Domo\Models\Entities\Precipitation;
 use App\Domains\Domo\Models\Entities\Thermometer;
+use App\Domains\Domo\Models\Entities\WeatherAlert;
 use App\Domains\Domo\Models\Entities\WeatherCondition;
 use App\Domains\Domo\Models\Entities\WindSpeed;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
@@ -41,6 +42,7 @@ final class WeatherForecast extends Device
         public readonly array $hourlyForecasts,
         public readonly ?Thermometer $minTemperature,
         public readonly ?Thermometer $maxTemperature,
+        public readonly ?WeatherAlert $alert,
     ) {
         parent::__construct(
             id: $id,

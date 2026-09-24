@@ -31,6 +31,17 @@
 
 	--color-db-foreground: var(--db-foreground);
 	--color-db-outline: var(--db-outline);
+
+	--color-weather-alert-yellow: var(--weather-alert-yellow);
+	--color-weather-alert-yellow-foreground: var(
+		--weather-alert-yellow-foreground
+	);
+	--color-weather-alert-orange: var(--weather-alert-orange);
+	--color-weather-alert-orange-foreground: var(
+		--weather-alert-orange-foreground
+	);
+	--color-weather-alert-red: var(--weather-alert-red);
+	--color-weather-alert-red-foreground: var(--weather-alert-red-foreground);
 }
 
 @utility text-heading {

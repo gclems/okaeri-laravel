@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+import { type ComponentProps, useMemo } from "react";
 
 import Humidity from "@meteocons/svg/fill/humidity.svg";
 import Rain from "@meteocons/svg/fill/rain.svg";
 import WindSock from "@meteocons/svg/fill/windsock.svg";
+import { motion } from "motion/react";
 import { Card, cn, Popover, ScrollArea } from "shanty-ui";
 
 import { Meteocon } from "@/components/meteocon";
@@ -31,8 +32,28 @@ function WeatherCard() {
 					<div className="flex-1">
 						<ForecastPopover weatherForecast={weatherForecast} />
 					</div>
-					<div>
-						<ConditionsBar weatherForecast={weatherForecast} />
+					<div className="flex flex-col justify-center gap-y-6">
+						<ConditionItem>
+							<ConditionIcon src={Rain} alt="Pluie" />
+							<ConditionValue
+								value={weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}
+								unit="%"
+							/>
+						</ConditionItem>
+						<ConditionItem>
+							<ConditionIcon src={WindSock} alt="Vent" />
+							<ConditionValue
+								value={weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
+								unit={weatherForecast.windSpeed?.unit ?? ""}
+							/>
+						</ConditionItem>
+						<ConditionItem>
+							<ConditionIcon src={Humidity} alt="Humidité" />
+							<ConditionValue
+								value={weatherForecast.humidity?.value?.toFixed(0) ?? "–"}
+								unit="%"
+							/>
+						</ConditionItem>
 					</div>
 					<div className="flex-1 flex flex-col">
 						<div className="flex-1">
@@ -49,6 +70,32 @@ function WeatherCard() {
 						</div>
 					</div>
 				</div>
+				{weatherForecast.alert && weatherForecast.alert.level !== "Vert" && (
+					<motion.ul className="space-y-0.5 mt-4">
+						{Object.entries(weatherForecast.alert.risks)
+							.filter(([_, level]) => level !== "Vert")
+							.map(([risk, level]) => (
+								<li
+									key={risk}
+									className={cn(
+										"text-metric px-2 rounded-full",
+										"flex items-center justify-between",
+										{
+											"bg-weather-alert-red text-weather-alert-red-foreground":
+												level === "Rouge",
+											"bg-weather-alert-orange text-weather-alert-orange-foreground":
+												level === "Orange",
+											"bg-weather-alert-yellow text-weather-alert-yellow-foreground":
+												level === "Jaune",
+										},
+									)}
+								>
+									<div className="text-xs">Vigilance {level}</div>
+									<div className="text-base font-bold">{risk}</div>
+								</li>
+							))}
+					</motion.ul>
+				)}
 			</Card.Body>
 		</Card>
 	);
@@ -141,12 +188,8 @@ function ForecastPopover({
 				render={<div />}
 				className="flex flex-col justify-center items-center"
 			>
-				<Meteocon
-					src={conditionIcon}
-					alt={conditionLabel}
-					className="size-24 -mt-4"
-				/>
-				<div className="-mt-4 mb-3">{conditionLabel}</div>
+				<Meteocon src={conditionIcon} alt={conditionLabel} className="size-16" />
+				<div className="mb-3">{conditionLabel}</div>
 				<div className="text-metric font-semibold text-4xl">
 					{weatherForecast.temperature?.value?.toFixed(0) ?? "–"}
 					<span className="text-lg">°C</span>
@@ -155,7 +198,7 @@ function ForecastPopover({
 
 			<Popover.Popup size="sm">
 				<div className="flex gap-x-2 items-center">
-					<Meteocon src={conditionIcon} alt={conditionLabel} className="size-24" />
+					<Meteocon src={conditionIcon} alt={conditionLabel} className="size-12" />
 					<div className="text-metric">
 						<div className=" font-semibold text-xl">{conditionLabel}</div>
 						<div>
@@ -233,7 +276,7 @@ function ForecastPopover({
 									return (
 										<li
 											key={dailyForecast.id}
-											className="flex flex-col items-center bg-black/10 rounded-lg p-1 w-20"
+											className="flex flex-col items-center bg-foreground/10 rounded-lg p-1 w-20"
 										>
 											<Meteocon
 												src={getWeatherConditionIcon(dailyForecast?.condition ?? null)}
@@ -263,35 +306,22 @@ function ForecastPopover({
 	);
 }
 
-function ConditionsBar({
-	weatherForecast,
-}: {
-	weatherForecast: WeatherForecast;
-}) {
+function ConditionItem(props: Omit<ComponentProps<"div">, "className">) {
+	return <div className="flex gap-x-1" {...props} />;
+}
+
+function ConditionIcon(
+	props: Omit<ComponentProps<typeof Meteocon>, "className">,
+) {
+	return <Meteocon className="size-6" {...props} />;
+}
+
+function ConditionValue({ value, unit }: { value: string; unit?: string }) {
 	return (
-		<div className="flex flex-col -ml-4">
-			<div className="flex items-center">
-				<Meteocon src={Rain} alt="Pluie" className="size-12" />
-				<div className="text-metric -mb-2 -mt-2">
-					<div>{weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}%</div>
-				</div>
-			</div>
-			<div className="flex items-center">
-				<Meteocon src={WindSock} alt="Vent" className="size-12" />
-				<div className="text-metric -mb-2 -mt-2">
-					<div>
-						{weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
-						<span className="text-xs">{weatherForecast.windSpeed?.unit}</span>
-					</div>
-				</div>
-			</div>
-			<div className="flex items-center">
-				<Meteocon src={Humidity} alt="Humidité" className="size-12" />
-				<div className="text-metric -mb-2 -mt-2">
-					<div className="font-semibold">
-						{weatherForecast.humidity?.value?.toFixed(0) ?? "–"}%
-					</div>
-				</div>
+		<div className="text-metric">
+			<div>
+				{value ?? "–"}
+				<span className="text-xs">{unit}</span>
 			</div>
 		</div>
 	);

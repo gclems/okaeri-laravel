@@ -12,11 +12,11 @@
 	--foreground: oklch(0.2917 0.0567 268.77);
 	--border: oklch(81.458% 0.0101 273.316);
 
-	--tooltip: oklch(0.1985 0.0123 353.84);
+	--tooltip: oklch(0.2917 0.0567 268.77);
 	--tooltip-foreground: oklch(0.6956 0 353.84);
 
 	--input: oklch(0.9731 0 0);
-	--input-foreground: oklch(0.2341 0.0186 107.75);
+	--input-foreground: oklch(0.2917 0.0567 268.77);
 	--input-placeholder: oklch(0.2917 0.0567 268.77);
 	--input-border: oklch(0.9114 0.0042 301.42);
 
@@ -36,13 +36,13 @@
 	--secondary-foreground: oklch(100% 0 0);
 
 	--neutral: oklch(0.6956 0 353.84);
-	--neutral-foreground: oklch(0.1985 0.0123 353.84);
+	--neutral-foreground: oklch(0.2917 0.0567 268.77);
 
 	--success: oklch(0.8208 0.1293 131.99);
 	--success-foreground: oklch(100% 0 0);
 
 	--info: oklch(0.7332 0.126 271.95);
-	--info-foreground: oklch(0.1985 0.0123 353.84);
+	--info-foreground: oklch(0.2917 0.0567 268.77);
 
 	--warning: oklch(0.8391 0.1507 94.38);
 	--warning-foreground: oklch(1 0 0);
@@ -71,4 +71,11 @@
 	--background-texture: url("../surface_background.jpg");
 	--db-foreground: oklch(0.9843 0.004 106.47);
 	--db-outline: oklch(0.2917 0.0567 268.77);
+
+	--weather-alert-yellow: oklch(0.8391 0.1507 94.38);
+	--weather-alert-yellow-foreground: oklch(0.2917 0.0567 268.77);
+	--weather-alert-orange: oklch(76.609% 0.15339 71.16);
+	--weather-alert-orange-foreground: oklch(1 0 0);
+	--weather-alert-red: oklch(0.6459 0.2128 30.72);
+	--weather-alert-red-foreground: oklch(1 0 0);
 }

@@ -71,4 +71,11 @@
 	--background-texture: url("../surface_background_dark.jpg");
 	--db-foreground: oklch(92.797% 0.00011 271.152);
 	--db-outline: oklch(0.2917 0.0567 268.77);
+
+	--weather-alert-yellow: oklch(0.8391 0.1507 94.38);
+	--weather-alert-yellow-foreground: oklch(0.2917 0.0567 268.77);
+	--weather-alert-orange: oklch(76.609% 0.15339 71.16);
+	--weather-alert-orange-foreground: oklch(1 0 0);
+	--weather-alert-red: oklch(0.6459 0.2128 30.72);
+	--weather-alert-red-foreground: oklch(1 0 0);
 }

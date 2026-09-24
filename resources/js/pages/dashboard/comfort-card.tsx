@@ -61,7 +61,9 @@ function ComfortCard() {
 							</CarouselItem>
 						))}
 					</CarouselContent>
-					<CarouselDots />
+					<div className="mt-4">
+						<CarouselDots />
+					</div>
 				</Carousel>
 			</Card.Body>
 		</Card>
@@ -77,9 +79,9 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 					<div key={sensor.id} className="flex items-center">
 						{sensor.thermometer && (
 							<div className="flex items-center justify-center gap-x-1 flex-1">
-								<Meteocon src={Thermometer} alt="Thermometer" className="size-16" />
+								<Meteocon src={Thermometer} alt="Thermometer" className="size-8" />
 								<span
-									className={cn("text-metric text-lg @md:text-2xl font-semibold -ml-4", {
+									className={cn("text-metric text-lg @md:text-2xl font-semibold", {
 										"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
 										"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
 									})}
@@ -99,8 +101,8 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 						)}
 						{sensor.hygrometer && (
 							<div className="flex items-center justify-center text-sm flex-1">
-								<Meteocon src={Humidity} alt="Humidity" className="size-12" />
-								<span className="text-metric -ml-2 text-lg @md:text-2xl font-semibold">
+								<Meteocon src={Humidity} alt="Humidity" className="size-8" />
+								<span className="text-metric text-lg @md:text-2xl font-semibold">
 									<RollingNumber
 										number={+(sensor.hygrometer.value ?? 0)}
 										formatter={(value) => value.toFixed(1).toString()}

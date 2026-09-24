@@ -15,6 +15,7 @@ use App\Domains\Domo\Resolvers\Entities\MeteoFranceRainChanceResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceSnowChanceResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceTemperatureResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceUvIndexResolver;
+use App\Domains\Domo\Resolvers\Entities\MeteoFranceWeatherAlertResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceWeatherConditionResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceWindGustResolver;
 use App\Domains\Domo\Resolvers\Entities\MeteoFranceWindSpeedResolver;
@@ -37,6 +38,7 @@ final class MeteoFranceWeatherForecastResolver implements DeviceResolver
         private readonly MeteoFranceSnowChanceResolver $snowChanceResolver,
         private readonly MeteoFranceUvIndexResolver $uvIndexResolver,
         private readonly MeteoFranceWeatherConditionResolver $weatherConditionResolver,
+        private readonly MeteoFranceWeatherAlertResolver $weatherAlertResolver,
         private readonly DayWeatherForecastResolver $dayWeatherForecastResolver,
         private readonly HourWeatherForecastResolver $hourWeatherForecastResolver,
     ) {}
@@ -63,6 +65,7 @@ final class MeteoFranceWeatherForecastResolver implements DeviceResolver
         $snowChanceEntity = null;
         $uvIndexEntity = null;
         $conditionEntity = null;
+        $alertEntity = null;
 
         $device->entities->each(function ($entity) use (
             $device,
@@ -78,6 +81,7 @@ final class MeteoFranceWeatherForecastResolver implements DeviceResolver
             &$snowChanceEntity,
             &$uvIndexEntity,
             &$conditionEntity,
+            &$alertEntity,
         ) {
             if (! $temperatureEntity && $this->temperatureResolver->supports($entity, $device)) {
                 $temperatureEntity = $this->temperatureResolver->resolve($entity, $device);
@@ -103,6 +107,8 @@ final class MeteoFranceWeatherForecastResolver implements DeviceResolver
                 $uvIndexEntity = $this->uvIndexResolver->resolve($entity, $device);
             } elseif (! $conditionEntity && $this->weatherConditionResolver->supports($entity, $device)) {
                 $conditionEntity = $this->weatherConditionResolver->resolve($entity, $device);
+            } elseif (! $alertEntity && $this->weatherAlertResolver->supports($entity, $device)) {
+                $alertEntity = $this->weatherAlertResolver->resolve($entity, $device);
             }
         });
 
@@ -149,6 +155,7 @@ final class MeteoFranceWeatherForecastResolver implements DeviceResolver
                     unit: $todayDailyForecast->temperature_unit,
                 )
                 : null,
+            $alertEntity,
         );
     }
 }

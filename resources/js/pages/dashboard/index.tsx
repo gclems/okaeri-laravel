@@ -21,7 +21,7 @@ export default function Dashboard() {
 
 			<div>
 				<div className="flex gap-(--dashboard-spacing) flex-col lg:flex-row">
-					<div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-(--dashboard-spacing) content-start">
+					<div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-(--dashboard-spacing) content-center">
 						<div className="lg:block hidden" />
 						<ComfortCard />
 						<AirConditioningCard />

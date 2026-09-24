@@ -72,7 +72,7 @@ function ComfortCard() {
 
 function RoomItem({ vm }: { vm: RoomViewModel }) {
 	return (
-		<div className="@container">
+		<div className="@container space-y-2">
 			<div className="text-center">{vm.room.name}</div>
 			<div>
 				{vm.sensors.map((sensor) => (

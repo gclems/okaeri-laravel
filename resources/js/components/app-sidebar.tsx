@@ -7,6 +7,8 @@ import { Button, cn, Drawer, ScrollArea } from "shanty-ui";
 
 import { home } from "@/routes";
 
+import { DinoSchedulePicture } from "./dino-schedule-picture";
+
 function AppSidebar() {
 	return (
 		<Drawer>
@@ -16,7 +18,11 @@ function AppSidebar() {
 			>
 				<HugeiconsIcon icon={Menu01Icon} />
 			</Drawer.Trigger>
-			<Drawer.Popup size="sm" side="left" className="p-0 pt-4 rounded-4xl!">
+			<Drawer.Popup
+				size="sm"
+				side="left"
+				className="p-0 pt-4 rounded-4xl! overflow-auto"
+			>
 				<div className="h-full overflow-hidden w-full flex flex-col gap-y-4">
 					<Drawer.Trigger
 						render={<button type="button" />}
@@ -38,6 +44,7 @@ function AppSidebar() {
 						</ul>
 					</ScrollArea>
 				</div>
+				<DinoSchedulePicture className="absolute -bottom-2 -right-8 h-40" />
 			</Drawer.Popup>
 		</Drawer>
 	);

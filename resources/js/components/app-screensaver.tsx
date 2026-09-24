@@ -5,6 +5,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { RollingTime } from "@/components/rolling-time";
 import { useClock } from "@/features/clock/use-clock";
 
+import { DinoSchedulePicture } from "./dino-schedule-picture";
+
 const INACTIVITY_DELAY = 120_000;
 
 function ScreensaverClock() {
@@ -12,7 +14,6 @@ function ScreensaverClock() {
 
 	return (
 		<>
-			<img src="/images/logo_image.png" alt="Logo" className="max-w-64 w-full" />
 			<RollingTime
 				date={now}
 				className="text-[clamp(5rem,18vw,12rem)] leading-none text-primary"
@@ -47,6 +48,19 @@ function AppScreensaver() {
 		};
 
 		const handleActivity = (event: Event) => {
+			if (
+				event instanceof KeyboardEvent &&
+				event.key.toLowerCase() === "l" &&
+				(event.ctrlKey || event.metaKey)
+			) {
+				event.preventDefault();
+				window.clearTimeout(timeoutRef.current);
+				const newVisible = !visibleRef.current;
+				visibleRef.current = newVisible;
+				setVisible(newVisible);
+				return;
+			}
+
 			if (visibleRef.current) {
 				if (event.type === "pointerdown") {
 					visibleRef.current = false;
@@ -86,6 +100,14 @@ function AppScreensaver() {
 					exit={{ opacity: 0 }}
 					transition={{ duration: 0.4 }}
 				>
+					<div className="w-fit h-fit">
+						<img
+							src="/images/logo_image.png"
+							alt="Logo"
+							className="max-w-64 w-full"
+						/>
+						<DinoSchedulePicture className="w-40 absolute bottom-4 right-4" />
+					</div>
 					<ScreensaverClock />
 					<p className="absolute bottom-10 text-sm text-primary/70">
 						Cliquez pour continuer

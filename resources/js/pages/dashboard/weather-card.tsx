@@ -3,7 +3,7 @@ import { type ComponentProps, useMemo } from "react";
 import Humidity from "@meteocons/svg/fill/humidity.svg";
 import Rain from "@meteocons/svg/fill/rain.svg";
 import WindSock from "@meteocons/svg/fill/windsock.svg";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Card, cn, Popover, ScrollArea } from "shanty-ui";
 
 import { Meteocon } from "@/components/meteocon";
@@ -25,79 +25,114 @@ function WeatherCard() {
 
 	if (!weatherForecast) return null;
 
+	const temperature = weatherForecast.temperature?.value ?? 0;
 	return (
-		<Card size="sm">
-			<Card.Body className="w-fit min-w-120">
-				<div className="w-full flex flex-row gap-x-4">
-					<div className="flex-1">
-						<ForecastPopover weatherForecast={weatherForecast} />
-					</div>
-					<div className="flex flex-col justify-center gap-y-6">
-						<ConditionItem>
-							<ConditionIcon src={Rain} alt="Pluie" />
-							<ConditionValue
-								value={weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}
-								unit="%"
-							/>
-						</ConditionItem>
-						<ConditionItem>
-							<ConditionIcon src={WindSock} alt="Vent" />
-							<ConditionValue
-								value={weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
-								unit={weatherForecast.windSpeed?.unit ?? ""}
-							/>
-						</ConditionItem>
-						<ConditionItem>
-							<ConditionIcon src={Humidity} alt="Humidité" />
-							<ConditionValue
-								value={weatherForecast.humidity?.value?.toFixed(0) ?? "–"}
-								unit="%"
-							/>
-						</ConditionItem>
-					</div>
-					<div className="flex-1 flex flex-col">
+		<div className="w-fit relative">
+			<Card size="sm">
+				<Card.Body className="w-fit min-w-120">
+					<div className="w-full flex flex-row gap-x-4">
 						<div className="flex-1">
-							<Card.Header
-								title={
-									<div className="flex items-center gap-x-2 flex-row-reverse w-full">
-										<img src="/images/weather_small.png" alt="Météo" /> Météo
-									</div>
-								}
-							/>
+							<ForecastPopover weatherForecast={weatherForecast} />
 						</div>
-						<div className="mt-4 flex flex-col items-end justify-end">
-							<DatePanel />
+						<div className="flex flex-col justify-center gap-y-6">
+							<ConditionItem>
+								<ConditionIcon src={Rain} alt="Pluie" />
+								<ConditionValue
+									value={weatherForecast.rainChance?.value?.toFixed(0) ?? "–"}
+									unit="%"
+								/>
+							</ConditionItem>
+							<ConditionItem>
+								<ConditionIcon src={WindSock} alt="Vent" />
+								<ConditionValue
+									value={weatherForecast.windSpeed?.value?.toFixed(0) ?? "–"}
+									unit={weatherForecast.windSpeed?.unit ?? ""}
+								/>
+							</ConditionItem>
+							<ConditionItem>
+								<ConditionIcon src={Humidity} alt="Humidité" />
+								<ConditionValue
+									value={weatherForecast.humidity?.value?.toFixed(0) ?? "–"}
+									unit="%"
+								/>
+							</ConditionItem>
+						</div>
+						<div className="flex-1 flex flex-col">
+							<div className="flex-1">
+								<Card.Header
+									title={
+										<div className="flex items-center gap-x-2 flex-row-reverse w-full">
+											<img src="/images/weather_small.png" alt="Météo" /> Météo
+										</div>
+									}
+								/>
+							</div>
+							<div className="mt-4 flex flex-col items-end justify-end">
+								<DatePanel />
+							</div>
 						</div>
 					</div>
-				</div>
-				{weatherForecast.alert && weatherForecast.alert.level !== "Vert" && (
-					<motion.ul className="space-y-0.5 mt-4">
-						{Object.entries(weatherForecast.alert.risks)
-							.filter(([_, level]) => level !== "Vert")
-							.map(([risk, level]) => (
-								<li
-									key={risk}
-									className={cn(
-										"text-metric px-2 rounded-full",
-										"flex items-center justify-between",
-										{
-											"bg-weather-alert-red text-weather-alert-red-foreground":
-												level === "Rouge",
-											"bg-weather-alert-orange text-weather-alert-orange-foreground":
-												level === "Orange",
-											"bg-weather-alert-yellow text-weather-alert-yellow-foreground":
-												level === "Jaune",
-										},
-									)}
-								>
-									<div className="text-xs">Vigilance {level}</div>
-									<div className="text-base font-bold">{risk}</div>
-								</li>
-							))}
-					</motion.ul>
+					{weatherForecast.alert && weatherForecast.alert.level !== "Vert" && (
+						<motion.ul className="space-y-0.5 mt-4">
+							{Object.entries(weatherForecast.alert.risks)
+								.filter(([_, level]) => level !== "Vert")
+								.map(([risk, level]) => (
+									<li
+										key={risk}
+										className={cn(
+											"text-metric px-2 rounded-full",
+											"flex items-center justify-between",
+											{
+												"bg-weather-alert-red text-weather-alert-red-foreground":
+													level === "Rouge",
+												"bg-weather-alert-orange text-weather-alert-orange-foreground":
+													level === "Orange",
+												"bg-weather-alert-yellow text-weather-alert-yellow-foreground":
+													level === "Jaune",
+											},
+										)}
+									>
+										<div className="text-xs">Vigilance {level}</div>
+										<div className="text-base font-bold">{risk}</div>
+									</li>
+								))}
+						</motion.ul>
+					)}
+				</Card.Body>
+			</Card>
+			<AnimatePresence>
+				{temperature >= 28 && temperature <= 35 && (
+					<motion.img
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1, transition: { duration: 2 } }}
+						exit={{ opacity: 0 }}
+						src="/images/animations/sleeping-dino.png"
+						alt="Sleeping dino"
+						className="absolute -left-1.5 -bottom-2.5 w-20"
+					/>
 				)}
-			</Card.Body>
-		</Card>
+				{temperature > 7 && temperature <= 12 && (
+					<motion.img
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1, transition: { duration: 2 } }}
+						exit={{ opacity: 0 }}
+						src="/images/animations/cosy-dino.png"
+						alt="Cosy dino"
+						className="absolute -left-4 -bottom-2 w-18"
+					/>
+				)}
+				{temperature <= 7 && (
+					<motion.img
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1, transition: { duration: 2 } }}
+						exit={{ opacity: 0 }}
+						src="/images/animations/cold-dino.png"
+						alt="Cold dino"
+						className="absolute -left-4 -bottom-2 w-18"
+					/>
+				)}
+			</AnimatePresence>
+		</div>
 	);
 }
 

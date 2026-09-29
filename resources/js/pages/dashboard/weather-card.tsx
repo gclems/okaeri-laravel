@@ -27,14 +27,14 @@ function WeatherCard() {
 
 	const temperature = weatherForecast.temperature?.value ?? 0;
 	return (
-		<div className="w-fit relative">
+		<div className="w-full relative">
 			<Card size="sm">
-				<Card.Body className="w-fit min-w-120">
-					<div className="w-full flex flex-row gap-x-4">
-						<div className="flex-1">
+				<Card.Body className="w-full">
+					<div className="w-full flex flex-col @md:flex-row gap-4">
+						<div className="w-full @md:flex-1 order-2 @md:order-1">
 							<ForecastPopover weatherForecast={weatherForecast} />
 						</div>
-						<div className="flex flex-col justify-center gap-y-6">
+						<div className="flex @md:flex-col justify-center gap-6 order-3 @md:order-2 mb-4 @md:mb-0">
 							<ConditionItem>
 								<ConditionIcon src={Rain} alt="Pluie" />
 								<ConditionValue
@@ -57,17 +57,15 @@ function WeatherCard() {
 								/>
 							</ConditionItem>
 						</div>
-						<div className="flex-1 flex flex-col">
-							<div className="flex-1">
-								<Card.Header
-									title={
-										<div className="flex items-center gap-x-2 flex-row-reverse w-full">
-											<img src="/images/weather_small.png" alt="Météo" /> Météo
-										</div>
-									}
-								/>
-							</div>
-							<div className="mt-4 flex flex-col items-end justify-end">
+						<div className="w-full @md:flex-1 flex flex-col order-1 @md:order-3">
+							<Card.Header
+								title={
+									<div className="flex items-center gap-x-2 flex-row-reverse w-full">
+										<img src="/images/weather_small.png" alt="Météo" /> Météo
+									</div>
+								}
+							/>
+							<div className="mt-4 flex flex-col @md:items-end @md:justify-end justify-center">
 								<DatePanel />
 							</div>
 						</div>
@@ -139,8 +137,8 @@ function WeatherCard() {
 function DatePanel() {
 	const now = useClock();
 	return (
-		<div className="text-right">
-			<div className="space-x-1 text-metric flex items-baseline">
+		<div className="text-center @md:text-right">
+			<div className="space-x-1 text-metric flex items-baseline justify-center @md:justify-right">
 				<span>
 					{now.toLocaleDateString([], {
 						weekday: "short",
@@ -229,13 +227,15 @@ function ForecastPopover({
 				render={<div />}
 				className="flex flex-col justify-center items-center"
 			>
-				<Meteocon
-					src={conditionIcon}
-					alt={conditionLabel}
-					className="size-12 my-4"
-				/>
-				<div className="mb-3">{conditionLabel}</div>
-				<div className="text-metric font-semibold text-4xl">
+				<div className="flex flex-col items-center justify-center flex-1">
+					<Meteocon
+						src={conditionIcon}
+						alt={conditionLabel}
+						className="size-12 my-4"
+					/>
+					<div className="mb-3">{conditionLabel}</div>
+				</div>
+				<div className="text-metric font-semibold text-4xl flex-1 text-center">
 					{weatherForecast.temperature?.value?.toFixed(0) ?? "–"}
 					<span className="text-lg">°C</span>
 				</div>

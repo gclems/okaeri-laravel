@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
 	ElectricPlugsIcon,
@@ -44,11 +44,12 @@ function CarItem({ car }: { car: Car }) {
 	const isPlugged = car.isPlugged?.value ?? false;
 	const isCharging = car.isCharging?.value ?? false;
 	const chargingTime = getChargingTime(car.remainingChargingMinutes?.value ?? 0);
+	const isMapMountable = useIsMapMountable();
 
 	return (
 		<Card className="@container">
 			<Card.Body className="flex flex-col @lg:flex-row gap-3">
-				{car.coordinates && (
+				{car.coordinates && isMapMountable && (
 					<div className="order-2 @lg:order-1 @lg:flex-1 h-48 @lg:h-auto border border-primary rounded-xl overflow-hidden">
 						<MapContainer
 							center={[car.coordinates.latitude ?? 0, car.coordinates.longitude ?? 0]}
@@ -191,6 +192,23 @@ function CarItem({ car }: { car: Car }) {
 			</Card.Body>
 		</Card>
 	);
+}
+
+/**
+ * react-leaflet's MapContainer removes its map on effect cleanup but never recreates it,
+ * which breaks when effects are torn down and replayed (e.g. inside a hidden `<Activity>`).
+ * Unmounting the map while effects are inactive lets it be recreated from scratch.
+ */
+function useIsMapMountable(): boolean {
+	const [isMountable, setIsMountable] = useState(false);
+
+	useEffect(() => {
+		setIsMountable(true);
+
+		return () => setIsMountable(false);
+	}, []);
+
+	return isMountable;
 }
 
 function RecenterMap({

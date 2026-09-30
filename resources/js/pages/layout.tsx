@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from "react";
+import { Activity, type ReactNode, useMemo, useState } from "react";
 
 import { motion } from "motion/react";
 import { ShantyRoot } from "shanty-ui";
@@ -24,6 +24,7 @@ function Layout({ children }: { children: ReactNode }) {
 	useTheme();
 	useAppUpdated();
 	const now = useClock();
+	const [isCoveredByScreensaver, setIsCoveredByScreensaver] = useState(false);
 
 	const weatherForecastsMap = useDomoStore((state) => state.weatherForecastsMap);
 	const weatherForecast = useMemo(
@@ -48,12 +49,14 @@ function Layout({ children }: { children: ReactNode }) {
 					}}
 				>
 					<main className="relative flex-1 h-full min-h-full max-h-full overflow-auto flex flex-col p-2 gap-y-2">
-						{children}
-						<AppTopBar />
+						<Activity mode={isCoveredByScreensaver ? "hidden" : "visible"}>
+							{children}
+							<AppTopBar />
+						</Activity>
 					</main>
 				</motion.div>
 			</ShantyRoot>
-			<AppScreensaver />
+			<AppScreensaver onCoverChange={setIsCoveredByScreensaver} />
 
 			<DomoRoomsUpdater />
 			<DomoDevicesUpdater />

@@ -29,14 +29,26 @@ function ScreensaverClock() {
 	);
 }
 
-function AppScreensaver() {
+/**
+ * `onCoverChange(true)` fires once the screensaver fully covers the app (fade-in done),
+ * `onCoverChange(false)` fires as soon as it starts hiding, so the app is back under the fade-out.
+ */
+function AppScreensaver({
+	onCoverChange,
+}: {
+	onCoverChange?: (isCovering: boolean) => void;
+}) {
 	const [visible, setVisible] = useState(false);
 	const timeoutRef = useRef<number>(undefined);
 	const visibleRef = useRef(false);
 
 	useEffect(() => {
 		visibleRef.current = visible;
-	}, [visible]);
+
+		if (!visible) {
+			onCoverChange?.(false);
+		}
+	}, [visible, onCoverChange]);
 
 	useEffect(() => {
 		const scheduleScreensaver = () => {
@@ -99,6 +111,11 @@ function AppScreensaver() {
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					transition={{ duration: 0.4 }}
+					onAnimationComplete={() => {
+						if (visibleRef.current) {
+							onCoverChange?.(true);
+						}
+					}}
 				>
 					<div className="w-fit h-fit">
 						<img

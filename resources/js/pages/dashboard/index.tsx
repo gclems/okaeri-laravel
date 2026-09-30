@@ -17,7 +17,7 @@ export default function Dashboard() {
 			<Head title="" />
 
 			<div className="flex justify-end my-(--dashboard-spacing)">
-				<div className="@container w-full md:w-4/5 lg:w-1/2 xl:w-1/3 flex justify-end max-w-130">
+				<div className="@container w-full md:w-4/5 lg:w-1/2 2xl:w-1/3 flex justify-end max-w-130">
 					<WeatherCard />
 				</div>
 			</div>

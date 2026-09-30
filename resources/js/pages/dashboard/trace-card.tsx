@@ -27,7 +27,7 @@ function TraceCard() {
 			<Card.Header
 				title={
 					<>
-						{/* <img src="/images/router_small.png" alt="Router" className="h-6" />  */}
+						<img src="/images/trace_small.png" alt="Router" className="h-6" />{" "}
 						Historique
 					</>
 				}

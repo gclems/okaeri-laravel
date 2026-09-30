@@ -8,6 +8,7 @@ import { DoorCard } from "./door-card";
 import { EnergyConsumptionCard } from "./energy-consumption-card";
 import { LightingCard } from "./lighting-card";
 import { NetworkCard } from "./network-card";
+import { TraceCard } from "./trace-card";
 import { WeatherCard } from "./weather-card";
 
 export default function Dashboard() {
@@ -34,6 +35,9 @@ export default function Dashboard() {
 
 						<LightingCard />
 						<BatteriesCard />
+						<div className="col-span-2">
+							<TraceCard />
+						</div>
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-(--dashboard-spacing) lg:block lg:w-72 lg:space-y-(--dashboard-spacing)">
 						<DoorCard />

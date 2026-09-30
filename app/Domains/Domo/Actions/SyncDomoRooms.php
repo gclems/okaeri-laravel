@@ -15,12 +15,14 @@ final class SyncDomoRooms
             $collection->map(fn (DTOHomeAssistantArea $area) => [
                 'ha_id' => $area->id,
                 'name' => $area->name,
+                'ha_temperature_entity_id' => $area->temperatureEntityId,
+                'ha_humidity_entity_id' => $area->humidityEntityId,
                 'raw' => json_encode($area),
                 'created_at' => now(),
                 'updated_at' => now(),
             ])->toArray(),
             ['ha_id'],
-            ['name', 'raw', 'ha_id']
+            ['name', 'raw', 'ha_id', 'ha_temperature_entity_id', 'ha_humidity_entity_id']
         );
 
         DomoRoom::whereNotIn('ha_id', $collection->pluck('id'))->delete();

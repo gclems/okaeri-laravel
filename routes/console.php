@@ -10,3 +10,6 @@ Schedule::command('app:sync-weather-hourly-forecasts')
 
 Schedule::command('app:sync-weather-daily-forecasts')
     ->everySixHours();
+
+Schedule::command('model:prune')
+    ->dailyAt('03:00');

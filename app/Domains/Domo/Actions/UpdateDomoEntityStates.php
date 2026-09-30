@@ -2,14 +2,20 @@
 
 namespace App\Domains\Domo\Actions;
 
+use App\Domains\Domo\Events\DomoEntityEventsUpdated;
 use App\Domains\Domo\Events\DomoEntityStatesUpdated;
 use App\Domains\Domo\Events\DomoEntityStateUpdated;
+use App\Domains\Domo\Services\DomoEntityEventRecorder;
 use App\Models\DomoEntity;
 use App\Models\DomoEntityState;
 use Carbon\Carbon;
 
 final class UpdateDomoEntityStates
 {
+    public function __construct(
+        private DomoEntityEventRecorder $recorder
+    ) {}
+
     public function execute(array $haEntityStates): void
     {
         $collection = collect($haEntityStates);
@@ -40,6 +46,8 @@ final class UpdateDomoEntityStates
             ['value', 'attributes', 'raw', 'updated_at']
         );
 
+        $this->recordEvents($collection->pluck('entity_id')->all());
+
         if ($collection->count() > 1) {
             DomoEntityStatesUpdated::dispatch();
         } else {
@@ -47,6 +55,23 @@ final class UpdateDomoEntityStates
             if ($state) {
                 DomoEntityStateUpdated::dispatch($state);
             }
+        }
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $haEntityIds
+     */
+    private function recordEvents(array $haEntityIds): void
+    {
+        $isJournalModified = DomoEntity::query()
+            ->with(['state', 'device.entities'])
+            ->whereIn('ha_id', $haEntityIds)
+            ->get()
+            ->filter(fn (DomoEntity $entity) => $entity->state !== null)
+            ->reduce(fn (bool $carry, DomoEntity $entity) => $this->recorder->record($entity, $entity->state) || $carry, false);
+
+        if ($isJournalModified) {
+            DomoEntityEventsUpdated::dispatch();
         }
     }
 }

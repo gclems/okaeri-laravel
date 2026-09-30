@@ -109,6 +109,14 @@ body {
 	}
 }
 
+/* @utility surface-not-textured {
+	&::before {
+		content: "";
+		@apply absolute inset-0 -z-10 bg-repeat opacity-0;
+		background-image: none;
+	}
+} */
+
 [data-slot="sidebar-inner"] {
 	@apply relative isolate overflow-hidden surface-texture;
 }

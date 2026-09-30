@@ -1,0 +1,59 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class() extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::dropIfExists('domo_device_events');
+        Schema::dropIfExists('domo_entity_state_histories');
+
+        Schema::create('domo_entity_events', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('domo_entity_id')->constrained('domo_entities')->cascadeOnDelete();
+            $table->string('value');
+            $table->json('attributes')->nullable();
+            $table->json('changes');
+            $table->timestamp('occurred_at');
+
+            $table->index('occurred_at');
+            $table->index(['domo_entity_id', 'occurred_at']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('domo_entity_events');
+
+        Schema::create('domo_device_events', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('domo_device_id')->constrained('domo_devices');
+            $table->string('kind');
+            $table->string('value');
+            $table->timestamp('occurred_at');
+
+            $table->index('occurred_at');
+            $table->index(['domo_device_id', 'kind', 'occurred_at']);
+        });
+
+        Schema::create('domo_entity_state_histories', function (Blueprint $table) {
+            $table->id();
+            $table->string('ha_entity_id');
+            $table->string('value');
+            $table->json('attributes');
+            $table->json('raw')->nullable();
+            $table->timestamps();
+
+            $table->index(['ha_entity_id', 'updated_at']);
+        });
+    }
+};

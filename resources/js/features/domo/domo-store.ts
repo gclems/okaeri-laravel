@@ -4,6 +4,7 @@ import type {
 	DomoDevice,
 	DomoEntity,
 	DomoEntityAssignment,
+	DomoEntityEvent,
 	DomoEntityState,
 	DomoRoom,
 	SunPhase,
@@ -36,6 +37,7 @@ type DomoStore = {
 	carsMap: Map<number, Car>;
 	switchesMap: Map<number, SwitchDevice>;
 	weatherForecastsMap: Map<number, WeatherForecast>;
+	tracesMap: Map<number, DomoEntityEvent>;
 
 	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) => void;
 	updateDomoDevices: (devices: DomoDevice[], mode: UpdateMode) => void;
@@ -61,6 +63,7 @@ type DomoStore = {
 		weatherForecasts: WeatherForecast[],
 		mode: UpdateMode,
 	) => void;
+	updateTraces: (traces: DomoEntityEvent[], mode: UpdateMode) => void;
 };
 
 enum UpdateMode {
@@ -97,6 +100,7 @@ const useDomoStore = create<DomoStore>((set) => ({
 	carsMap: new Map<number, Car>(),
 	switchesMap: new Map<number, SwitchDevice>(),
 	weatherForecastsMap: new Map<number, WeatherForecast>(),
+	tracesMap: new Map<number, DomoEntityEvent>(),
 
 	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) =>
 		set(() => ({
@@ -279,6 +283,16 @@ const useDomoStore = create<DomoStore>((set) => ({
 				weatherForecasts,
 				mode,
 				(weatherForecast) => weatherForecast.id,
+			),
+		})),
+
+	updateTraces: (traces: DomoEntityEvent[], mode: UpdateMode) =>
+		set(() => ({
+			tracesMap: updateMapFromArray(
+				useDomoStore.getState().tracesMap,
+				traces,
+				mode,
+				(trace) => trace.id,
 			),
 		})),
 }));

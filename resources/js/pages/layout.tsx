@@ -13,6 +13,7 @@ import { DomoRoomsUpdater } from "@/components/domo-store/domo-rooms-updater";
 import { NetworkUpdater } from "@/components/domo-store/network-updater";
 import { ProjectionsUpdater } from "@/components/domo-store/projections-updater";
 import { SunPhaseUpdater } from "@/components/domo-store/sun-phase-updater";
+import { TraceUpdater } from "@/components/domo-store/trace-updater";
 import { useClock } from "@/features/clock/use-clock";
 import { useDomoStore } from "@/features/domo/domo-store";
 import { useTheme } from "@/features/use-theme";
@@ -63,6 +64,7 @@ function Layout({ children }: { children: ReactNode }) {
 			<SunPhaseUpdater />
 			<ProjectionsUpdater />
 			<NetworkUpdater />
+			<TraceUpdater />
 		</>
 	);
 }

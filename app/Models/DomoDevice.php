@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Carbon\CarbonImmutable;
+use Database\Factories\DomoDeviceFactory;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -47,6 +49,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class DomoDevice extends Model
 {
+    /** @use HasFactory<DomoDeviceFactory> */
+    use HasFactory;
+
     public function casts(): array
     {
         return [

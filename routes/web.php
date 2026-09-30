@@ -5,6 +5,7 @@ use App\Http\Controllers\DomoController;
 use App\Http\Controllers\DomoDevicesController;
 use App\Http\Controllers\DomoEntitiesController;
 use App\Http\Controllers\DomoEntityAssignmentsController;
+use App\Http\Controllers\DomoEntityEventsController;
 use App\Http\Controllers\DomoEntityStatesController;
 use App\Http\Controllers\DomoRoomsController;
 use App\Http\Controllers\HomeArchitectController;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 // API
 Route::get('domo-rooms', [DomoRoomsController::class, 'list'])->name('domo-rooms.list');
 Route::get('domo-devices', [DomoDevicesController::class, 'list'])->name('domo-devices.list');
+Route::get('domo-entity-events', [DomoEntityEventsController::class, 'list'])->name('domo-entity-events.list');
 Route::get('domo-entities', [DomoEntitiesController::class, 'list'])->name('domo-entities.list');
 Route::get('domo-entity-assignments', [DomoEntityAssignmentsController::class, 'list'])->name('domo-entity-assignments.list');
 Route::get('domo-entity-states', [DomoEntityStatesController::class, 'list'])->name('domo-entity-states.list');

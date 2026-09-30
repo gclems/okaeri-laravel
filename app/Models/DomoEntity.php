@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Carbon\CarbonImmutable;
+use Database\Factories\DomoEntityFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,13 +39,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntity whereUpdatedAt($value)
  *
  * @property-read DomoEntityState|null $state
- * @property-read Collection<int, DomoEntityStateHistory> $stateHistories
- * @property-read int|null $state_histories_count
+ * @property-read Collection<int, DomoEntityEvent> $events
+ * @property-read int|null $events_count
  *
  * @mixin \Eloquent
  */
 class DomoEntity extends Model
 {
+    /** @use HasFactory<DomoEntityFactory> */
+    use HasFactory;
+
     public function casts(): array
     {
         return [
@@ -72,9 +77,12 @@ class DomoEntity extends Model
         return $this->hasOne(DomoEntityState::class, 'ha_entity_id', 'ha_id');
     }
 
-    public function stateHistories(): HasMany
+    /**
+     * @return HasMany<DomoEntityEvent, $this>
+     */
+    public function events(): HasMany
     {
-        return $this->hasMany(DomoEntityStateHistory::class, 'ha_entity_id', 'ha_id');
+        return $this->hasMany(DomoEntityEvent::class);
     }
 
     public function assignments(): HasMany

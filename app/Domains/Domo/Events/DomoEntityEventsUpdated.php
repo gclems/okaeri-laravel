@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Domains\Domo\Events;
+
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class DomoEntityEventsUpdated implements ShouldBroadcastNow
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    public function broadcastAs(): string
+    {
+        return 'DomoEntityEventsUpdated';
+    }
+
+    public function broadcastOn(): array
+    {
+        return [
+            'domo',
+        ];
+    }
+}

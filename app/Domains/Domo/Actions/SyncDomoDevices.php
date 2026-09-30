@@ -8,6 +8,9 @@ use App\Models\DomoDevice;
 
 final class SyncDomoDevices
 {
+    /**
+     * @param  array<array-key, DTOHomeAssistantDevice>  $haDevices
+     */
     public function execute(array $haDevices): void
     {
         $collection = collect($haDevices);

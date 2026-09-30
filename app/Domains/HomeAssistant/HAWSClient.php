@@ -47,11 +47,16 @@ final class HAWSClient
         return $this->factory->create($payload);
     }
 
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     public function request(array $payload, ?Cancellation $cancellation = null): mixed
     {
         $messageId = $this->sendCommand($payload);
 
-        while ($message = $this->receive($cancellation)) {
+        while (true) {
+            $message = $this->receive($cancellation);
+
             if ($message instanceof HAResultWSMessage && $message->id === $messageId) {
                 if (! $message->success) {
                     throw new RuntimeException(
@@ -68,10 +73,11 @@ final class HAWSClient
                 continue;
             }
         }
-
-        throw new RuntimeException('Home Assistant closed websocket connection before request completed');
     }
 
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     public function requestOnce(array $payload, ?Cancellation $cancellation = null): mixed
     {
         $this->start();
@@ -81,6 +87,10 @@ final class HAWSClient
         return $result;
     }
 
+    /**
+     * @param  array<string, mixed>|null  $serviceData
+     * @param  array<string, mixed>|null  $target
+     */
     public function callService(
         string $domain,
         string $service,
@@ -88,7 +98,7 @@ final class HAWSClient
         ?array $target = null,
         bool $returnResponse = false,
         ?Cancellation $cancellation = null,
-    ) {
+    ): mixed {
         $payload = [
             'type' => 'call_service',
             'domain' => $domain,
@@ -110,11 +120,13 @@ final class HAWSClient
         return $this->requestOnce($payload, $cancellation);
     }
 
-    public function listen(callable $handler, ?Cancellation $cancellation = null): void
+    public function listen(callable $handler, ?Cancellation $cancellation = null): never
     {
         $this->eventHandler = $handler;
 
-        while ($message = $this->receive($cancellation)) {
+        while (true) {
+            $message = $this->receive($cancellation);
+
             match (true) {
                 $message instanceof HAEventWSMessage => $this->dispatchEvent($message),
                 default => null,
@@ -174,6 +186,9 @@ final class HAWSClient
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     private function send(array $payload): void
     {
         $this->connection->sendText(
@@ -184,6 +199,9 @@ final class HAWSClient
         );
     }
 
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     private function sendCommand(array $payload): int
     {
         $messageId = $this->nextMessageId();
@@ -198,6 +216,9 @@ final class HAWSClient
         return ++$this->messageId;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function receiveRaw(?Cancellation $cancellation = null): array
     {
         $message = $this->connection->receive($cancellation);

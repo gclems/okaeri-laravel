@@ -10,7 +10,7 @@ final class UnifyDaemon
         private readonly UnifyClient $client,
     ) {}
 
-    public function run(): void
+    public function run(): never
     {
         while (true) {
             $this->poll();

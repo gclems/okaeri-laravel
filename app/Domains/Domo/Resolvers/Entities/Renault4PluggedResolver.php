@@ -8,6 +8,9 @@ use App\Models\DomoEntity;
 
 final class Renault4PluggedResolver extends SlugSuffixEntityResolver
 {
+    /**
+     * @var list<string>
+     */
     private array $trueValues = [
         'plugged',
         'plugged_waiting_for_charge',

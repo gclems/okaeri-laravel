@@ -8,6 +8,9 @@ use App\Models\DomoRoom;
 
 final class SyncDomoRooms
 {
+    /**
+     * @param  array<array-key, DTOHomeAssistantArea>  $haAreas
+     */
     public function execute(array $haAreas): void
     {
         $collection = collect($haAreas);

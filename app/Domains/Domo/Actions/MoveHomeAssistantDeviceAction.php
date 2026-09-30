@@ -15,7 +15,7 @@ final class MoveHomeAssistantDeviceAction
         $this->hawsClient->requestOnce([
             'type' => 'config/device_registry/update',
             'device_id' => $device_ha_id,
-            'area_id' => $area_ha_id ?? null,
+            'area_id' => $area_ha_id,
         ]);
     }
 }

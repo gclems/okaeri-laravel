@@ -10,6 +10,7 @@ use App\Http\Requests\StoreDomoRoomRequest;
 use App\Models\DomoRoom;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class DomoRoomsController extends Controller
@@ -25,7 +26,7 @@ class DomoRoomsController extends Controller
     public function store(
         StoreDomoRoomRequest $request,
         StoreHomeAssistantAreaAction $storeAction
-    ) {
+    ): RedirectResponse {
         $storeAction->execute($request->validated('name'));
 
         return Inertia::back();
@@ -34,8 +35,8 @@ class DomoRoomsController extends Controller
     public function rename(
         RenameDomoRoomRequest $request,
         DomoRoom $room,
-        RenameHomeAssistantAreaAction $renameAction)
-    {
+        RenameHomeAssistantAreaAction $renameAction
+    ): RedirectResponse {
         $renameAction->execute($room, $request->validated('name'));
 
         return Inertia::back();
@@ -44,7 +45,7 @@ class DomoRoomsController extends Controller
     public function delete(
         DomoRoom $room,
         DeleteHomeAssistantAreaAction $deleteAction
-    ) {
+    ): RedirectResponse {
         $deleteAction->execute($room);
 
         return Inertia::back();

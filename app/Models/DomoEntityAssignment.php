@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Domains\Domo\EntityAssignmentRoles;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -11,10 +12,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $domo_entity_id
  * @property int|null $domo_room_id
  * @property EntityAssignmentRoles $role
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\DomoEntity|null $entity
- * @property-read \App\Models\DomoRoom|null $room
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read DomoEntity|null $entity
+ * @property-read DomoRoom|null $room
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntityAssignment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntityAssignment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntityAssignment query()
@@ -24,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntityAssignment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntityAssignment whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DomoEntityAssignment whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class DomoEntityAssignment extends Model
@@ -41,11 +44,17 @@ class DomoEntityAssignment extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<DomoEntity, $this>
+     */
     public function entity(): BelongsTo
     {
         return $this->belongsTo(DomoEntity::class);
     }
 
+    /**
+     * @return BelongsTo<DomoRoom, $this>
+     */
     public function room(): BelongsTo
     {
         return $this->belongsTo(DomoRoom::class);

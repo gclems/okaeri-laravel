@@ -8,11 +8,13 @@ use App\Models\DomoEntity;
 
 final class SyncDomoEntities
 {
+    /**
+     * @param  array<array-key, HomeAssistantEntity>  $haEntities
+     */
     public function execute(array $haEntities): void
     {
         $kept = collect($haEntities)
             ->where(fn (HomeAssistantEntity $entity) => $entity->deviceId !== null
-                && $entity->name !== null
                 && trim($entity->name) !== ''
                 && $entity->disabledBy === null
             );
@@ -21,8 +23,8 @@ final class SyncDomoEntities
             $kept
                 ->map(fn (HomeAssistantEntity $entity) => [
                     'ha_id' => $entity->id,
-                    'name' => $entity->name ?? null,
-                    'ha_device_id' => $entity->deviceId ?? null,
+                    'name' => $entity->name,
+                    'ha_device_id' => $entity->deviceId,
                     'platform' => $entity->platform,
                     'raw' => json_encode($entity),
                     'created_at' => now(),

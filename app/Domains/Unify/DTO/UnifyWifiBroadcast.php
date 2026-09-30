@@ -10,6 +10,9 @@ final class UnifyWifiBroadcast
         public readonly bool $hidden,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(

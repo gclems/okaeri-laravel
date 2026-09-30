@@ -2,12 +2,13 @@
 
 namespace App\Domains\HomeAssistant\Events;
 
-use App\Domains\HomeAssistant\DTO\HomeAssistantEntityState;
-
+/**
+ * @extends HAWSEvent<mixed>
+ */
 final class HAWSEntityStateChanged extends HAWSEvent
 {
     /**
-     * @param  HomeAssistantEntityState[]  $states
+     * @param  array<mixed>  $states
      */
     public function __construct(
         array $states,

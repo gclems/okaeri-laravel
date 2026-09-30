@@ -8,13 +8,14 @@ use App\Domains\Domo\Models\Devices\ClimateSensor;
 use App\Domains\Domo\Models\Devices\LightBulb;
 use App\Domains\Domo\Models\Devices\SwitchDevice;
 use App\Domains\Domo\Models\Devices\WeatherForecast;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class DomoController extends Controller
 {
     public function getProjections(
         GenerateDomoModelsAction $generateDomoModelsAction
-    ) {
+    ): JsonResponse {
         $allProjections = $generateDomoModelsAction->execute();
 
         $lights = [];

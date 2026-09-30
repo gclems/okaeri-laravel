@@ -20,7 +20,7 @@ class SyncWeatherDailyForecasts extends Command
     public function handle(
         HAWSClient $hawsClient,
         StoreWeatherDailyForecastsAction $storeWeatherDailyForecasts,
-    ) {
+    ): void {
         $weatherEntities = DomoEntity::with('state')
             ->where('ha_id', 'like', 'weather.%')
             ->get();

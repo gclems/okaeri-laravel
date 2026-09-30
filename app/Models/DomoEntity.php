@@ -60,18 +60,27 @@ class DomoEntity extends Model
         'raw',
     ];
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function domain(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value, array $attributes) => explode('.', $attributes['ha_id'])[0] ?? null,
+            get: fn (mixed $value, array $attributes) => explode('.', $attributes['ha_id'])[0],
         );
     }
 
+    /**
+     * @return BelongsTo<DomoDevice, $this>
+     */
     public function device(): BelongsTo
     {
         return $this->belongsTo(DomoDevice::class, 'ha_device_id', 'ha_id');
     }
 
+    /**
+     * @return HasOne<DomoEntityState, $this>
+     */
     public function state(): HasOne
     {
         return $this->hasOne(DomoEntityState::class, 'ha_entity_id', 'ha_id');
@@ -85,6 +94,9 @@ class DomoEntity extends Model
         return $this->hasMany(DomoEntityEvent::class);
     }
 
+    /**
+     * @return HasMany<DomoEntityAssignment, $this>
+     */
     public function assignments(): HasMany
     {
         return $this->hasMany(DomoEntityAssignment::class);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,6 +13,9 @@ class RenameDomoRoomRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
@@ -19,7 +23,7 @@ class RenameDomoRoomRequest extends FormRequest
                 'required',
                 'string',
                 'max:30',
-                Rule::unique('domo_rooms', 'name')->ignore($this->route('room')->id),
+                Rule::unique('domo_rooms', 'name')->ignore($this->route('room')),
             ],
         ];
     }

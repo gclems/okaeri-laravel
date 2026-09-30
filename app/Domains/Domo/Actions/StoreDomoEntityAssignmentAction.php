@@ -2,7 +2,6 @@
 
 namespace App\Domains\Domo\Actions;
 
-use App\Domains\Domo\DomoEventMode;
 use App\Domains\Domo\EntityAssignmentRoles;
 use App\Domains\Domo\Events\DomoEntityAssignmentsUpdated;
 use App\Models\DomoEntity;
@@ -20,7 +19,7 @@ final class StoreDomoEntityAssignmentAction
         ?DomoRoom $room,
     ): void {
         // Create the assignment
-        $created = $entity->assignments()->create([
+        $entity->assignments()->create([
             'role' => $role,
             'domo_room_id' => $room?->id,
         ]);
@@ -28,12 +27,9 @@ final class StoreDomoEntityAssignmentAction
         // Move the device into the room
         $this->moveHomeAssistantDeviceAction->execute(
             $entity->ha_device_id,
-            $room?->ha_id ?? null
+            $room?->ha_id
         );
 
-        DomoEntityAssignmentsUpdated::dispatch(
-            [$created],
-            DomoEventMode::MERGE
-        );
+        DomoEntityAssignmentsUpdated::dispatch();
     }
 }

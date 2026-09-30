@@ -16,6 +16,9 @@ final class UpdateDomoEntityStates
         private DomoEntityEventRecorder $recorder
     ) {}
 
+    /**
+     * @param  array<mixed>  $haEntityStates
+     */
     public function execute(array $haEntityStates): void
     {
         $collection = collect($haEntityStates);

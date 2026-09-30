@@ -59,6 +59,9 @@ class WeatherDailyForecast extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<DomoDevice, $this>
+     */
     public function device(): BelongsTo
     {
         return $this->belongsTo(DomoDevice::class, 'ha_device_id', 'ha_id');

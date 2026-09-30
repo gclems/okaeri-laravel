@@ -8,6 +8,9 @@ use App\Models\DomoEntity;
 
 final class Renault4FlapOpenedResolver extends SlugSuffixEntityResolver
 {
+    /**
+     * @var list<string>
+     */
     private array $trueValues = [
         'energy_flap_opened',
     ];

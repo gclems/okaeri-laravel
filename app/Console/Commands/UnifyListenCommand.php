@@ -11,10 +11,8 @@ use Illuminate\Console\Command;
 #[Description('Polls the UniFi Network Integrations API for uplink throughput and broadcasts updates')]
 class UnifyListenCommand extends Command
 {
-    public function handle(UnifyDaemon $daemon)
+    public function handle(UnifyDaemon $daemon): void
     {
         $daemon->run();
-
-        return self::SUCCESS;
     }
 }

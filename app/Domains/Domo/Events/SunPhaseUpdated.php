@@ -12,6 +12,9 @@ class SunPhaseUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * @param  array<mixed>  $sunPhases
+     */
     public function __construct(
         public readonly array $sunPhases,
         public readonly DomoEventMode $mode

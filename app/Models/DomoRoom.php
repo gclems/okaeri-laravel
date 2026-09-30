@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
- * @property int $ha_id
+ * @property string $ha_id
  * @property string $name
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
@@ -51,21 +51,33 @@ class DomoRoom extends Model
         'raw',
     ];
 
+    /**
+     * @return HasMany<DomoDevice, $this>
+     */
     public function devices(): HasMany
     {
-        return $this->hasMany(DomoDevice::class);
+        return $this->hasMany(DomoDevice::class, 'ha_area_id', 'ha_id');
     }
 
+    /**
+     * @return HasMany<DomoEntityAssignment, $this>
+     */
     public function assignments(): HasMany
     {
         return $this->hasMany(DomoEntityAssignment::class);
     }
 
+    /**
+     * @return BelongsTo<DomoEntity, $this>
+     */
     public function temperatureEntity(): BelongsTo
     {
         return $this->belongsTo(DomoEntity::class, 'ha_temperature_entity_id', 'ha_id');
     }
 
+    /**
+     * @return BelongsTo<DomoEntity, $this>
+     */
     public function humidityEntity(): BelongsTo
     {
         return $this->belongsTo(DomoEntity::class, 'ha_humidity_entity_id', 'ha_id');

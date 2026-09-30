@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
- * @property int $ha_id
- * @property int|null $ha_area_id
+ * @property string $ha_id
+ * @property string|null $ha_area_id
  * @property string $name
  * @property bool $is_active
  * @property bool $is_virtual
@@ -65,21 +65,33 @@ class DomoDevice extends Model
         'raw',
     ];
 
+    /**
+     * @return HasMany<DomoEntity, $this>
+     */
     public function entities(): HasMany
     {
         return $this->hasMany(DomoEntity::class, 'ha_device_id', 'ha_id');
     }
 
+    /**
+     * @return BelongsTo<DomoRoom, $this>
+     */
     public function room(): BelongsTo
     {
         return $this->belongsTo(DomoRoom::class, 'ha_area_id', 'ha_id');
     }
 
+    /**
+     * @return HasMany<WeatherDailyForecast, $this>
+     */
     public function dailyWeatherForecasts(): HasMany
     {
         return $this->hasMany(WeatherDailyForecast::class, 'ha_device_id', 'ha_id');
     }
 
+    /**
+     * @return HasMany<WeatherHourlyForecast, $this>
+     */
     public function hourlyWeatherForecasts(): HasMany
     {
         return $this->hasMany(WeatherHourlyForecast::class, 'ha_device_id', 'ha_id');

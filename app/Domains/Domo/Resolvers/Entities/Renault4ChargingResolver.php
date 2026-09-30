@@ -8,6 +8,9 @@ use App\Models\DomoEntity;
 
 final class Renault4ChargingResolver extends SlugSuffixEntityResolver
 {
+    /**
+     * @var list<string>
+     */
     private array $trueValues = [
         'charge_in_progress',
     ];

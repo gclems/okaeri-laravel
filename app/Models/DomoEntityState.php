@@ -31,6 +31,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class DomoEntityState extends Model
 {
+    /**
+     * @var array<string, array<string, string>>
+     */
     public array $interfaces = [
         'attributes' => [
             'type' => 'Record<string, unknown>',
@@ -49,6 +52,9 @@ class DomoEntityState extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<DomoEntity, $this>
+     */
     public function entity(): BelongsTo
     {
         return $this->belongsTo(DomoEntity::class, 'ha_entity_id', 'ha_id');

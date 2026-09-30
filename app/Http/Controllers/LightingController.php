@@ -19,7 +19,7 @@ class LightingController extends Controller
             ->get();
 
         $toggleAction->execute(
-            $entities->pluck('ha_id')->all(),
+            $entities->map(fn (DomoEntity $entity) => $entity->ha_id)->all(),
             $request->validated('target_state')
         );
 

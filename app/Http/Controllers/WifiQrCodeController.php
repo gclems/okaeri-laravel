@@ -8,6 +8,7 @@ use chillerlan\QRCode\Data\QRMatrix;
 use chillerlan\QRCode\Output\QRGdImagePNG;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 class WifiQrCodeController extends Controller
@@ -50,6 +51,10 @@ class WifiQrCodeController extends Controller
     private function addLogo(\GdImage $image): string
     {
         $logo = imagecreatefrompng(public_path('images/logo_qrcode.png'));
+
+        if ($logo === false) {
+            throw new RuntimeException('Unable to load QR code logo');
+        }
 
         $qrSize = imagesx($image);
         $logoSize = intval($qrSize * 0.22);

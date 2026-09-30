@@ -55,6 +55,9 @@ final class UnifyClient
         return $this->wifiBroadcastId;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function request(string $path): array
     {
         $url = rtrim(config('unify.url'), '/').'/proxy/network/integrations/v1'.$path;

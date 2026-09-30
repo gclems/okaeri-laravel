@@ -10,6 +10,7 @@ use App\Models\DomoEntityAssignment;
 use App\Models\DomoRoom;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class DomoEntityAssignmentsController extends Controller
@@ -25,9 +26,9 @@ class DomoEntityAssignmentsController extends Controller
     public function store(
         StoreDomoEntityAssignmentRequest $request,
         StoreDomoEntityAssignmentAction $storeAction
-    ) {
-        $entity = DomoEntity::find($request->validated('entity_id'));
-        $room = $request->validated('room_id') ? DomoRoom::find($request->validated('room_id')) : null;
+    ): RedirectResponse {
+        $entity = DomoEntity::findOrFail($request->integer('entity_id'));
+        $room = $request->filled('room_id') ? DomoRoom::findOrFail($request->integer('room_id')) : null;
 
         $storeAction->execute(
             $entity,

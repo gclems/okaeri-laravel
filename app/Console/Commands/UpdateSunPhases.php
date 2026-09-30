@@ -19,7 +19,7 @@ class UpdateSunPhases extends Command
      */
     public function handle(
         MetNoClient $metNoClient
-    ) {
+    ): void {
         logger()->info('update sun phases started...');
 
         $today = now()->startOfDay();
@@ -70,9 +70,7 @@ class UpdateSunPhases extends Command
 
             $progress->finish();
 
-            if (count($toCreate) > 0) {
-                SunPhase::insert($toCreate);
-            }
+            SunPhase::insert($toCreate);
 
             /* Delete data outside of keeping range, ie the $dates array */
             SunPhase::whereNotIn('date', $dates)->delete();

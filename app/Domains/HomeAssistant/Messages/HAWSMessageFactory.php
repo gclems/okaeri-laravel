@@ -4,6 +4,9 @@ namespace App\Domains\HomeAssistant\Messages;
 
 final class HAWSMessageFactory
 {
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     public function create(array $payload): HAWSMessage
     {
         return match ($payload['type'] ?? null) {

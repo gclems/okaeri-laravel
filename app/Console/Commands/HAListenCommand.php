@@ -13,7 +13,7 @@ class HAListenCommand extends Command
 {
     public function handle(
         HADaemon $daemon,
-    ) {
+    ): int {
         $daemon->run();
 
         return self::SUCCESS;

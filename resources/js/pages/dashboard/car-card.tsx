@@ -43,6 +43,7 @@ function CarItem({ car }: { car: Car }) {
 	const batteryLevel = car.battery?.value ?? 0;
 	const isPlugged = car.isPlugged?.value ?? false;
 	const isCharging = car.isCharging?.value ?? false;
+	const isEnergyFlapOpened = car.energyFlapOpened?.value ?? false;
 	const chargingTime = getChargingTime(car.remainingChargingMinutes?.value ?? 0);
 	const isMapMountable = useIsMapMountable();
 
@@ -179,7 +180,7 @@ function CarItem({ car }: { car: Car }) {
 						</div>
 					</div>
 
-					{car.energyFlapOpened && (
+					{isEnergyFlapOpened && (
 						<div
 							className={cn("mt-4 text-metric text-sm", {
 								"text-xl font-semibold text-destructive": !isPlugged,

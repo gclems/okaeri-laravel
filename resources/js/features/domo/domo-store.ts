@@ -12,6 +12,7 @@ import type {
 import type {
 	Car,
 	ClimateSensor,
+	ElectricityMeter,
 	LightBulb,
 	SwitchDevice,
 	WeatherForecast,
@@ -37,6 +38,7 @@ type DomoStore = {
 	carsMap: Map<number, Car>;
 	switchesMap: Map<number, SwitchDevice>;
 	weatherForecastsMap: Map<number, WeatherForecast>;
+	electricityMetersMap: Map<number, ElectricityMeter>;
 	tracesMap: Map<number, DomoEntityEvent>;
 
 	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) => void;
@@ -61,6 +63,10 @@ type DomoStore = {
 	updateSwitches: (switches: SwitchDevice[], mode: UpdateMode) => void;
 	updateWeatherForecasts: (
 		weatherForecasts: WeatherForecast[],
+		mode: UpdateMode,
+	) => void;
+	updateElectricityMeters: (
+		electricityMeters: ElectricityMeter[],
 		mode: UpdateMode,
 	) => void;
 	updateTraces: (traces: DomoEntityEvent[], mode: UpdateMode) => void;
@@ -100,6 +106,7 @@ const useDomoStore = create<DomoStore>((set) => ({
 	carsMap: new Map<number, Car>(),
 	switchesMap: new Map<number, SwitchDevice>(),
 	weatherForecastsMap: new Map<number, WeatherForecast>(),
+	electricityMetersMap: new Map<number, ElectricityMeter>(),
 	tracesMap: new Map<number, DomoEntityEvent>(),
 
 	updateDomoRooms: (domoRooms: DomoRoom[], mode: UpdateMode) =>
@@ -260,6 +267,19 @@ const useDomoStore = create<DomoStore>((set) => ({
 				cars,
 				mode,
 				(car) => car.id,
+			),
+		})),
+
+	updateElectricityMeters: (
+		electricityMeters: ElectricityMeter[],
+		mode: UpdateMode,
+	) =>
+		set(() => ({
+			electricityMetersMap: updateMapFromArray(
+				useDomoStore.getState().electricityMetersMap,
+				electricityMeters,
+				mode,
+				(electricityMeter) => electricityMeter.id,
 			),
 		})),
 

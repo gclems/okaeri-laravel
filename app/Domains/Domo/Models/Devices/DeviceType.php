@@ -12,4 +12,5 @@ enum DeviceType: string
     case Car = 'car';
     case Switch = 'switch';
     case WeatherForecast = 'weather_forecast';
+    case ElectricityMeter = 'electricity_meter';
 }

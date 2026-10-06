@@ -61,11 +61,37 @@ readonly type: DeviceType,
 readonly roomId: number | null,
 readonly battery: Battery | null,
 };
-export type DeviceType = 'light_bulb' | 'climate_sensor' | 'car' | 'switch' | 'weather_forecast';
+export type DeviceType = 'light_bulb' | 'climate_sensor' | 'car' | 'switch' | 'weather_forecast' | 'electricity_meter';
 export type Distance = {
 readonly value: number | null,
 readonly unit: string | null,
 readonly id: number,
+};
+export type ElectricMeasurement = {
+readonly value: number | null,
+readonly unit: string | null,
+readonly id: number,
+};
+export type ElectricityMeter = {
+readonly consumption: ElectricMeasurement | null,
+readonly consumptionTiers: ElectricMeasurement[],
+readonly injectedEnergy: ElectricMeasurement | null,
+readonly activePower: ElectricMeasurement | null,
+readonly activePowerPhaseB: ElectricMeasurement | null,
+readonly totalActivePower: ElectricMeasurement | null,
+readonly apparentPower: ElectricMeasurement | null,
+readonly current: ElectricMeasurement | null,
+readonly currentPhaseB: ElectricMeasurement | null,
+readonly currentPhaseC: ElectricMeasurement | null,
+readonly voltage: ElectricMeasurement | null,
+readonly voltagePhaseB: ElectricMeasurement | null,
+readonly voltagePhaseC: ElectricMeasurement | null,
+readonly id: number,
+readonly name: string,
+readonly isActive: boolean,
+readonly type: DeviceType,
+readonly roomId: number | null,
+readonly battery: Battery | null,
 };
 export type Entity = {
 readonly id: number,

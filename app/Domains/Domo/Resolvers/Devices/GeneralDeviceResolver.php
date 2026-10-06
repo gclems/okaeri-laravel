@@ -17,6 +17,7 @@ final class GeneralDeviceResolver implements DeviceResolver
         HueDimmerSwitchResolver $dimmerSwitchResolver,
         HueSmartButtonResolver $smartButtonResolver,
         MeteoFranceWeatherForecastResolver $weatherForecastResolver,
+        ZLinkyResolver $zLinkyResolver,
     ) {
         $this->resolvers = [
             $climateSensorResolver,
@@ -25,6 +26,7 @@ final class GeneralDeviceResolver implements DeviceResolver
             $dimmerSwitchResolver,
             $smartButtonResolver,
             $weatherForecastResolver,
+            $zLinkyResolver,
         ];
     }
 

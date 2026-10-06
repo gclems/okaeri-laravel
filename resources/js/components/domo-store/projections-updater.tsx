@@ -8,6 +8,7 @@ import { UpdateMode, useDomoStore } from "@/features/domo/domo-store";
 import type {
 	Car,
 	ClimateSensor,
+	ElectricityMeter,
 	LightBulb,
 	SwitchDevice,
 	WeatherForecast,
@@ -19,6 +20,7 @@ type ProjectionsApiResponse = {
 	cars: Car[];
 	switches: SwitchDevice[];
 	weatherForecasts: WeatherForecast[];
+	electricityMeters: ElectricityMeter[];
 };
 
 // spatie/typescript-transformer flattens each Device subclass independently,
@@ -29,7 +31,8 @@ type AnyDevice =
 	| (Omit<ClimateSensor, "type"> & { type: "climate_sensor" })
 	| (Omit<Car, "type"> & { type: "car" })
 	| (Omit<SwitchDevice, "type"> & { type: "switch" })
-	| (Omit<WeatherForecast, "type"> & { type: "weather_forecast" });
+	| (Omit<WeatherForecast, "type"> & { type: "weather_forecast" })
+	| (Omit<ElectricityMeter, "type"> & { type: "electricity_meter" });
 
 function ProjectionsUpdater() {
 	const updateLights = useDomoStore((state) => state.updateLights);
@@ -41,19 +44,29 @@ function ProjectionsUpdater() {
 	const updateWeatherForecasts = useDomoStore(
 		(state) => state.updateWeatherForecasts,
 	);
+	const updateElectricityMeters = useDomoStore(
+		(state) => state.updateElectricityMeters,
+	);
 	const { get } = useHttp<ProjectionsApiResponse>();
 
 	const update = useCallback(() => {
 		get(DomoController.getProjections.url(), {
 			onSuccess: (projections) => {
-				const { lights, climateSensors, cars, switches, weatherForecasts } =
-					projections as ProjectionsApiResponse;
+				const {
+					lights,
+					climateSensors,
+					cars,
+					switches,
+					weatherForecasts,
+					electricityMeters,
+				} = projections as ProjectionsApiResponse;
 
 				updateLights(lights, UpdateMode.Replace);
 				updateClimateSensors(climateSensors, UpdateMode.Replace);
 				updateCars(cars, UpdateMode.Replace);
 				updateSwitches(switches, UpdateMode.Replace);
 				updateWeatherForecasts(weatherForecasts, UpdateMode.Replace);
+				updateElectricityMeters(electricityMeters, UpdateMode.Replace);
 			},
 		});
 	}, [
@@ -63,6 +76,7 @@ function ProjectionsUpdater() {
 		updateCars,
 		updateSwitches,
 		updateWeatherForecasts,
+		updateElectricityMeters,
 	]);
 
 	useEchoPublic(
@@ -84,6 +98,9 @@ function ProjectionsUpdater() {
 					break;
 				case "weather_forecast":
 					updateWeatherForecasts([device], UpdateMode.Merge);
+					break;
+				case "electricity_meter":
+					updateElectricityMeters([device], UpdateMode.Merge);
 					break;
 			}
 		},

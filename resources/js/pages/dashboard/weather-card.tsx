@@ -71,7 +71,7 @@ function WeatherCard() {
 						</div>
 					</div>
 					{weatherForecast.alert && weatherForecast.alert.level !== "Vert" && (
-						<motion.ul className="space-y-0.5 mt-4">
+						<motion.ul className="space-y-0.5 mt-4 px-8">
 							{Object.entries(weatherForecast.alert.risks)
 								.filter(([_, level]) => level !== "Vert")
 								.map(([risk, level]) => (

@@ -18,7 +18,7 @@ type RoomViewModel = {
 	isOn: boolean;
 };
 
-function LightingCard() {
+function LightingCard({ className }: { className?: string }) {
 	const { post } = useHttp();
 
 	const lightsMap = useDomoStore((state) => state.lightsMap);
@@ -68,7 +68,7 @@ function LightingCard() {
 	};
 
 	return (
-		<Card>
+		<Card className={className}>
 			<Card.Header
 				title={
 					<>

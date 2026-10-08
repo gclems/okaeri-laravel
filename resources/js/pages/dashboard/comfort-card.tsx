@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 
 import Humidity from "@meteocons/svg/fill/humidity.svg";
 import Thermometer from "@meteocons/svg/fill/thermometer.svg";
@@ -21,7 +21,7 @@ type RoomViewModel = {
 	sensors: ClimateSensor[];
 };
 
-function ComfortCard() {
+function ComfortCard({ className }: { className?: string }) {
 	const climateSensorsMap = useDomoStore((state) => state.climateSensorsMap);
 	const roomsMap = useDomoStore((state) => state.domoRoomsMap);
 	const viewModels: RoomViewModel[] = useMemo(() => {
@@ -39,7 +39,7 @@ function ComfortCard() {
 	}, [climateSensorsMap, roomsMap]);
 
 	return (
-		<Card>
+		<Card className={className}>
 			<Card.Header
 				title={
 					<>
@@ -61,7 +61,7 @@ function ComfortCard() {
 							</CarouselItem>
 						))}
 					</CarouselContent>
-					<div className="mt-4">
+					<div className="mt-8">
 						<CarouselDots />
 					</div>
 				</Carousel>
@@ -76,44 +76,59 @@ function RoomItem({ vm }: { vm: RoomViewModel }) {
 			<div className="text-center">{vm.room.name}</div>
 			<div>
 				{vm.sensors.map((sensor) => (
-					<div key={sensor.id} className="flex items-center">
-						{sensor.thermometer && (
-							<div className="flex items-center justify-center gap-x-1 flex-1">
-								<Meteocon src={Thermometer} alt="Thermometer" className="size-8" />
-								<span
-									className={cn("text-metric text-lg @md:text-2xl font-semibold", {
-										"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
-										"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
-									})}
-								>
+					<Fragment key={sensor.id}>
+						<div className="flex items-center min-h-12">
+							{sensor.thermometer && (
+								<div className="flex items-center justify-center gap-x-1 flex-1">
+									<Meteocon src={Thermometer} alt="Thermometer" className="size-8" />
+									<span
+										className={cn("text-metric text-lg @md:text-2xl font-semibold", {
+											"text-temperature-excessive": +(sensor.thermometer.value ?? 0) >= 26,
+											"text-temperature-low": +(sensor.thermometer.value ?? 0) <= 17,
+										})}
+									>
+										<RollingNumber
+											number={+(sensor.thermometer.value ?? 0)}
+											formatter={(value) => value.toFixed(1).toString()}
+										/>
+									</span>
+									<span className="text-muted">
+										&nbsp;{sensor.thermometer.unit as string}
+									</span>
+								</div>
+							)}
+							{sensor.thermometer && sensor.hygrometer && (
+								<Separator orientation="vertical" className="bg-border h-8" />
+							)}
+							{sensor.hygrometer && (
+								<div className="flex items-center justify-center text-sm flex-1">
+									<Meteocon src={Humidity} alt="Humidity" className="size-8" />
+									<span className="text-metric text-lg @md:text-2xl font-semibold">
+										<RollingNumber
+											number={+(sensor.hygrometer.value ?? 0)}
+											formatter={(value) => value.toFixed(1).toString()}
+										/>
+									</span>
+									<span className="text-muted">
+										&nbsp;{sensor.hygrometer.unit as string}
+									</span>
+								</div>
+							)}
+						</div>
+						{sensor.barometer && (
+							<div className="flex justify-center items-baseline">
+								<span className="text-metric text-sm @md:text-lg font-semibold">
 									<RollingNumber
-										number={+(sensor.thermometer.value ?? 0)}
-										formatter={(value) => value.toFixed(1).toString()}
+										number={+(sensor.barometer.value ?? 0)}
+										formatter={(value) => value.toFixed(0).toString()}
 									/>
 								</span>
-								<span className="text-muted">
-									&nbsp;{sensor.thermometer.unit as string}
+								<span className="text-muted text-xs @md:text-sm">
+									&nbsp;{sensor.barometer.unit as string}
 								</span>
 							</div>
 						)}
-						{sensor.thermometer && sensor.hygrometer && (
-							<Separator orientation="vertical" className="bg-border h-8" />
-						)}
-						{sensor.hygrometer && (
-							<div className="flex items-center justify-center text-sm flex-1">
-								<Meteocon src={Humidity} alt="Humidity" className="size-8" />
-								<span className="text-metric text-lg @md:text-2xl font-semibold">
-									<RollingNumber
-										number={+(sensor.hygrometer.value ?? 0)}
-										formatter={(value) => value.toFixed(1).toString()}
-									/>
-								</span>
-								<span className="text-muted">
-									&nbsp;{sensor.hygrometer.unit as string}
-								</span>
-							</div>
-						)}
-					</div>
+					</Fragment>
 				))}
 			</div>
 		</div>

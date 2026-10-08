@@ -36,7 +36,13 @@ function CarCard() {
 	const carsMap = useDomoStore((state) => state.carsMap);
 
 	const cars = Array.from(carsMap.values());
-	return cars.map((car) => <CarItem key={car.id} car={car} />);
+	return (
+		<>
+			{cars.map((car) => (
+				<CarItem key={car.id} car={car} />
+			))}
+		</>
+	);
 }
 
 function CarItem({ car }: { car: Car }) {
@@ -48,7 +54,7 @@ function CarItem({ car }: { car: Car }) {
 	const isMapMountable = useIsMapMountable();
 
 	return (
-		<Card className="@container">
+		<Card className="@container h-full">
 			<Card.Body className="flex flex-col @lg:flex-row gap-3">
 				{car.coordinates && isMapMountable && (
 					<div className="order-2 @lg:order-1 @lg:flex-1 h-48 @lg:h-auto border border-primary rounded-xl overflow-hidden">

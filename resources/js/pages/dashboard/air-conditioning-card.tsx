@@ -1,8 +1,8 @@
 import { Card } from "shanty-ui";
 
-function AirConditioningCard() {
+function AirConditioningCard({ className }: { className?: string }) {
 	return (
-		<Card>
+		<Card className={className}>
 			<Card.Header
 				title={
 					<>

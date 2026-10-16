@@ -104,6 +104,18 @@ export interface DomoEntityState {
 	entity_exists?: boolean;
 }
 
+export interface DomoInput {
+	// columns
+	id: number;
+	ha_entity_id: string;
+	value: string;
+	raw?: Array<unknown>;
+	created_at: string | null;
+	updated_at: string | null;
+	// overrides
+	attributes: Record<string, unknown>;
+}
+
 export interface DomoRoom {
 	// columns
 	id: number;

@@ -169,6 +169,27 @@ body {
 	@apply bg-transparent;
 }
 
+.react-colorful__hue {
+	@apply rounded-t-md;
+}
+.react-colorful__alpha {
+	@apply rounded-b-md;
+}
+/* The alpha gradient (transparent -> color) is drawn over black, so it reads as black -> color. */
+.react-colorful__alpha,
+.react-colorful__alpha-pointer {
+	background-color: #000;
+	background-image: none;
+}
+
+.brightness-only .react-colorful__saturation,
+.brightness-only .react-colorful__hue {
+	display: none;
+}
+.brightness-only .react-colorful__alpha {
+	border-radius: 8px;
+}
+
 @theme {
 	--animate-charging: charging 1.5s ease-out infinite;
 }

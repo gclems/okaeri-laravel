@@ -7,6 +7,7 @@ use App\Http\Controllers\DomoEntitiesController;
 use App\Http\Controllers\DomoEntityAssignmentsController;
 use App\Http\Controllers\DomoEntityEventsController;
 use App\Http\Controllers\DomoEntityStatesController;
+use App\Http\Controllers\DomoInputsController;
 use App\Http\Controllers\DomoRoomsController;
 use App\Http\Controllers\HomeArchitectController;
 use App\Http\Controllers\LightingController;
@@ -21,13 +22,16 @@ Route::get('domo-entity-events', [DomoEntityEventsController::class, 'list'])->n
 Route::get('domo-entities', [DomoEntitiesController::class, 'list'])->name('domo-entities.list');
 Route::get('domo-entity-assignments', [DomoEntityAssignmentsController::class, 'list'])->name('domo-entity-assignments.list');
 Route::get('domo-entity-states', [DomoEntityStatesController::class, 'list'])->name('domo-entity-states.list');
+Route::get('domo-inputs', [DomoInputsController::class, 'list'])->name('domo-inputs.list');
 Route::get('sun-phases', [SunPhasesController::class, 'list'])->name('sun-phases.list');
 Route::get('wifi-qr-code', [WifiQrCodeController::class, 'show'])->name('wifi-qr-code.show');
 
 Route::get('domo-projections', [DomoController::class, 'getProjections'])->name('domo-projections.get');
 
+Route::post('lighting/rooms/toggle', [LightingController::class, 'toggleRooms'])->name('lighting.toggleRooms');
 Route::post('lighting/{entity}/toggle', [LightingController::class, 'toggleLight'])->name('lighting.toggleLight');
 Route::post('lighting/toggle', [LightingController::class, 'toggle'])->name('lighting.toggle');
+Route::post('lighting/color', [LightingController::class, 'changeLightBulbColor'])->name('lighting.changeLightBulbColor');
 
 // Inertia routes
 Route::get('/', [DashboardController::class, 'index'])->name('home');

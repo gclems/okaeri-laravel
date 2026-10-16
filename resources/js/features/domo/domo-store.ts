@@ -6,6 +6,7 @@ import type {
 	DomoEntityAssignment,
 	DomoEntityEvent,
 	DomoEntityState,
+	DomoInput,
 	DomoRoom,
 	SunPhase,
 } from "@/types/models";
@@ -30,6 +31,7 @@ type DomoStore = {
 	domoEntitiesMap: Map<number, DomoEntity>;
 	domoStatesMap: Map<number, DomoEntityState>;
 	domoAssignmentsMap: Map<number, DomoEntityAssignment>;
+	domoInputsMap: Map<string, DomoInput>;
 
 	sunPhasesMap: Map<string, SunPhase>;
 	network: Network[];
@@ -51,6 +53,7 @@ type DomoStore = {
 		assignments: DomoEntityAssignment[],
 		mode: UpdateMode,
 	) => void;
+	updateDomoInputs: (inputs: DomoInput[], mode: UpdateMode) => void;
 
 	updateSunPhases: (sunPhases: SunPhase[], mode: UpdateMode) => void;
 	addNetwork: (uplink: Network) => void;
@@ -98,6 +101,7 @@ const useDomoStore = create<DomoStore>((set) => ({
 	domoEntitiesMap: new Map<number, DomoEntity>(),
 	domoStatesMap: new Map<number, DomoEntityState>(),
 	domoAssignmentsMap: new Map<number, DomoEntityAssignment>(),
+	domoInputsMap: new Map<string, DomoInput>(),
 
 	sunPhasesMap: new Map<string, SunPhase>(),
 	network: [],
@@ -206,6 +210,15 @@ const useDomoStore = create<DomoStore>((set) => ({
 				assignments,
 				mode,
 				(assignment) => assignment.id,
+			),
+		})),
+	updateDomoInputs: (inputs: DomoInput[], mode: UpdateMode) =>
+		set(() => ({
+			domoInputsMap: updateMapFromArray(
+				useDomoStore.getState().domoInputsMap,
+				inputs,
+				mode,
+				(input) => input.ha_entity_id,
 			),
 		})),
 

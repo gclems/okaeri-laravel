@@ -12,6 +12,10 @@ final class ToggleLightsAction
     ) {}
 
     /**
+     * Native light services are fine for individual bulbs: each bulb adapts on its own
+     * to the Natural Light behaviour induced by its room's activation state.
+     * Whole rooms must go through ToggleRoomsLightsAction instead.
+     *
      * @param  array<int, string>  $entities_ha_ids
      */
     public function execute(array $entities_ha_ids, string $target_state): void

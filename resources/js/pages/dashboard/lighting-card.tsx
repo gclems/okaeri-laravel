@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
 	LightbulbIcon,
@@ -245,17 +245,9 @@ function ViewModelItem({
 }
 
 /**
- * Minimum delay between two commands sent while dragging the picker.
- */
-const COLOR_COMMAND_THROTTLE_MS = 300;
-
-/**
  * Bulbs without color support are locked to white: only the alpha slider is shown.
  */
 const WHITE = { r: 255, g: 255, b: 255 } as const;
-
-const isSameRGBA = (a: RgbaColor | null, b: RgbaColor) =>
-	a !== null && a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a;
 
 function BulbColorPicker({ bulb }: { bulb: LightBulb }) {
 	const { post } = useHttp();
@@ -263,39 +255,24 @@ function BulbColorPicker({ bulb }: { bulb: LightBulb }) {
 	const entity = useDomoStore((state) =>
 		state.domoEntitiesMap.get(bulb.light.id),
 	);
-	const supportsColor = bulb.light.supportsColor;
+	const { rgb, brightness, supportsColor } = bulb.light;
 
-	// While the user drags, the picker is not driven by the bulb state anymore, so that
-	// broadcasted intermediate states don't make the handles jump back.
-	const [isPicking, setIsPicking] = useState(false);
-
-	const pickedRGBA = useRef<RgbaColor | null>(null);
-	const lastSentRGBA = useRef<RgbaColor | null>(null);
-	const throttleTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const [rgba, setRgba] = useState<RgbaColor>(() =>
+		toRGBA(rgb, brightness, supportsColor),
+	);
 
 	useEffect(() => {
-		return () => {
-			if (throttleTimeout.current) {
-				clearTimeout(throttleTimeout.current);
-			}
-		};
-	}, []);
+		setRgba(toRGBA(rgb, brightness, supportsColor));
+	}, [rgb, brightness, supportsColor]);
 
-	const bulbRGBA = useMemo((): RgbaColor => {
-		const [r, g, b] = decomposeRGB(bulb.light.rgb ?? "rgb(255,255,255)");
-		return {
-			...(supportsColor ? { r, g, b } : WHITE),
-			a: bulb.light.brightness ?? 1,
-		};
-	}, [bulb.light.rgb, bulb.light.brightness, supportsColor]);
+	const handleChange = (picked: RgbaColor) => {
+		setRgba(supportsColor ? picked : { ...WHITE, a: picked.a });
+	};
 
-	const sendPickedColor = () => {
-		const rgba = pickedRGBA.current;
-		if (!entity || !rgba || isSameRGBA(lastSentRGBA.current, rgba)) {
+	const commit = () => {
+		if (!entity) {
 			return;
 		}
-
-		lastSentRGBA.current = rgba;
 
 		post(
 			LightingController.changeLightBulbColor.url({
@@ -309,38 +286,27 @@ function BulbColorPicker({ bulb }: { bulb: LightBulb }) {
 		);
 	};
 
-	const handleChange = (rgba: RgbaColor) => {
-		pickedRGBA.current = supportsColor ? rgba : { ...WHITE, a: rgba.a };
-
-		if (throttleTimeout.current) {
-			return;
-		}
-
-		sendPickedColor();
-		throttleTimeout.current = setTimeout(() => {
-			throttleTimeout.current = null;
-			sendPickedColor();
-		}, COLOR_COMMAND_THROTTLE_MS);
-	};
-
-	const handlePickEnd = () => {
-		setIsPicking(false);
-		sendPickedColor();
-	};
-
 	return (
-		<div
-			onPointerDownCapture={() => setIsPicking(true)}
-			onPointerUp={handlePickEnd}
-			onPointerCancel={handlePickEnd}
-		>
-			<RgbaColorPicker
-				className={supportsColor ? undefined : "brightness-only"}
-				color={isPicking ? (pickedRGBA.current ?? bulbRGBA) : bulbRGBA}
-				onChange={handleChange}
-			/>
-		</div>
+		<RgbaColorPicker
+			className={supportsColor ? undefined : "brightness-only"}
+			color={rgba}
+			onChange={handleChange}
+			onPointerUp={commit}
+			onKeyUp={commit}
+		/>
 	);
+}
+
+function toRGBA(
+	rgb: string | null,
+	brightness: number | null,
+	supportsColor: boolean,
+): RgbaColor {
+	const [r, g, b] = decomposeRGB(rgb ?? "rgb(255,255,255)");
+	return {
+		...(supportsColor ? { r, g, b } : WHITE),
+		a: brightness ?? 1,
+	};
 }
 
 export { LightingCard };

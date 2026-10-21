@@ -276,7 +276,9 @@ function BulbColorPicker({ bulb }: { bulb: LightBulb }) {
 		}
 
 		// The bulb brightness is sent on its own: the color is sent at full brightness.
-		const fullBrightness = picked.withChannelValue("brightness", 100).toFormat("rgb");
+		const fullBrightness = picked
+			.withChannelValue("brightness", 100)
+			.toFormat("rgb");
 
 		post(
 			LightingController.changeLightBulbColor.url({
@@ -310,16 +312,18 @@ function BulbColorPicker({ bulb }: { bulb: LightBulb }) {
 						<ColorWheelTrack />
 						<ColorThumb className={THUMB_CLASS_NAME} />
 					</ColorWheel>
-					<ColorArea
-						aria-label="Saturation et luminosité"
-						colorSpace="hsb"
-						xChannel="saturation"
-						yChannel="brightness"
-						className="absolute inset-0 m-auto size-24 rounded-md"
-						onChangeEnd={commit}
-					>
-						<ColorThumb className={THUMB_CLASS_NAME} />
-					</ColorArea>
+					<div className="absolute inset-0 flex items-center justify-center">
+						<ColorArea
+							aria-label="Saturation et luminosité"
+							colorSpace="hsb"
+							xChannel="saturation"
+							yChannel="brightness"
+							onChangeEnd={commit}
+							className="size-24 rounded-md"
+						>
+							<ColorThumb className={THUMB_CLASS_NAME} />
+						</ColorArea>
+					</div>
 				</div>
 			) : (
 				<ColorSlider

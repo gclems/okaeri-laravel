@@ -8,13 +8,22 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useHttp } from "@inertiajs/react";
 import { AnimatePresence, motion } from "motion/react";
-import { type RgbaColor, RgbaColorPicker } from "react-colorful";
+import {
+	type Color,
+	ColorArea,
+	ColorPicker,
+	ColorSlider,
+	ColorThumb,
+	ColorWheel,
+	ColorWheelTrack,
+	parseColor,
+	SliderTrack,
+} from "react-aria-components";
 import { Button, Card, cn, Dialog, Switch } from "shanty-ui";
 
 import LightingController from "@/actions/App/Http/Controllers/LightingController";
 import { AnimatedNumber } from "@/components/animated-number";
 import { useDomoStore } from "@/features/domo/domo-store";
-import { decomposeRGB } from "@/helpers/colors";
 import type { DomoRoom } from "@/types/models";
 import type { LightBulb } from "@/types/projections";
 
@@ -244,10 +253,8 @@ function ViewModelItem({
 	);
 }
 
-/**
- * Bulbs without color support are locked to white: only the alpha slider is shown.
- */
-const WHITE = { r: 255, g: 255, b: 255 } as const;
+const THUMB_CLASS_NAME =
+	"size-5 rounded-full border-2 border-white shadow-[0_0_0_1px_black,inset_0_0_0_1px_black] data-focus-visible:size-6";
 
 function BulbColorPicker({ bulb }: { bulb: LightBulb }) {
 	const { post } = useHttp();
@@ -257,56 +264,87 @@ function BulbColorPicker({ bulb }: { bulb: LightBulb }) {
 	);
 	const { rgb, brightness, supportsColor } = bulb.light;
 
-	const [rgba, setRgba] = useState<RgbaColor>(() =>
-		toRGBA(rgb, brightness, supportsColor),
-	);
+	const [color, setColor] = useState<Color>(() => toHSB(rgb, brightness));
 
 	useEffect(() => {
-		setRgba(toRGBA(rgb, brightness, supportsColor));
-	}, [rgb, brightness, supportsColor]);
+		setColor(toHSB(rgb, brightness));
+	}, [rgb, brightness]);
 
-	const handleChange = (picked: RgbaColor) => {
-		setRgba(supportsColor ? picked : { ...WHITE, a: picked.a });
-	};
-
-	const commit = () => {
+	const commit = (picked: Color) => {
 		if (!entity) {
 			return;
 		}
+
+		// The bulb brightness is sent on its own: the color is sent at full brightness.
+		const fullBrightness = picked.withChannelValue("brightness", 100).toFormat("rgb");
 
 		post(
 			LightingController.changeLightBulbColor.url({
 				query: {
 					ha_entity_id: entity.ha_id,
-					...(supportsColor && { red: rgba.r, green: rgba.g, blue: rgba.b }),
+					...(supportsColor && {
+						red: fullBrightness.getChannelValue("red"),
+						green: fullBrightness.getChannelValue("green"),
+						blue: fullBrightness.getChannelValue("blue"),
+					}),
 					// A brightness of 0 is ignored by the script, so it would leave the bulb unchanged.
-					brightness: Math.max(1, Math.round(rgba.a * 255)),
+					brightness: Math.max(
+						1,
+						Math.round((picked.getChannelValue("brightness") / 100) * 255),
+					),
 				},
 			}),
 		);
 	};
 
 	return (
-		<RgbaColorPicker
-			className={supportsColor ? undefined : "brightness-only"}
-			color={rgba}
-			onChange={handleChange}
-			onPointerUp={commit}
-			onKeyUp={commit}
-		/>
+		<ColorPicker value={color} onChange={setColor}>
+			{supportsColor ? (
+				<div className="relative">
+					<ColorWheel
+						aria-label="Teinte"
+						outerRadius={100}
+						innerRadius={74}
+						onChangeEnd={commit}
+					>
+						<ColorWheelTrack />
+						<ColorThumb className={THUMB_CLASS_NAME} />
+					</ColorWheel>
+					<ColorArea
+						aria-label="Saturation et luminosité"
+						colorSpace="hsb"
+						xChannel="saturation"
+						yChannel="brightness"
+						className="absolute inset-0 m-auto size-24 rounded-md"
+						onChangeEnd={commit}
+					>
+						<ColorThumb className={THUMB_CLASS_NAME} />
+					</ColorArea>
+				</div>
+			) : (
+				<ColorSlider
+					aria-label="Luminosité"
+					colorSpace="hsb"
+					channel="brightness"
+					className="w-48"
+					onChangeEnd={commit}
+				>
+					<SliderTrack className="h-7 rounded-md">
+						<ColorThumb className={cn(THUMB_CLASS_NAME, "top-1/2")} />
+					</SliderTrack>
+				</ColorSlider>
+			)}
+		</ColorPicker>
 	);
 }
 
-function toRGBA(
-	rgb: string | null,
-	brightness: number | null,
-	supportsColor: boolean,
-): RgbaColor {
-	const [r, g, b] = decomposeRGB(rgb ?? "rgb(255,255,255)");
-	return {
-		...(supportsColor ? { r, g, b } : WHITE),
-		a: brightness ?? 1,
-	};
+/**
+ * The bulb color, with its brightness (0-1) as the HSB brightness channel.
+ */
+function toHSB(rgb: string | null, brightness: number | null): Color {
+	return parseColor(rgb ?? "rgb(255, 255, 255)")
+		.toFormat("hsb")
+		.withChannelValue("brightness", (brightness ?? 1) * 100);
 }
 
 export { LightingCard };

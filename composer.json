@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.5",
         "amphp/websocket-client": "^2.0",
         "chillerlan/php-qrcode": "^6.0",
         "inertiajs/inertia-laravel": "^3.0",

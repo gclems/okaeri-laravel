@@ -8,11 +8,19 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import L from "leaflet";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import {
+	Circle,
+	CircleMarker,
+	MapContainer,
+	Marker,
+	TileLayer,
+	useMap,
+} from "react-leaflet";
 import { Card, cn, Separator } from "shanty-ui";
 
 import { RollingNumber } from "@/components/rolling-number";
 import { useDomoStore } from "@/features/domo/domo-store";
+import { useUserPosition } from "@/features/geolocation/use-user-position";
 import type { Car } from "@/types/projections";
 import "leaflet/dist/leaflet.css";
 
@@ -52,6 +60,7 @@ function CarItem({ car }: { car: Car }) {
 	const isEnergyFlapOpened = car.energyFlapOpened?.value ?? false;
 	const chargingTime = getChargingTime(car.remainingChargingMinutes?.value ?? 0);
 	const isMapMountable = useIsMapMountable();
+	const userPosition = useUserPosition();
 
 	return (
 		<Card className="@container h-full">
@@ -82,6 +91,25 @@ function CarItem({ car }: { car: Car }) {
 								]}
 								icon={isCharging ? carChargingIcon : carIcon}
 							/>
+							{userPosition && (
+								<>
+									<Circle
+										center={[userPosition.latitude, userPosition.longitude]}
+										radius={userPosition.accuracy}
+										pathOptions={{ color: "#3b82f6", weight: 1, fillOpacity: 0.15 }}
+									/>
+									<CircleMarker
+										center={[userPosition.latitude, userPosition.longitude]}
+										radius={7}
+										pathOptions={{
+											color: "#ffffff",
+											weight: 2,
+											fillColor: "#3b82f6",
+											fillOpacity: 1,
+										}}
+									/>
+								</>
+							)}
 						</MapContainer>
 					</div>
 				)}

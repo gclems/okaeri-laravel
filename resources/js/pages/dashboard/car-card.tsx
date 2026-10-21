@@ -20,7 +20,10 @@ import { Card, cn, Separator } from "shanty-ui";
 
 import { RollingNumber } from "@/components/rolling-number";
 import { useDomoStore } from "@/features/domo/domo-store";
-import { useUserPosition } from "@/features/geolocation/use-user-position";
+import {
+	type UserPosition,
+	useUserPosition,
+} from "@/features/geolocation/use-user-position";
 import type { Car } from "@/types/projections";
 import "leaflet/dist/leaflet.css";
 
@@ -83,6 +86,7 @@ function CarItem({ car }: { car: Car }) {
 							<RecenterMap
 								latitude={car.coordinates.latitude ?? 0}
 								longitude={car.coordinates.longitude ?? 0}
+								userPosition={userPosition}
 							/>
 							<Marker
 								position={[
@@ -246,20 +250,48 @@ function useIsMapMountable(): boolean {
 	return isMountable;
 }
 
+/**
+ * Centers the map on the car, or fits both the car and the user when the user position is known.
+ * User coordinates are rounded (~100 m) so GPS jitter doesn't override manual pan/zoom.
+ */
 function RecenterMap({
 	latitude,
 	longitude,
+	userPosition,
 }: {
 	latitude: number;
 	longitude: number;
+	userPosition?: UserPosition | null;
 }) {
 	const map = useMap();
+	const userLatitude = userPosition
+		? roundCoordinate(userPosition.latitude)
+		: null;
+	const userLongitude = userPosition
+		? roundCoordinate(userPosition.longitude)
+		: null;
 
 	useEffect(() => {
-		map.setView([latitude, longitude]);
-	}, [map, latitude, longitude]);
+		if (userLatitude === null || userLongitude === null) {
+			map.setView([latitude, longitude]);
+
+			return;
+		}
+
+		map.fitBounds(
+			L.latLngBounds([
+				[latitude, longitude],
+				[userLatitude, userLongitude],
+			]),
+			{ padding: [40, 40], maxZoom: 16 },
+		);
+	}, [map, latitude, longitude, userLatitude, userLongitude]);
 
 	return null;
+}
+
+function roundCoordinate(coordinate: number): number {
+	return Math.round(coordinate * 1_000) / 1_000;
 }
 
 export { CarCard };
